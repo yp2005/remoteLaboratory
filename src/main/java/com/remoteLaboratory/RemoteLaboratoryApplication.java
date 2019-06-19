@@ -1,5 +1,7 @@
 package com.remoteLaboratory;
 
+import com.remoteLaboratory.utils.LogCleanUtil;
+import com.remoteLaboratory.utils.SpringUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,5 +16,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 public class RemoteLaboratoryApplication {
     public static void main(String[] args) {
         ApplicationContext applicationContext = SpringApplication.run(RemoteLaboratoryApplication.class, args);
+        SpringUtil.setApplicationContext(applicationContext);
+        new LogCleanUtil().execute(); // 日志清理调度
     }
 }
