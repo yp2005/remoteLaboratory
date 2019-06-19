@@ -1,0 +1,71 @@
+server:
+  port: 8000
+  context-path: /remoteLaboratory
+
+spring:
+  application:
+    name: remoteLaboratory
+  profiles:
+    active: dev
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+---
+UPLOAD_FILE_PATH: /temp
+spring:
+  profiles: dev
+  datasource:
+    url: jdbc:mysql://localhost:3306/remoteLaboratory?useSSL=false&useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: root
+    testWhileIdle: true
+    validationQuery: select 1
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5Dialect
+    hibernate:
+      ddl-auto: update
+
+    show-sql: true
+logging:
+  level:
+    root: debug
+
+jedis:
+  pool:
+    host: localhost
+    port: 6379
+    config:
+      maxTotal: 100
+      maxIdle: 10
+      maxWaitMillis: 100000
+---
+spring:
+  profiles: docker
+  datasource:
+    url: jdbc:mysql://localhost:3306/remoteLaboratory?useSSL=false&useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: root
+    testWhileIdle: true
+    validationQuery: select 1
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5Dialect
+    hibernate:
+      ddl-auto: update
+
+    show-sql: true
+logging:
+  level:
+    root: debug
+
+jedis:
+  pool:
+    host: localhost
+    port: 6379
+    config:
+      maxTotal: 100
+      maxIdle: 10
+      maxWaitMillis: 100000
+
+
