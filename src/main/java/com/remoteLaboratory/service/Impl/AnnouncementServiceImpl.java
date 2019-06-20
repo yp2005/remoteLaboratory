@@ -1,10 +1,10 @@
 package com.remoteLaboratory.service.Impl;
 
-import com.remoteLaboratory.entities.LogRecord;
+import com.remoteLaboratory.entities.Announcement;
 import com.remoteLaboratory.entities.User;
 import com.remoteLaboratory.repositories.LogRecordRepository;
-import com.remoteLaboratory.repositories.LogRecordRepository;
-import com.remoteLaboratory.service.LogRecordService;
+import com.remoteLaboratory.repositories.AnnouncementRepository;
+import com.remoteLaboratory.service.AnnouncementService;
 import com.remoteLaboratory.utils.LogUtil;
 import com.remoteLaboratory.utils.MySpecification;
 import com.remoteLaboratory.utils.exception.BusinessException;
@@ -25,39 +25,46 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 /**
- * 日志记录服务接口实现
+ * 公告服务接口实现
  *
  * @Author: yupeng
  */
 
 @Service
 @Transactional
-public class LogRecordServiceImpl implements LogRecordService {
-    private static Logger log = LoggerFactory.getLogger(LogRecordServiceImpl.class);
+public class AnnouncementServiceImpl implements AnnouncementService {
+    private static Logger log = LoggerFactory.getLogger(AnnouncementServiceImpl.class);
+
+    private AnnouncementRepository announcementRepository;
 
     private LogRecordRepository logRecordRepository;
 
     @Autowired
-    public LogRecordServiceImpl(LogRecordRepository logRecordRepository) {
+    public AnnouncementServiceImpl(AnnouncementRepository announcementRepository, LogRecordRepository logRecordRepository) {
+        this.announcementRepository = announcementRepository;
         this.logRecordRepository = logRecordRepository;
     }
 
     @Override
-    public LogRecord add(LogRecord logRecord) throws BusinessException {
-        logRecord = logRecordRepository.save(logRecord);
-        return logRecord;
+    public Announcement add(Announcement announcement) throws BusinessException {
+        announcement = announcementRepository.save(announcement);
+        return announcement;
     }
 
     @Override
-    public LogRecord update(LogRecord logRecord) throws BusinessException {
-        logRecord = logRecordRepository.save(logRecord);
-        return logRecord;
+    public Announcement update(Announcement announcement) throws BusinessException {
+        announcement = announcementRepository.save(announcement);
+        return announcement;
     }
 
     @Override
     public void delete(List<Integer> ids, User loginUser) throws BusinessException {
         for (int id : ids) {
-            logRecordRepository.delete(id);
+            Announcement announcement = this.announcementRepository.findOne(id);
+            if(announcement != null) {
+                announcementRepository.delete(id);
+                LogUtil.add(this.logRecordRepository, "删除", "公告", loginUser, announcement.getId(), announcement.getTitle());
+            }
         }
     }
 
@@ -74,13 +81,13 @@ public class LogRecordServiceImpl implements LogRecordService {
         }
         ListOutput listOutput = new ListOutput();
         if (pageable != null) {
-            Page<LogRecord> list = logRecordRepository.findAll(new MySpecification<LogRecord>(listInput.getSearchParas()), pageable);
+            Page<Announcement> list = announcementRepository.findAll(new MySpecification<Announcement>(listInput.getSearchParas()), pageable);
             listOutput.setPage(listInput.getPage());
             listOutput.setPageSize(listInput.getPageSize());
             listOutput.setTotalNum((int) list.getTotalElements());
             listOutput.setList(list.getContent());
         } else {
-            List<LogRecord> list = logRecordRepository.findAll(new MySpecification<LogRecord>(listInput.getSearchParas()));
+            List<Announcement> list = announcementRepository.findAll(new MySpecification<Announcement>(listInput.getSearchParas()));
             listOutput.setTotalNum(list.size());
             listOutput.setList(list);
         }
@@ -88,12 +95,12 @@ public class LogRecordServiceImpl implements LogRecordService {
     }
 
     @Override
-    public LogRecord get(Integer id) throws BusinessException {
-        LogRecord logRecord = logRecordRepository.findOne(id);
-        if (logRecord == null) {
+    public Announcement get(Integer id) throws BusinessException {
+        Announcement announcement = announcementRepository.findOne(id);
+        if (announcement == null) {
             throw new BusinessException(Messages.CODE_20001);
         }
-        return logRecord;
+        return announcement;
     }
 
 }

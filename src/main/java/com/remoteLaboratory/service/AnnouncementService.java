@@ -1,7 +1,7 @@
 package com.remoteLaboratory.service;
 
 
-import com.remoteLaboratory.entities.LogRecord;
+import com.remoteLaboratory.entities.Announcement;
 import com.remoteLaboratory.entities.User;
 import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.vo.ListInput;
@@ -10,42 +10,42 @@ import com.remoteLaboratory.vo.ListOutput;
 import java.util.List;
 
 /**
- * 日志记录服务接口定义
+ * 公告服务接口定义
  *
  * @Author: yupeng
  */
 
-public interface LogRecordService {
+public interface AnnouncementService {
     /**
-     * 添加日志记录信息
-     * @param logRecord
+     * 添加公告信息
+     * @param announcement
      * @return
      */
-    public LogRecord add(LogRecord logRecord) throws BusinessException;
+    public Announcement add(Announcement announcement) throws BusinessException;
 
     /**
-     * 修改日志记录信息
-     * @param logRecord
+     * 修改公告信息
+     * @param announcement
      * @return
      */
-    public LogRecord update(LogRecord logRecord) throws BusinessException;
+    public Announcement update(Announcement announcement) throws BusinessException;
 
     /**
-     * 根据条件查询日志记录信息列表
+     * 根据条件查询公告信息列表
      * @param listInput
-     * @return LogRecordListOutput
+     * @return AnnouncementListOutput
      */
     public ListOutput list(ListInput listInput) throws BusinessException;
 
     /**
-     * 根据id获取日志记录信息
+     * 根据id获取公告信息
      * @param id
-     * @return LogRecord
+     * @return Announcement
      */
-    public LogRecord get(Integer id) throws BusinessException;
+    public Announcement get(Integer id) throws BusinessException;
 
     /**
-     * 修改日志记录信息
+     * 修改公告信息
      * @param ids
      * @param loginUser
      */

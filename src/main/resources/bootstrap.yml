@@ -29,7 +29,7 @@ spring:
     show-sql: true
 logging:
   level:
-    root: debug
+    root: info
 
 jedis:
   pool:
@@ -57,7 +57,7 @@ spring:
     show-sql: true
 logging:
   level:
-    root: debug
+    root: info
 
 jedis:
   pool:
