@@ -26,8 +26,8 @@ services:
     volumes_from:
       - db-init
     environment:
-      - MYSQL_ROOT_PASSWORD=turbo-utoss*()123
-      - MYSQL_DATABASE=TURBODB
-      - MYSQL_USER=utoss
-      - MYSQL_PASSWORD=utoss_*()123
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=remoteLaboratory
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --innodb-buffer-pool-size=5368709120 --innodb_buffer_pool_chunk_size=671088640 --max_allowed_packet=1073741824
