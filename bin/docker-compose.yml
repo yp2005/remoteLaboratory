@@ -11,7 +11,7 @@ services:
     command: ["java","-Xmx128M","-Djava.security.egd=file:/dev/./urandom","-jar","/app/tremoteLaboratory.jar"]
 
   tremoteLaboratory:
-    image: public/tremoteLaboratory:1.0-SNAPSHOT
+    image: public/tremote_laboratory:1.0-SNAPSHOT
     volumes:
       - /app
 
