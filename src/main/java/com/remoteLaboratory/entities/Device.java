@@ -8,19 +8,18 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 课程
+ * 设备
  *
  * @Author: yupeng
  */
 
 @Entity
-@Table(name = "rl_course")
-@ApiModel(value = "课程表")
-public class Course implements Serializable {
+@Table(name = "rl_device")
+@ApiModel(value = "设备表")
+public class Device {
     @Id
     @Column(length = 10, nullable = false)
     @ApiModelProperty(value = "ID", hidden = true)
@@ -34,25 +33,34 @@ public class Course implements Serializable {
     @NotNull
     private String name;
 
-    @Lob
-    @ApiModelProperty(value = "logo")
+    @Column(length = 10)
+    @ApiModelProperty(value = "类型 1-在线实验设备 2-实时数据设备")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotNull
-    private String logo;
+    private Integer type;
 
-    @Column(length = 5000)
-    @ApiModelProperty(value = "描述")
+    @Column(length = 255)
+    @ApiModelProperty(value = "在线实验设备需要嵌入的实验页面url")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String description;
+    private String pageUrl;
+
+    @Column(length = 255)
+    @ApiModelProperty(value = "数据类型：实时数据设备根据数据类型使用不同的展示页面")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String dataType;
+
+    @Column(length = 255)
+    @ApiModelProperty(value = "资源类型 如：示波器")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String resourceClass;
 
     @Column(updatable = false)
-    @ApiModelProperty(value = "创建时间", hidden = true)
+    @ApiModelProperty(value = "创建时间",hidden = true)
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
     private Date createTime;
 
-    @ApiModelProperty(value = "修改时间", hidden = true)
+    @ApiModelProperty(value = "修改时间",hidden = true)
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @Temporal(TemporalType.TIMESTAMP)
     @UpdateTimestamp
@@ -74,20 +82,36 @@ public class Course implements Serializable {
         this.name = name;
     }
 
-    public String getLogo() {
-        return logo;
+    public Integer getType() {
+        return type;
     }
 
-    public void setLogo(String logo) {
-        this.logo = logo;
+    public void setType(Integer type) {
+        this.type = type;
     }
 
-    public String getDescription() {
-        return description;
+    public String getPageUrl() {
+        return pageUrl;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setPageUrl(String pageUrl) {
+        this.pageUrl = pageUrl;
+    }
+
+    public String getDataType() {
+        return dataType;
+    }
+
+    public void setDataType(String dataType) {
+        this.dataType = dataType;
+    }
+
+    public String getResourceClass() {
+        return resourceClass;
+    }
+
+    public void setResourceClass(String resourceClass) {
+        this.resourceClass = resourceClass;
     }
 
     public Date getCreateTime() {
@@ -106,5 +130,5 @@ public class Course implements Serializable {
         this.updateTime = updateTime;
     }
 
-    public interface Validation{};
+    public interface Validation{}
 }

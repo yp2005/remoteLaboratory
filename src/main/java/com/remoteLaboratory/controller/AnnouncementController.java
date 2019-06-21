@@ -60,7 +60,7 @@ public class AnnouncementController {
     }
 
     @PutMapping
-    @ApiOperation(value = "修改公告(管理员接口)", notes = "修改公告信息接口(管理员接口)")
+    @ApiOperation(value = "修改公告", notes = "修改公告信息接口")
     @LoginRequired(adminRequired = "1")
     public CommonResponse update(@Validated({Announcement.Validation.class}) @RequestBody Announcement announcement, @ApiIgnore User loginUser) throws BusinessException {
         announcement = announcementService.update(announcement);

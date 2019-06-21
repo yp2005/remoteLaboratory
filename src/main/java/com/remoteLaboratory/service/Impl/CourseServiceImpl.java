@@ -1,10 +1,11 @@
 package com.remoteLaboratory.service.Impl;
 
+import com.remoteLaboratory.entities.Course;
 import com.remoteLaboratory.entities.LogRecord;
 import com.remoteLaboratory.entities.User;
+import com.remoteLaboratory.repositories.CourseRepository;
 import com.remoteLaboratory.repositories.LogRecordRepository;
-import com.remoteLaboratory.repositories.UserRepository;
-import com.remoteLaboratory.service.UserService;
+import com.remoteLaboratory.service.CourseService;
 import com.remoteLaboratory.utils.MySpecification;
 import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.utils.message.Messages;
@@ -25,56 +26,54 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 用户服务接口实现
+ * 课程服务接口实现
  *
  * @Author: yupeng
  */
 
 @Service
 @Transactional
-public class UserServiceImpl implements UserService {
-    private static Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
+public class CourseServiceImpl implements CourseService {
+    private static Logger log = LoggerFactory.getLogger(CourseServiceImpl.class);
 
-    private UserRepository userRepository;
+    private CourseRepository courseRepository;
 
     private LogRecordRepository logRecordRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, LogRecordRepository logRecordRepository) {
-        this.userRepository = userRepository;
+    public CourseServiceImpl(CourseRepository courseRepository,
+                             LogRecordRepository logRecordRepository) {
+        this.courseRepository = courseRepository;
         this.logRecordRepository = logRecordRepository;
     }
 
     @Override
-    public User add(User user) throws BusinessException {
-        User oldUser = this.userRepository.findByUserName(user.getUserName());
-        if(oldUser != null) {
-            throw new BusinessException(Messages.CODE_40010, "用户名已存在！");
-        }
-        user = userRepository.save(user);
-        return user;
+    public Course add(Course course) throws BusinessException {
+        course = courseRepository.save(course);
+        return course;
     }
 
     @Override
-    public User update(User user) throws BusinessException {
-        user = userRepository.save(user);
-        return user;
+    public Course update(Course course) throws BusinessException {
+        course = courseRepository.save(course);
+        return course;
     }
 
     @Override
     public void delete(List<Integer> ids, User loginUser) throws BusinessException {
         List<LogRecord> logRecords = new ArrayList<>();
         for (int id : ids) {
-            User user = this.userRepository.findOne(id);
-            if(user != null) {
-                userRepository.delete(id);
+            Course course = courseRepository.findOne(id);
+            if (course != null) {
+                courseRepository.delete(id);
+                // TODO 删除关联的各种对象
                 LogRecord logRecord = new LogRecord();
                 logRecord.setType("删除");
-                logRecord.setObject("用户");
+                logRecord.setObject("课程");
                 logRecord.setUserId(loginUser.getId());
                 logRecord.setUserName(StringUtils.isEmpty(loginUser.getPersonName()) ? loginUser.getUserName() : loginUser.getPersonName());
-                logRecord.setObjectId(user.getId());
-                logRecord.setObjectName(user.getUserName());
+                logRecord.setObjectId(course.getId());
+                logRecord.setObjectName(course.getName());
                 logRecords.add(logRecord);
             }
         }
@@ -96,13 +95,13 @@ public class UserServiceImpl implements UserService {
         }
         ListOutput listOutput = new ListOutput();
         if (pageable != null) {
-            Page<User> list = userRepository.findAll(new MySpecification<User>(listInput.getSearchParas()), pageable);
+            Page<Course> list = courseRepository.findAll(new MySpecification<Course>(listInput.getSearchParas()), pageable);
             listOutput.setPage(listInput.getPage());
             listOutput.setPageSize(listInput.getPageSize());
             listOutput.setTotalNum((int) list.getTotalElements());
             listOutput.setList(list.getContent());
         } else {
-            List<User> list = userRepository.findAll(new MySpecification<User>(listInput.getSearchParas()));
+            List<Course> list = courseRepository.findAll(new MySpecification<Course>(listInput.getSearchParas()));
             listOutput.setTotalNum(list.size());
             listOutput.setList(list);
         }
@@ -110,12 +109,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User get(Integer id) throws BusinessException {
-        User user = userRepository.findOne(id);
-        if (user == null) {
+    public Course get(Integer id) throws BusinessException {
+        Course course = courseRepository.findOne(id);
+        if (course == null) {
             throw new BusinessException(Messages.CODE_20001);
         }
-        return user;
+        return course;
     }
-
 }

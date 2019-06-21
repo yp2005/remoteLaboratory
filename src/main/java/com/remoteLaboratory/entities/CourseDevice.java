@@ -12,15 +12,15 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 课程
+ * 课程设备
  *
  * @Author: yupeng
  */
 
 @Entity
-@Table(name = "rl_course")
-@ApiModel(value = "课程表")
-public class Course implements Serializable {
+@Table(name = "rl_course_device")
+@ApiModel(value = "课程设备表")
+public class CourseDevice implements Serializable {
     @Id
     @Column(length = 10, nullable = false)
     @ApiModelProperty(value = "ID", hidden = true)
@@ -28,22 +28,29 @@ public class Course implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
+    @Column(length = 10)
+    @ApiModelProperty(value = "课程Id")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
+    private Integer courseId;
+
     @Column(length = 255)
-    @ApiModelProperty(value = "名称")
+    @ApiModelProperty(value = "课程名称")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotNull
-    private String name;
+    private String courseName;
 
-    @Lob
-    @ApiModelProperty(value = "logo")
+    @Column(length = 10)
+    @ApiModelProperty(value = "设备Id")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotNull
-    private String logo;
+    private Integer deviceId;
 
-    @Column(length = 5000)
-    @ApiModelProperty(value = "描述")
+    @Column(length = 255)
+    @ApiModelProperty(value = "设备名称")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String description;
+    @NotNull
+    private String deviceName;
 
     @Column(updatable = false)
     @ApiModelProperty(value = "创建时间", hidden = true)
@@ -66,28 +73,36 @@ public class Course implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public Integer getCourseId() {
+        return courseId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCourseId(Integer courseId) {
+        this.courseId = courseId;
     }
 
-    public String getLogo() {
-        return logo;
+    public Integer getDeviceId() {
+        return deviceId;
     }
 
-    public void setLogo(String logo) {
-        this.logo = logo;
+    public void setDeviceId(Integer deviceId) {
+        this.deviceId = deviceId;
     }
 
-    public String getDescription() {
-        return description;
+    public String getCourseName() {
+        return courseName;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
+    }
+
+    public String getDeviceName() {
+        return deviceName;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
     }
 
     public Date getCreateTime() {

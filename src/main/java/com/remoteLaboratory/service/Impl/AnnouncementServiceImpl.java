@@ -1,6 +1,7 @@
 package com.remoteLaboratory.service.Impl;
 
 import com.remoteLaboratory.entities.Announcement;
+import com.remoteLaboratory.entities.LogRecord;
 import com.remoteLaboratory.entities.User;
 import com.remoteLaboratory.repositories.LogRecordRepository;
 import com.remoteLaboratory.repositories.AnnouncementRepository;
@@ -22,6 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -59,12 +61,23 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public void delete(List<Integer> ids, User loginUser) throws BusinessException {
+        List<LogRecord> logRecords = new ArrayList<>();
         for (int id : ids) {
             Announcement announcement = this.announcementRepository.findOne(id);
             if(announcement != null) {
                 announcementRepository.delete(id);
-                LogUtil.add(this.logRecordRepository, "删除", "公告", loginUser, announcement.getId(), announcement.getTitle());
+                LogRecord logRecord = new LogRecord();
+                logRecord.setType("删除");
+                logRecord.setObject("公告");
+                logRecord.setUserId(loginUser.getId());
+                logRecord.setUserName(StringUtils.isEmpty(loginUser.getPersonName()) ? loginUser.getUserName() : loginUser.getPersonName());
+                logRecord.setObjectId(announcement.getId());
+                logRecord.setObjectName(announcement.getTitle());
+                logRecords.add(logRecord);
             }
+        }
+        for(LogRecord logRecord : logRecords) {
+            logRecordRepository.save(logRecord);
         }
     }
 

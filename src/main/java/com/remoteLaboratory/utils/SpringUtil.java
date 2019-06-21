@@ -4,6 +4,8 @@ import org.springframework.context.ApplicationContext;
 
 /**
  * Spring工具类，用于调用getBean方法获取spring管理的对象
+ *
+ * @Author: yupeng
  */
 public class SpringUtil {
     private static ApplicationContext applicationContext;

@@ -1,10 +1,11 @@
 package com.remoteLaboratory.service.Impl;
 
+import com.remoteLaboratory.entities.Device;
 import com.remoteLaboratory.entities.LogRecord;
 import com.remoteLaboratory.entities.User;
+import com.remoteLaboratory.repositories.DeviceRepository;
 import com.remoteLaboratory.repositories.LogRecordRepository;
-import com.remoteLaboratory.repositories.UserRepository;
-import com.remoteLaboratory.service.UserService;
+import com.remoteLaboratory.service.DeviceService;
 import com.remoteLaboratory.utils.MySpecification;
 import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.utils.message.Messages;
@@ -25,56 +26,53 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 用户服务接口实现
+ * 设备服务接口实现
  *
  * @Author: yupeng
  */
 
 @Service
 @Transactional
-public class UserServiceImpl implements UserService {
-    private static Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
+public class DeviceServiceImpl implements DeviceService {
+    private static Logger log = LoggerFactory.getLogger(DeviceServiceImpl.class);
 
-    private UserRepository userRepository;
+    private DeviceRepository deviceRepository;
 
     private LogRecordRepository logRecordRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, LogRecordRepository logRecordRepository) {
-        this.userRepository = userRepository;
+    public DeviceServiceImpl(DeviceRepository deviceRepository,
+                             LogRecordRepository logRecordRepository) {
+        this.deviceRepository = deviceRepository;
         this.logRecordRepository = logRecordRepository;
     }
 
     @Override
-    public User add(User user) throws BusinessException {
-        User oldUser = this.userRepository.findByUserName(user.getUserName());
-        if(oldUser != null) {
-            throw new BusinessException(Messages.CODE_40010, "用户名已存在！");
-        }
-        user = userRepository.save(user);
-        return user;
+    public Device add(Device device) throws BusinessException {
+        device = deviceRepository.save(device);
+        return device;
     }
 
     @Override
-    public User update(User user) throws BusinessException {
-        user = userRepository.save(user);
-        return user;
+    public Device update(Device device) throws BusinessException {
+        device = deviceRepository.save(device);
+        return device;
     }
 
     @Override
     public void delete(List<Integer> ids, User loginUser) throws BusinessException {
         List<LogRecord> logRecords = new ArrayList<>();
         for (int id : ids) {
-            User user = this.userRepository.findOne(id);
-            if(user != null) {
-                userRepository.delete(id);
+            Device device = deviceRepository.findOne(id);
+            if (device != null) {
+                deviceRepository.delete(id);
                 LogRecord logRecord = new LogRecord();
                 logRecord.setType("删除");
-                logRecord.setObject("用户");
+                logRecord.setObject("设备");
                 logRecord.setUserId(loginUser.getId());
                 logRecord.setUserName(StringUtils.isEmpty(loginUser.getPersonName()) ? loginUser.getUserName() : loginUser.getPersonName());
-                logRecord.setObjectId(user.getId());
-                logRecord.setObjectName(user.getUserName());
+                logRecord.setObjectId(device.getId());
+                logRecord.setObjectName(device.getName());
                 logRecords.add(logRecord);
             }
         }
@@ -96,13 +94,13 @@ public class UserServiceImpl implements UserService {
         }
         ListOutput listOutput = new ListOutput();
         if (pageable != null) {
-            Page<User> list = userRepository.findAll(new MySpecification<User>(listInput.getSearchParas()), pageable);
+            Page<Device> list = deviceRepository.findAll(new MySpecification<Device>(listInput.getSearchParas()), pageable);
             listOutput.setPage(listInput.getPage());
             listOutput.setPageSize(listInput.getPageSize());
             listOutput.setTotalNum((int) list.getTotalElements());
             listOutput.setList(list.getContent());
         } else {
-            List<User> list = userRepository.findAll(new MySpecification<User>(listInput.getSearchParas()));
+            List<Device> list = deviceRepository.findAll(new MySpecification<Device>(listInput.getSearchParas()));
             listOutput.setTotalNum(list.size());
             listOutput.setList(list);
         }
@@ -110,12 +108,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User get(Integer id) throws BusinessException {
-        User user = userRepository.findOne(id);
-        if (user == null) {
+    public Device get(Integer id) throws BusinessException {
+        Device device = deviceRepository.findOne(id);
+        if (device == null) {
             throw new BusinessException(Messages.CODE_20001);
         }
-        return user;
+        return device;
     }
-
 }
