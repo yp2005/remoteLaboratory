@@ -9,9 +9,25 @@ services:
     volumes_from:
       - tremoteLaboratory
     command: ["java","-Xmx128M","-Djava.security.egd=file:/dev/./urandom","-jar","/app/tremoteLaboratory.jar"]
-
+    depends-on:
+      - mysql
   tremoteLaboratory:
     image: public/tremote_laboratory:1.0-SNAPSHOT
     volumes:
       - /app
 
+  mysql:
+    image: mysql:5.7
+    ports:
+      - 3306
+    volumes:
+      - ${mysql_data}:/var/lib/mysql
+      - /etc/localtime:/etc/localtime:ro
+    volumes_from:
+      - db-init
+    environment:
+      - MYSQL_ROOT_PASSWORD=turbo-utoss*()123
+      - MYSQL_DATABASE=TURBODB
+      - MYSQL_USER=utoss
+      - MYSQL_PASSWORD=utoss_*()123
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --innodb-buffer-pool-size=5368709120 --innodb_buffer_pool_chunk_size=671088640 --max_allowed_packet=1073741824
