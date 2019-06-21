@@ -9,7 +9,7 @@ services:
     volumes_from:
       - tremoteLaboratory
     command: ["java","-Xmx128M","-Djava.security.egd=file:/dev/./urandom","-jar","/app/tremoteLaboratory.jar"]
-    depends-on:
+    depends_on:
       - mysql
   tremoteLaboratory:
     image: public/tremote_laboratory:1.0-SNAPSHOT
