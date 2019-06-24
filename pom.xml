@@ -22,7 +22,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <docker.image.prefix>public</docker.image.prefix>
-        <docker.plugin.version>1.0.0</docker.plugin.version>
+        <docker.plugin.version>1.2.0</docker.plugin.version>
         <hutool.version>4.5.0</hutool.version>
     </properties>
     <dependencies>
@@ -147,4 +147,61 @@
             <version>2.6</version>
         </dependency>
     </dependencies>
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </testResource>
+        </testResources>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>${docker.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <imageName>public/tremote_laboratory:${project.version}
+                    </imageName>
+                    <pushImage>false</pushImage>
+                    <dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>
+                    <resources>
+                        <resource>
+                            <targetPath>/</targetPath>
+                            <directory>${project.build.directory}</directory>
+                            <include>${project.build.finalName}.jar</include>
+                        </resource>
+
+                    </resources>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
 </project>

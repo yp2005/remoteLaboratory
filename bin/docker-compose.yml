@@ -1,0 +1,47 @@
+version: '2'
+services:
+  mysql:
+    image: mysql:5.7
+    ports:
+      - 3306
+    volumes:
+      - ${MYSQL_DATA}:/var/lib/mysql
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=LABORATORY
+      - MYSQL_USER=laboratory
+      - MYSQL_PASSWORD=laboratory
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --innodb-buffer-pool-size=5368709120 --innodb_buffer_pool_chunk_size=671088640 --max_allowed_packet=1073741824
+  redis:
+    image: redis:5-alpine
+
+    ports:
+      - 6379
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${REDIS_DATA}:/data
+
+    command: redis-server --appendonly yes
+
+
+  webserver:
+    image: openjdk:8
+    ports:
+      - 8000:8000
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${UPLOAD_DATA}:/temp
+    volumes_from:
+      - tremoteLaboratory
+    command: ["java","-Xmx128M","-Djava.security.egd=file:/dev/./urandom","-jar","/app/tremoteLaboratory.jar"]
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - mysql
+  tremoteLaboratory:
+    image: public/tremote_laboratory:1.0-SNAPSHOT
+    volumes:
+      - /app
+
+
