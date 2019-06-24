@@ -15,7 +15,7 @@ UPLOAD_FILE_PATH: /temp
 spring:
   profiles: dev
   datasource:
-    url: jdbc:mysql://localhost:3306/remoteLaboratory?useSSL=false&useUnicode=true&characterEncoding=utf-8
+    url: jdbc:mysql://mysql:3306/remoteLaboratory?useSSL=false&useUnicode=true&characterEncoding=utf-8
     username: root
     password: root
     testWhileIdle: true
