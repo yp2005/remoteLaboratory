@@ -48,7 +48,7 @@ spring:
     password: laboratory
     testWhileIdle: true
     validationQuery: select 1
-
+    driver-class-name: com.mysql.jdbc.Driver
   jpa:
     database-platform: org.hibernate.dialect.MySQL5Dialect
     hibernate:
