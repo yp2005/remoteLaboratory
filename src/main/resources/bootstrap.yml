@@ -43,7 +43,7 @@ jedis:
 spring:
   profiles: docker
   datasource:
-    url: jdbc:mysql://mysql:3306/LABORATORY?useSSL=false&useUnicode=true&characterEncoding=utf-8
+    url:jdbc:mysql://mysql:3306/LABORATORY?useSSL=false&useUnicode=true&characterEncoding=utf-8
     username: laboratory
     password: laboratory
     testWhileIdle: true
