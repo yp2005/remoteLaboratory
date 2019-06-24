@@ -7,7 +7,10 @@ import com.remoteLaboratory.redis.RedisClient;
 import com.remoteLaboratory.repositories.LogRecordRepository;
 import com.remoteLaboratory.repositories.UserRepository;
 import com.remoteLaboratory.service.UserService;
-import com.remoteLaboratory.utils.*;
+import com.remoteLaboratory.utils.CommonResponse;
+import com.remoteLaboratory.utils.Constants;
+import com.remoteLaboratory.utils.EncodeUtils;
+import com.remoteLaboratory.utils.LogUtil;
 import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.utils.message.Messages;
 import com.remoteLaboratory.vo.ListInput;
@@ -138,7 +141,7 @@ public class UserController {
     public CommonResponse get(@NotNull(message = "用户编号不能为空") @PathVariable Integer id, @ApiIgnore User loginUser) throws BusinessException {
         User user = userService.get(id);
         // 管理账户可以查看所有用户信息，学生只能查看自己的信息
-        if(!UserUtil.isAdmin(loginUser) && !loginUser.getId().equals(user.getId())) {
+        if(!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !loginUser.getId().equals(user.getId())) {
             throw new BusinessException(Messages.CODE_50201);
         }
         CommonResponse commonResponse = CommonResponse.getInstance(user);

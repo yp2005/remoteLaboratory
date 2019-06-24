@@ -26,7 +26,7 @@ import springfox.documentation.annotations.ApiIgnore;
  */
 @RestController
 @RequestMapping("/logRecord")
-@LoginRequired(adminRequired = "1")
+@LoginRequired(teacherRequired = "1")
 @Api(description = "日志记录")
 public class LogRecordController {
 

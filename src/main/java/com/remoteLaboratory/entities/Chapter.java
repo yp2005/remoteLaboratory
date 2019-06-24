@@ -12,15 +12,15 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 课程
+ * 课程章
  *
  * @Author: yupeng
  */
 
 @Entity
-@Table(name = "rl_course")
-@ApiModel(value = "课程表")
-public class Course implements Serializable {
+@Table(name = "rl_chapter")
+@ApiModel(value = "课程章表")
+public class Chapter implements Serializable {
     @Id
     @Column(length = 10, nullable = false)
     @ApiModelProperty(value = "ID", hidden = true)
@@ -29,38 +29,28 @@ public class Course implements Serializable {
     private Integer id;
 
     @Column(length = 255)
-    @ApiModelProperty(value = "名称")
+    @ApiModelProperty(value = "名称 如：第一章")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotNull
     private String name;
 
-    @Lob
-    @ApiModelProperty(value = "logo")
+    @Column(length = 255)
+    @ApiModelProperty(value = "标题")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotNull
-    private String logo;
+    private String title;
 
     @Column(length = 10)
-    @ApiModelProperty(value = "老师ID")
+    @ApiModelProperty(value = "所属课程ID")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotNull
-    private Integer teacherId;
+    private Integer courseId;
 
     @Column(length = 255)
-    @ApiModelProperty(value = "老师名称")
+    @ApiModelProperty(value = "所属课程名称")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotNull
-    private String teacherName;
-
-    @Column(length = 5000)
-    @ApiModelProperty(value = "描述")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String description;
-
-    @Column(length = 10)
-    @ApiModelProperty(value = "状态 0-草稿 1-发布")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Integer status;
+    private String courseName;
 
     @Column(updatable = false)
     @ApiModelProperty(value = "创建时间", hidden = true)
@@ -91,36 +81,28 @@ public class Course implements Serializable {
         this.name = name;
     }
 
-    public String getLogo() {
-        return logo;
+    public String getTitle() {
+        return title;
     }
 
-    public void setLogo(String logo) {
-        this.logo = logo;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getDescription() {
-        return description;
+    public Integer getCourseId() {
+        return courseId;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setCourseId(Integer courseId) {
+        this.courseId = courseId;
     }
 
-    public Integer getTeacherId() {
-        return teacherId;
+    public String getCourseName() {
+        return courseName;
     }
 
-    public void setTeacherId(Integer teacherId) {
-        this.teacherId = teacherId;
-    }
-
-    public String getTeacherName() {
-        return teacherName;
-    }
-
-    public void setTeacherName(String teacherName) {
-        this.teacherName = teacherName;
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
     }
 
     public Date getCreateTime() {
@@ -137,14 +119,6 @@ public class Course implements Serializable {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
     }
 
     public interface Validation{};

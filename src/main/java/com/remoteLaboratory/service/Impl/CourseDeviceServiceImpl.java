@@ -1,11 +1,14 @@
 package com.remoteLaboratory.service.Impl;
 
+import com.remoteLaboratory.entities.Course;
 import com.remoteLaboratory.entities.CourseDevice;
 import com.remoteLaboratory.entities.LogRecord;
 import com.remoteLaboratory.entities.User;
 import com.remoteLaboratory.repositories.CourseDeviceRepository;
 import com.remoteLaboratory.repositories.LogRecordRepository;
 import com.remoteLaboratory.service.CourseDeviceService;
+import com.remoteLaboratory.service.CourseService;
+import com.remoteLaboratory.utils.Constants;
 import com.remoteLaboratory.utils.LogUtil;
 import com.remoteLaboratory.utils.MySpecification;
 import com.remoteLaboratory.utils.exception.BusinessException;
@@ -41,10 +44,15 @@ public class CourseDeviceServiceImpl implements CourseDeviceService {
 
     private LogRecordRepository logRecordRepository;
 
+    private CourseService courseService;
+
     @Autowired
-    public CourseDeviceServiceImpl(CourseDeviceRepository courseDeviceRepository, LogRecordRepository logRecordRepository) {
+    public CourseDeviceServiceImpl(CourseDeviceRepository courseDeviceRepository,
+                                   CourseService courseService,
+                                   LogRecordRepository logRecordRepository) {
         this.courseDeviceRepository = courseDeviceRepository;
         this.logRecordRepository = logRecordRepository;
+        this.courseService = courseService;
     }
 
     @Override
@@ -69,6 +77,10 @@ public class CourseDeviceServiceImpl implements CourseDeviceService {
         for (int id : ids) {
             CourseDevice courseDevice = this.courseDeviceRepository.findOne(id);
             if(courseDevice != null) {
+                Course course = this.courseService.get(courseDevice.getCourseId());
+                if(!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
+                    throw new BusinessException(Messages.CODE_50200);
+                }
                 // TODO 判断设备是否已经被预约
                 courseDeviceRepository.delete(id);
                 LogRecord logRecord = new LogRecord();

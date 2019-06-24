@@ -87,6 +87,14 @@ public class Messages {
      */
     public static Integer CODE_50201 = 50201;
     /**
+     * 需要管理员权限
+     */
+    public static Integer CODE_50202 = 50202;
+    /**
+     * 需要老师以上权限
+     */
+    public static Integer CODE_50203 = 50203;
+    /**
      * 用户没有登陆或Token已过期
      */
     public static Integer CODE_50401 = 50401;
@@ -118,6 +126,8 @@ public class Messages {
         put(CODE_50101, "{?}数据格式错误");
         put(CODE_50200, "权限不足，无法执行此操作");
         put(CODE_50201, "权限不足，无法查看该信息");
+        put(CODE_50202, "需要管理员权限");
+        put(CODE_50203, "需要老师以上权限");
         put(CODE_50401, "用户没有登陆或Token已过期");
 
     }};

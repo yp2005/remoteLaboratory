@@ -18,6 +18,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +26,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +44,9 @@ public class UploadFileServiceImpl implements UploadFileService {
     private UploadFileRepository uploadFileRepository;
 
     private LogRecordRepository logRecordRepository;
+
+    @Value("${UPLOAD_FILE_PATH}")
+    private String uploadFilePath;
 
     @Autowired
     public UploadFileServiceImpl(UploadFileRepository uploadFileRepository, LogRecordRepository logRecordRepository) {
@@ -64,9 +69,11 @@ public class UploadFileServiceImpl implements UploadFileService {
     @Override
     public void delete(List<Integer> ids, User loginUser) throws BusinessException {
         List<LogRecord> logRecords = new ArrayList<>();
+        List<UploadFile> uploadFiles = new ArrayList<>();
         for (int id : ids) {
             UploadFile uploadFile = this.uploadFileRepository.findOne(id);
             if(uploadFile != null) {
+                uploadFiles.add(uploadFile);
                 uploadFileRepository.delete(id);
                 LogRecord logRecord = new LogRecord();
                 logRecord.setType("删除");
@@ -80,6 +87,13 @@ public class UploadFileServiceImpl implements UploadFileService {
         }
         for(LogRecord logRecord : logRecords) {
             logRecordRepository.save(logRecord);
+        }
+        for(UploadFile uploadFile : uploadFiles) {
+            String localFilePath = this.uploadFilePath + File.separator + uploadFile.getUploadFileName().split("|")[1];
+            File file = new File(localFilePath);
+            if (file.exists()) {
+                file.delete();
+            }
         }
     }
 

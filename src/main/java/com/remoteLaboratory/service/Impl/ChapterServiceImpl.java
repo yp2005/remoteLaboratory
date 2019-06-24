@@ -1,15 +1,14 @@
 package com.remoteLaboratory.service.Impl;
 
-import com.remoteLaboratory.entities.Announcement;
+import com.remoteLaboratory.entities.Chapter;
 import com.remoteLaboratory.entities.Course;
 import com.remoteLaboratory.entities.LogRecord;
 import com.remoteLaboratory.entities.User;
+import com.remoteLaboratory.repositories.ChapterRepository;
 import com.remoteLaboratory.repositories.LogRecordRepository;
-import com.remoteLaboratory.repositories.AnnouncementRepository;
-import com.remoteLaboratory.service.AnnouncementService;
+import com.remoteLaboratory.service.ChapterService;
 import com.remoteLaboratory.service.CourseService;
 import com.remoteLaboratory.utils.Constants;
-import com.remoteLaboratory.utils.LogUtil;
 import com.remoteLaboratory.utils.MySpecification;
 import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.utils.message.Messages;
@@ -30,59 +29,61 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 公告服务接口实现
+ * 课程章服务接口实现
  *
  * @Author: yupeng
  */
 
 @Service
 @Transactional
-public class AnnouncementServiceImpl implements AnnouncementService {
-    private static Logger log = LoggerFactory.getLogger(AnnouncementServiceImpl.class);
+public class ChapterServiceImpl implements ChapterService {
+    private static Logger log = LoggerFactory.getLogger(ChapterServiceImpl.class);
 
-    private AnnouncementRepository announcementRepository;
+    private ChapterRepository chapterRepository;
 
     private LogRecordRepository logRecordRepository;
 
     private CourseService courseService;
 
     @Autowired
-    public AnnouncementServiceImpl(AnnouncementRepository announcementRepository, LogRecordRepository logRecordRepository, CourseService courseService) {
-        this.announcementRepository = announcementRepository;
+    public ChapterServiceImpl(ChapterRepository chapterRepository,
+                              CourseService courseService,
+                              LogRecordRepository logRecordRepository) {
+        this.chapterRepository = chapterRepository;
         this.logRecordRepository = logRecordRepository;
         this.courseService = courseService;
     }
 
     @Override
-    public Announcement add(Announcement announcement) throws BusinessException {
-        announcement = announcementRepository.save(announcement);
-        return announcement;
+    public Chapter add(Chapter chapter) throws BusinessException {
+        chapter = chapterRepository.save(chapter);
+        return chapter;
     }
 
     @Override
-    public Announcement update(Announcement announcement) throws BusinessException {
-        announcement = announcementRepository.save(announcement);
-        return announcement;
+    public Chapter update(Chapter chapter) throws BusinessException {
+        chapter = chapterRepository.save(chapter);
+        return chapter;
     }
 
     @Override
     public void delete(List<Integer> ids, User loginUser) throws BusinessException {
         List<LogRecord> logRecords = new ArrayList<>();
         for (int id : ids) {
-            Announcement announcement = this.announcementRepository.findOne(id);
-            if(announcement != null) {
-                Course course = this.courseService.get(announcement.getCourseId());
+            Chapter chapter = this.chapterRepository.findOne(id);
+            if(chapter != null) {
+                Course course = this.courseService.get(chapter.getCourseId());
                 if(!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
                     throw new BusinessException(Messages.CODE_50200);
                 }
-                announcementRepository.delete(id);
+                chapterRepository.delete(id);
                 LogRecord logRecord = new LogRecord();
                 logRecord.setType("删除");
-                logRecord.setObject("公告");
+                logRecord.setObject("课程章");
                 logRecord.setUserId(loginUser.getId());
                 logRecord.setUserName(StringUtils.isEmpty(loginUser.getPersonName()) ? loginUser.getUserName() : loginUser.getPersonName());
-                logRecord.setObjectId(announcement.getId());
-                logRecord.setObjectName(announcement.getTitle());
+                logRecord.setObjectId(chapter.getId());
+                logRecord.setObjectName(chapter.getTitle());
                 logRecords.add(logRecord);
             }
         }
@@ -104,13 +105,13 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         }
         ListOutput listOutput = new ListOutput();
         if (pageable != null) {
-            Page<Announcement> list = announcementRepository.findAll(new MySpecification<Announcement>(listInput.getSearchParas()), pageable);
+            Page<Chapter> list = chapterRepository.findAll(new MySpecification<Chapter>(listInput.getSearchParas()), pageable);
             listOutput.setPage(listInput.getPage());
             listOutput.setPageSize(listInput.getPageSize());
             listOutput.setTotalNum((int) list.getTotalElements());
             listOutput.setList(list.getContent());
         } else {
-            List<Announcement> list = announcementRepository.findAll(new MySpecification<Announcement>(listInput.getSearchParas()));
+            List<Chapter> list = chapterRepository.findAll(new MySpecification<Chapter>(listInput.getSearchParas()));
             listOutput.setTotalNum(list.size());
             listOutput.setList(list);
         }
@@ -118,12 +119,12 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public Announcement get(Integer id) throws BusinessException {
-        Announcement announcement = announcementRepository.findOne(id);
-        if (announcement == null) {
+    public Chapter get(Integer id) throws BusinessException {
+        Chapter chapter = chapterRepository.findOne(id);
+        if (chapter == null) {
             throw new BusinessException(Messages.CODE_20001);
         }
-        return announcement;
+        return chapter;
     }
 
 }

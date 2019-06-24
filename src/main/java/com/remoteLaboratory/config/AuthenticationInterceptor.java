@@ -47,18 +47,24 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                 if (userStr != null) {
                     User user = JSONObject.parseObject(userStr, User.class);
                     user.setToken(token);
+                    String teacherRequired = "0";
                     String adminRequired = "0";
                     if(classAnnotation != null) {
+                        teacherRequired = classAnnotation.teacherRequired();
                         adminRequired = classAnnotation.adminRequired();
                     }
                     if(methodAnnotation != null) {
+                        teacherRequired = methodAnnotation.teacherRequired();
                         adminRequired = methodAnnotation.adminRequired();
                     }
-                    // 需admin访问的接口拦截学生用户访问
-                    if(adminRequired.equals("1") && user.getUserType().equals(Constants.USER_TYPE_STUDENT)) {
-                        throw new BusinessException(Messages.CODE_50200);
+                    // 需老师以上权限访问的接口拦截学生用户访问
+                    if(teacherRequired.equals("1") && user.getUserType().equals(Constants.USER_TYPE_STUDENT)) {
+                        throw new BusinessException(Messages.CODE_50203);
                     }
-                    logger.info("adminRequired: " + adminRequired);
+                    // 需admin权限访问的接口拦截其他用户
+                    if(adminRequired.equals("1") && !user.getUserType().equals(Constants.USER_TYPE_ADMIN)) {
+                        throw new BusinessException(Messages.CODE_50202);
+                    }
                     request.setAttribute("loginUser", user);
                     redisClient.set(Constants.USER_TOKEN + token, userStr, Constants.TOKEN_EXPIRE_TIME);
                 } else {

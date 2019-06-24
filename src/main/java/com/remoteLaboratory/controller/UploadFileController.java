@@ -6,11 +6,12 @@ import com.remoteLaboratory.entities.User;
 import com.remoteLaboratory.repositories.LogRecordRepository;
 import com.remoteLaboratory.service.UploadFileService;
 import com.remoteLaboratory.utils.CommonResponse;
+import com.remoteLaboratory.utils.Constants;
 import com.remoteLaboratory.utils.LogUtil;
-import com.remoteLaboratory.utils.UserUtil;
 import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.utils.message.Messages;
 import com.remoteLaboratory.vo.ListInput;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -38,6 +39,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/uploadFile")
+@Api(description = "上传文件")
 @LoginRequired
 public class UploadFileController {
 
@@ -125,7 +127,7 @@ public class UploadFileController {
     @ApiOperation(value = "根据ID删除上传文件", notes = "根据ID删除上传文件信息接口")
     public CommonResponse deleteById(@NotNull(message = "上传文件编号不能为空") Integer id, @ApiIgnore User loginUser) throws BusinessException {
         UploadFile uploadFile = this.uploadFileService.get(id);
-        if(!UserUtil.isAdmin(loginUser) && !uploadFile.getUserId().equals(loginUser.getId())) {
+        if(!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !uploadFile.getUserId().equals(loginUser.getId())) {
             throw new BusinessException(Messages.CODE_50200);
         }
         List<Integer> ids = new ArrayList<>();

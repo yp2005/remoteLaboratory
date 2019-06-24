@@ -6,6 +6,7 @@ import com.remoteLaboratory.entities.User;
 import com.remoteLaboratory.repositories.CourseRepository;
 import com.remoteLaboratory.repositories.LogRecordRepository;
 import com.remoteLaboratory.service.CourseService;
+import com.remoteLaboratory.utils.Constants;
 import com.remoteLaboratory.utils.MySpecification;
 import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.utils.message.Messages;
@@ -65,6 +66,9 @@ public class CourseServiceImpl implements CourseService {
         for (int id : ids) {
             Course course = courseRepository.findOne(id);
             if (course != null) {
+                if(!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
+                    throw new BusinessException(Messages.CODE_50200);
+                }
                 courseRepository.delete(id);
                 // TODO 删除关联的各种对象
                 LogRecord logRecord = new LogRecord();

@@ -2,15 +2,20 @@ package com.remoteLaboratory.controller;
 
 import com.remoteLaboratory.config.LoginRequired;
 import com.remoteLaboratory.entities.Announcement;
+import com.remoteLaboratory.entities.Course;
 import com.remoteLaboratory.entities.User;
 import com.remoteLaboratory.repositories.LogRecordRepository;
 import com.remoteLaboratory.service.AnnouncementService;
+import com.remoteLaboratory.service.CourseService;
 import com.remoteLaboratory.utils.CommonResponse;
+import com.remoteLaboratory.utils.Constants;
 import com.remoteLaboratory.utils.LogUtil;
 import com.remoteLaboratory.utils.exception.BusinessException;
+import com.remoteLaboratory.utils.message.Messages;
 import com.remoteLaboratory.vo.ListInput;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +43,9 @@ public class AnnouncementController {
     private AnnouncementService announcementService;
 
     @Autowired
+    private CourseService courseService;
+
+    @Autowired
     private LogRecordRepository logRecordRepository;
 
     @PostMapping(path = "/list")
@@ -51,8 +59,14 @@ public class AnnouncementController {
 
     @PostMapping
     @ApiOperation(value = "添加公告", notes = "添加公告信息接口")
-    @LoginRequired(adminRequired = "1")
+    @LoginRequired(teacherRequired = "1")
     public CommonResponse add(@Validated({Announcement.Validation.class}) @RequestBody Announcement announcement, @ApiIgnore User loginUser) throws BusinessException {
+        Course course = this.courseService.get(announcement.getCourseId());
+        if(!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
+            throw new BusinessException(Messages.CODE_50200);
+        }
+        announcement.setUserId(loginUser.getId());
+        announcement.setUserName(StringUtils.isEmpty(loginUser.getPersonName()) ? loginUser.getUserName() : loginUser.getPersonName());
         announcement = announcementService.add(announcement);
         CommonResponse commonResponse = CommonResponse.getInstance(announcement);
         LogUtil.add(this.logRecordRepository, "添加", "公告", loginUser, announcement.getId(), announcement.getTitle());
@@ -61,8 +75,14 @@ public class AnnouncementController {
 
     @PutMapping
     @ApiOperation(value = "修改公告", notes = "修改公告信息接口")
-    @LoginRequired(adminRequired = "1")
+    @LoginRequired(teacherRequired = "1")
     public CommonResponse update(@Validated({Announcement.Validation.class}) @RequestBody Announcement announcement, @ApiIgnore User loginUser) throws BusinessException {
+        Course course = this.courseService.get(announcement.getCourseId());
+        if(!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
+            throw new BusinessException(Messages.CODE_50200);
+        }
+        announcement.setUserId(loginUser.getId());
+        announcement.setUserName(StringUtils.isEmpty(loginUser.getPersonName()) ? loginUser.getUserName() : loginUser.getPersonName());
         announcement = announcementService.update(announcement);
         CommonResponse commonResponse = CommonResponse.getInstance(announcement);
         LogUtil.add(this.logRecordRepository, "修改", "公告", loginUser, announcement.getId(), announcement.getTitle());
@@ -71,7 +91,7 @@ public class AnnouncementController {
 
     @DeleteMapping
     @ApiOperation(value = "删除公告", notes = "删除公告信息接口")
-    @LoginRequired(adminRequired = "1")
+    @LoginRequired(teacherRequired = "1")
     public CommonResponse delete(@NotNull(message = "公告编号不能为空") @RequestBody List<Integer> ids, @ApiIgnore User loginUser) throws BusinessException {
         announcementService.delete(ids, loginUser);
         CommonResponse commonResponse = CommonResponse.getInstance();
