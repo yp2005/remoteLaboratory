@@ -43,9 +43,9 @@ jedis:
 spring:
   profiles: docker
   datasource:
-    url: jdbc:mysql://localhost:3306/remoteLaboratory?useSSL=false&useUnicode=true&characterEncoding=utf-8
+    url: jdbc:mysql://mysql:3306/LABORATORY?useSSL=false&useUnicode=true&characterEncoding=utf-8
     username: root
-    password: root
+    password: laboratory
     testWhileIdle: true
     validationQuery: select 1
 
@@ -58,10 +58,10 @@ spring:
 logging:
   level:
     root: info
-
+UPLOAD_FILE_PATH: /temp
 jedis:
   pool:
-    host: localhost
+    host: redis
     port: 6379
     config:
       maxTotal: 100
