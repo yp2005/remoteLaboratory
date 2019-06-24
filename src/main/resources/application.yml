@@ -6,13 +6,12 @@ spring:
   application:
     name: remoteLaboratory
   profiles:
-    active: docker
+    active: dev
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
 logging:
-  level:
-    root: debug
+  level: debug
 ---
 UPLOAD_FILE_PATH: /temp
 spring:
@@ -32,7 +31,7 @@ spring:
     show-sql: true
 logging:
   level:
-    root: debug
+    root: info
 
 jedis:
   pool:
@@ -60,8 +59,7 @@ spring:
     show-sql: true
 logging:
   level:
-    root: debug
-
+    root: info
 UPLOAD_FILE_PATH: /temp
 jedis:
   pool:
