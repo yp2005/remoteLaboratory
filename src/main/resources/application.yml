@@ -6,7 +6,7 @@ spring:
   application:
     name: remoteLaboratory
   profiles:
-    active: dev
+    active: docker
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
