@@ -26,7 +26,7 @@ services:
 
 
   webserver:
-    image: openjdk:8
+    image: public/java
     ports:
       - 8000:8000
     volumes:
@@ -35,7 +35,7 @@ services:
       - ${LOG_DIR}:/log
     volumes_from:
       - tremoteLaboratory
-    command: ["java","-Xmx128M","-Djava.security.egd=file:/dev/./urandom","-Dlogging.file=/log/app.log","-jar","/app/tremoteLaboratory.jar"]
+    command: ["/wait-for.sh","mysql:3306","-t","60","--","java","-Xmx128M","-Djava.security.egd=file:/dev/./urandom","-Dlogging.file=/log/app.log","-jar","/app/tremoteLaboratory.jar"]
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
