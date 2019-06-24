@@ -33,7 +33,7 @@ public interface AnnouncementService {
     /**
      * 根据条件查询公告信息列表
      * @param listInput
-     * @return AnnouncementListOutput
+     * @return ListOutput
      */
     public ListOutput list(ListInput listInput) throws BusinessException;
 

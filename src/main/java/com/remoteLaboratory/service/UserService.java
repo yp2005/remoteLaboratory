@@ -32,7 +32,7 @@ public interface UserService {
     /**
      * 根据条件查询用户信息列表
      * @param listInput
-     * @return UserListOutput
+     * @return ListOutput
      */
     public ListOutput list(ListInput listInput) throws BusinessException;
 

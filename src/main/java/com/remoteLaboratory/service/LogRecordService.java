@@ -33,7 +33,7 @@ public interface LogRecordService {
     /**
      * 根据条件查询日志记录信息列表
      * @param listInput
-     * @return LogRecordListOutput
+     * @return ListOutput
      */
     public ListOutput list(ListInput listInput) throws BusinessException;
 

@@ -38,7 +38,7 @@ public interface SysSettingService {
     /**
      * 根据条件查询系统设置信息列表
      * @param listInput
-     * @return SysSettingListOutput
+     * @return ListOutput
      */
     public ListOutput list(ListInput listInput) throws BusinessException;
 
