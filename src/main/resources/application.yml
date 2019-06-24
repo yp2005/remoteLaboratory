@@ -11,7 +11,8 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
 logging:
-  level: debug
+  level:
+    root: debug
 ---
 UPLOAD_FILE_PATH: /temp
 spring:
@@ -60,7 +61,7 @@ spring:
 logging:
   level:
     root: debug
-    org: debug
+
 UPLOAD_FILE_PATH: /temp
 jedis:
   pool:
