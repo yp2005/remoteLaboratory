@@ -36,7 +36,7 @@ services:
       - 8000:8000
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ${UPLOAD_DATA}:/temp
+      - ${UPLOAD_DATA}:/static/upload
       - ${LOG_DIR}:/log
     volumes_from:
       - tremoteLaboratory

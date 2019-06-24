@@ -60,7 +60,7 @@ spring:
 logging:
   level:
     root: info
-UPLOAD_FILE_PATH: /temp
+UPLOAD_FILE_PATH: /static/upload
 jedis:
   pool:
     host: redis
