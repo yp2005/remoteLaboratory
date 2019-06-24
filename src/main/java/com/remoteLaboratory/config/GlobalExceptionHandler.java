@@ -22,7 +22,7 @@ import java.util.List;
  */
 
 @ControllerAdvice
-@PropertySource("classpath:bootstrap.yml")
+@PropertySource("classpath:application.yml")
 public class GlobalExceptionHandler {
 
     private Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
