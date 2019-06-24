@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @SpringBootApplication
 @EntityScan(basePackages = "com.remoteLaboratory.entities")
 @EnableJpaRepositories(basePackages = "com.remoteLaboratory.repositories")
-@EnableAutoConfiguration
+//@EnableAutoConfiguration
 public class RemoteLaboratoryApplication {
     public static void main(String[] args) {
         ApplicationContext applicationContext = SpringApplication.run(RemoteLaboratoryApplication.class, args);
