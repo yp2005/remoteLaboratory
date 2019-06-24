@@ -58,6 +58,7 @@ spring:
 logging:
   level:
     root: debug
+    org.apache: debug
 UPLOAD_FILE_PATH: /temp
 jedis:
   pool:
