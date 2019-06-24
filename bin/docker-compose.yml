@@ -1,7 +1,7 @@
 version: '2'
 services:
   mysql:
-    image: mysql:5.7
+    image: mysql:5.7.17
     ports:
       - 3306
     volumes:
@@ -32,9 +32,10 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ${UPLOAD_DATA}:/temp
+      - ${LOG_DIR}:/log
     volumes_from:
       - tremoteLaboratory
-    command: ["java","-Xmx128M","-Djava.security.egd=file:/dev/./urandom","-jar","/app/tremoteLaboratory.jar"]
+    command: ["java","-Xmx128M","-Djava.security.egd=file:/dev/./urandom","-Dlogging.file=/log/app.log","-jar","/app/tremoteLaboratory.jar"]
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
