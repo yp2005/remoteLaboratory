@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.persistence.Column;
-
 /**
  * 系统设置入参
  *
@@ -13,12 +11,10 @@ import javax.persistence.Column;
  */
 @ApiModel(value = "系统设置入参")
 public class SysSettingInput {
-    @Column(length = 255)
     @ApiModelProperty(value = "参数英文标识")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String keyName;
 
-    @Column(length = 255)
     @ApiModelProperty(value = "参数值")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String value;

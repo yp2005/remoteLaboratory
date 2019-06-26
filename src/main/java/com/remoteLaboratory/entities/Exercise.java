@@ -19,9 +19,9 @@ import java.util.Date;
  */
 
 @Entity
-@Table(name = "rl_exercises")
+@Table(name = "rl_exercise")
 @ApiModel(value = "习题表")
-public class Exercises implements Serializable {
+public class Exercise implements Serializable {
     @Id
     @Column(length = 10, nullable = false)
     @ApiModelProperty(value = "ID", hidden = true)
@@ -52,7 +52,7 @@ public class Exercises implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String options;
 
-    @Column(length = 255)
+    @Lob
     @ApiModelProperty(value = "正确答案 单选题-A 多选题-A,B,C 填空题-答案 判断题同选择题")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String answer;
@@ -86,6 +86,24 @@ public class Exercises implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotNull
     private String chapterTitle;
+
+    @Column(length = 10)
+    @ApiModelProperty(value = "所属节ID")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
+    private Integer sectionId;
+
+    @Column(length = 255)
+    @ApiModelProperty(value = "所属节名称")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
+    private String sectionName;
+
+    @Column(length = 255)
+    @ApiModelProperty(value = "所属节标题")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
+    private String sectionTitle;
 
     @Column(updatable = false)
     @ApiModelProperty(value = "创建时间", hidden = true)
@@ -202,6 +220,30 @@ public class Exercises implements Serializable {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public Integer getSectionId() {
+        return sectionId;
+    }
+
+    public void setSectionId(Integer sectionId) {
+        this.sectionId = sectionId;
+    }
+
+    public String getSectionName() {
+        return sectionName;
+    }
+
+    public void setSectionName(String sectionName) {
+        this.sectionName = sectionName;
+    }
+
+    public String getSectionTitle() {
+        return sectionTitle;
+    }
+
+    public void setSectionTitle(String sectionTitle) {
+        this.sectionTitle = sectionTitle;
     }
 
     public interface Validation{};
