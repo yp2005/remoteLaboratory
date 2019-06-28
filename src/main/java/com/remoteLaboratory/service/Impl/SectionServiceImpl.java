@@ -1,12 +1,9 @@
 package com.remoteLaboratory.service.Impl;
 
-import com.remoteLaboratory.entities.Course;
-import com.remoteLaboratory.entities.Section;
-import com.remoteLaboratory.entities.LogRecord;
-import com.remoteLaboratory.entities.User;
-import com.remoteLaboratory.repositories.SectionRepository;
-import com.remoteLaboratory.repositories.LogRecordRepository;
+import com.remoteLaboratory.entities.*;
+import com.remoteLaboratory.repositories.*;
 import com.remoteLaboratory.service.CourseService;
+import com.remoteLaboratory.service.CourseStudyRecordService;
 import com.remoteLaboratory.service.SectionService;
 import com.remoteLaboratory.utils.Constants;
 import com.remoteLaboratory.utils.MySpecification;
@@ -41,6 +38,12 @@ public class SectionServiceImpl implements SectionService {
 
     private SectionRepository sectionRepository;
 
+    private SectionStudyRecordRepository sectionStudyRecordRepository;
+
+    private CourseStudyRecordRepository courseStudyRecordRepository;
+
+    private CourseStudyRecordService courseStudyRecordService;
+
     private LogRecordRepository logRecordRepository;
 
     private CourseService courseService;
@@ -48,10 +51,16 @@ public class SectionServiceImpl implements SectionService {
     @Autowired
     public SectionServiceImpl(SectionRepository sectionRepository,
                               CourseService courseService,
+                              SectionStudyRecordRepository sectionStudyRecordRepository,
+                              CourseStudyRecordService courseStudyRecordService,
+                              CourseStudyRecordRepository courseStudyRecordRepository,
                               LogRecordRepository logRecordRepository) {
         this.sectionRepository = sectionRepository;
         this.logRecordRepository = logRecordRepository;
         this.courseService = courseService;
+        this.sectionStudyRecordRepository = sectionStudyRecordRepository;
+        this.courseStudyRecordService = courseStudyRecordService;
+        this.courseStudyRecordRepository = courseStudyRecordRepository;
     }
 
     @Override
@@ -125,6 +134,62 @@ public class SectionServiceImpl implements SectionService {
             throw new BusinessException(Messages.CODE_20001);
         }
         return section;
+    }
+
+    @Override
+    public Section startStudy(Integer id, User user) throws BusinessException {
+        Section section = sectionRepository.findOne(id);
+        if (section == null) {
+            throw new BusinessException(Messages.CODE_20001);
+        }
+        SectionStudyRecord sectionStudyRecord = this.sectionStudyRecordRepository.findBySectionIdAndUserId(id, user.getId());
+        if(sectionStudyRecord != null) {
+            if(sectionStudyRecord.getStudyStatus().equals(0)) {
+                sectionStudyRecord.setStudyStatus(2); // 状态设置为正在学习
+                sectionStudyRecord = this.sectionStudyRecordRepository.save(sectionStudyRecord);
+            }
+        }
+        else {
+            this.courseStudyRecordService.startStudy(section.getCourseId(), user);
+            sectionStudyRecord = this.sectionStudyRecordRepository.findBySectionIdAndUserId(id, user.getId());
+            sectionStudyRecord.setStudyStatus(2); // 状态设置为正在学习
+            sectionStudyRecord = this.sectionStudyRecordRepository.save(sectionStudyRecord);
+        }
+        CourseStudyRecord courseStudyRecord = this.courseStudyRecordRepository.findOne(sectionStudyRecord.getCourseStudyRecordId());
+        courseStudyRecord.setChapterId(sectionStudyRecord.getChapterId());
+        courseStudyRecord.setChapterName(sectionStudyRecord.getChapterName());
+        courseStudyRecord.setChapterTitle(sectionStudyRecord.getChapterTitle());
+        courseStudyRecord.setSectionId(section.getId());
+        courseStudyRecord.setSectionName(section.getName());
+        courseStudyRecord.setSectionTitle(section.getTitle());
+        this.courseStudyRecordRepository.save(courseStudyRecord);
+        return section;
+    }
+
+    @Override
+    public SectionStudyRecord finish(Integer id, User user) throws BusinessException {
+        Section section = sectionRepository.findOne(id);
+        if (section == null) {
+            throw new BusinessException(Messages.CODE_20001);
+        }
+        SectionStudyRecord sectionStudyRecord = this.sectionStudyRecordRepository.findBySectionIdAndUserId(id, user.getId());
+        if(sectionStudyRecord != null) {
+            if(!sectionStudyRecord.getStudyStatus().equals(1)) {
+                sectionStudyRecord.setStudyStatus(1); // 状态设置为已学习
+                sectionStudyRecord.setStudied(sectionStudyRecord.getStudied() + 0.5);
+                sectionStudyRecord = this.sectionStudyRecordRepository.save(sectionStudyRecord);
+                this.courseStudyRecordService.update(sectionStudyRecord.getCourseStudyRecordId());
+            }
+        }
+        else {
+            this.courseStudyRecordService.startStudy(section.getCourseId(), user);
+            sectionStudyRecord = this.sectionStudyRecordRepository.findBySectionIdAndUserId(id, user.getId());
+            sectionStudyRecord.setStudyStatus(1); // 状态设置为已学习
+            sectionStudyRecord.setStudied(sectionStudyRecord.getStudied() + 0.5);
+            sectionStudyRecord = this.sectionStudyRecordRepository.save(sectionStudyRecord);
+            this.courseStudyRecordService.update(sectionStudyRecord.getCourseStudyRecordId());
+        }
+        return sectionStudyRecord;
     }
 
 }

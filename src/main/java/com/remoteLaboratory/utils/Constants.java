@@ -11,6 +11,7 @@ public interface Constants {
 
     /*****************REDIS数据前缀*****************/
     String USER_TOKEN = "user_token#"; // 用户token
+    String USER_LOGIN_TIME = "user_login_time#"; // 用户登录时间
 
     /***************用户类型*****************/
     String USER_TYPE_ADMIN = "1"; // 管理员

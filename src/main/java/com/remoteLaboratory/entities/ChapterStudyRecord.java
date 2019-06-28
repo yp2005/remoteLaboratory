@@ -12,15 +12,15 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 课程节
+ * 章学习记录
  *
  * @Author: yupeng
  */
 
 @Entity
-@Table(name = "rl_section")
-@ApiModel(value = "课程节表")
-public class Section implements Serializable {
+@Table(name = "rl_chapter_study_record")
+@ApiModel(value = "章学习记录表")
+public class ChapterStudyRecord implements Serializable {
     @Id
     @Column(length = 10, nullable = false)
     @ApiModelProperty(value = "ID", hidden = true)
@@ -28,59 +28,44 @@ public class Section implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(length = 255)
-    @ApiModelProperty(value = "名称 如:第一节")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotNull
-    private String name;
-
-    @Column(length = 255)
-    @ApiModelProperty(value = "标题")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotNull
-    private String title;
-
-    @Lob
-    @ApiModelProperty(value = "内容")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotNull
-    private String content;
-
     @Column(length = 10)
-    @ApiModelProperty(value = "类型 1-图文 2-pdf 3-视频")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotNull
-    private Integer type;
-
-    @Column(length = 10)
-    @ApiModelProperty(value = "所属课程ID")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotNull
-    private Integer courseId;
-
-    @Column(length = 255)
-    @ApiModelProperty(value = "所属课程名称")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotNull
-    private String courseName;
-
-    @Column(length = 10)
-    @ApiModelProperty(value = "所属章ID")
+    @ApiModelProperty(value = "章ID")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotNull
     private Integer chapterId;
 
     @Column(length = 255)
-    @ApiModelProperty(value = "所属章名称")
+    @ApiModelProperty(value = "章名称")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotNull
     private String chapterName;
 
     @Column(length = 255)
-    @ApiModelProperty(value = "所属章标题")
+    @ApiModelProperty(value = "章标题")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotNull
     private String chapterTitle;
+
+    @Column(length = 10)
+    @ApiModelProperty(value = "课程学习记录ID")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
+    private Integer courseStudyRecordId;
+
+    @Column(length = 20)
+    @ApiModelProperty(value = "已学习进度 如：0.5=50%")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Double studied;
+
+    @Column(length = 10)
+    @ApiModelProperty(value = "用户ID")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer userId;
+
+    @Column(length = 255)
+    @ApiModelProperty(value = "用户名称")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String userName;
 
     @Column(updatable = false)
     @ApiModelProperty(value = "创建时间", hidden = true)
@@ -103,44 +88,28 @@ public class Section implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
-    public String getTitle() {
-        return title;
+    public Date getUpdateTime() {
+        return updateTime;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 
-    public String getContent() {
-        return content;
+    public Double getStudied() {
+        return studied;
     }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public Integer getCourseId() {
-        return courseId;
-    }
-
-    public void setCourseId(Integer courseId) {
-        this.courseId = courseId;
-    }
-
-    public String getCourseName() {
-        return courseName;
-    }
-
-    public void setCourseName(String courseName) {
-        this.courseName = courseName;
+    public void setStudied(Double studied) {
+        this.studied = studied;
     }
 
     public Integer getChapterId() {
@@ -167,28 +136,28 @@ public class Section implements Serializable {
         this.chapterTitle = chapterTitle;
     }
 
-    public Integer getType() {
-        return type;
+    public Integer getCourseStudyRecordId() {
+        return courseStudyRecordId;
     }
 
-    public void setType(Integer type) {
-        this.type = type;
+    public void setCourseStudyRecordId(Integer courseStudyRecordId) {
+        this.courseStudyRecordId = courseStudyRecordId;
     }
 
-    public Date getCreateTime() {
-        return createTime;
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
-    public Date getUpdateTime() {
-        return updateTime;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public interface Validation{};

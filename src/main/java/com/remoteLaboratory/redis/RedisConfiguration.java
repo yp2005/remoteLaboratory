@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
@@ -15,6 +17,9 @@ import redis.clients.jedis.JedisPoolConfig;
  */
 @Configuration
 public class RedisConfiguration {
+
+    @Autowired
+    private RedisConnectionFactory redisConnectionFactory;
 
     @Bean(name = "jedis.pool")
     @Autowired
@@ -34,5 +39,19 @@ public class RedisConfiguration {
         config.setMaxWaitMillis(maxWaitMillis);
         return config;
     }
+
+    @Bean
+    public RedisMessageListenerContainer redisMessageListenerContainer() {
+        RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
+        redisMessageListenerContainer.setConnectionFactory(redisConnectionFactory);
+        return redisMessageListenerContainer;
+    }
+
+
+    @Bean
+    public KeyExpiredListener keyExpiredListener() {
+        return new KeyExpiredListener(this.redisMessageListenerContainer());
+    }
+
 
 }

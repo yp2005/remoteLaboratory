@@ -3,6 +3,7 @@ package com.remoteLaboratory.controller;
 import com.remoteLaboratory.config.LoginRequired;
 import com.remoteLaboratory.entities.Course;
 import com.remoteLaboratory.entities.Section;
+import com.remoteLaboratory.entities.SectionStudyRecord;
 import com.remoteLaboratory.entities.User;
 import com.remoteLaboratory.repositories.LogRecordRepository;
 import com.remoteLaboratory.service.CourseService;
@@ -66,7 +67,7 @@ public class SectionController {
         }
         section = sectionService.add(section);
         CommonResponse commonResponse = CommonResponse.getInstance(section);
-        LogUtil.add(this.logRecordRepository, "添加", "课程节", loginUser, section.getId(), section.getTitle());
+        LogUtil.add(this.logRecordRepository, "添加", "课程节", loginUser, section.getId(), section.getName() + "、" + section.getTitle());
         return commonResponse;
     }
 
@@ -80,7 +81,7 @@ public class SectionController {
         }
         section = sectionService.update(section);
         CommonResponse commonResponse = CommonResponse.getInstance(section);
-        LogUtil.add(this.logRecordRepository, "修改", "课程节", loginUser, section.getId(), section.getTitle());
+        LogUtil.add(this.logRecordRepository, "修改", "课程节", loginUser, section.getId(), section.getName() + "、" + section.getTitle());
         return commonResponse;
     }
 
@@ -98,7 +99,25 @@ public class SectionController {
     public CommonResponse get(@NotNull(message = "课程节编号不能为空") @PathVariable Integer id, @ApiIgnore User loginUser) throws BusinessException {
         Section section = sectionService.get(id);
         CommonResponse commonResponse = CommonResponse.getInstance(section);
-        LogUtil.add(this.logRecordRepository, "查询", "课程节", loginUser, section.getId(), section.getTitle());
+        LogUtil.add(this.logRecordRepository, "查询", "课程节", loginUser, section.getId(), section.getName() + "、" + section.getTitle());
+        return commonResponse;
+    }
+
+    @GetMapping(path = "/startStudy/{id}")
+    @ApiOperation(value = "开始学习课程小节", notes = "开始学习课程小节接口")
+    public CommonResponse startStudy(@NotNull(message = "课程节编号不能为空") @PathVariable Integer id, @ApiIgnore User loginUser) throws BusinessException {
+        Section section = sectionService.startStudy(id, loginUser);
+        CommonResponse commonResponse = CommonResponse.getInstance(section);
+        LogUtil.add(this.logRecordRepository, "开始学习", "课程节", loginUser, section.getId(), section.getName() + "、" + section.getTitle());
+        return commonResponse;
+    }
+
+    @GetMapping(path = "/finish/{id}")
+    @ApiOperation(value = "完成课程小节学习", notes = "完成课程小节学习接口")
+    public CommonResponse finish(@NotNull(message = "课程节编号不能为空") @PathVariable Integer id, @ApiIgnore User loginUser) throws BusinessException {
+        SectionStudyRecord sectionStudyRecord = sectionService.finish(id, loginUser);
+        CommonResponse commonResponse = CommonResponse.getInstance(sectionStudyRecord);
+        LogUtil.add(this.logRecordRepository, "完成学习", "课程节", loginUser, sectionStudyRecord.getSectionId(), sectionStudyRecord.getSectionName() + "、" + sectionStudyRecord.getSectionTitle());
         return commonResponse;
     }
 }

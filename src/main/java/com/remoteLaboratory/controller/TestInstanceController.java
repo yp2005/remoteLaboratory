@@ -76,7 +76,7 @@ public class TestInstanceController {
         }
         CommonResponse commonResponse = CommonResponse.getInstance();
         commonResponse.setResult(testInstanceService.listBySectionId(listInput, sectionId));
-        LogUtil.add(this.logRecordRepository, "列表查询", "测验实例", loginUser, null, null);
+        LogUtil.add(this.logRecordRepository, "列表查询", "测验实例", loginUser, section.getId(), section.getName());
         return commonResponse;
     }
 
@@ -91,12 +91,12 @@ public class TestInstanceController {
         }
         CommonResponse commonResponse = CommonResponse.getInstance();
         commonResponse.setResult(testInstanceService.listByChapterId(listInput, chapterId));
-        LogUtil.add(this.logRecordRepository, "列表查询", "测验实例", loginUser, null, null);
+        LogUtil.add(this.logRecordRepository, "列表查询", "测验实例", loginUser, chapter.getId(), chapter.getName());
         return commonResponse;
     }
 
     @PostMapping(path = "/listByCourseId/{courseId}")
-    @ApiOperation(value = "测验实例列表", notes = "根据章Id查询测验实例信息列表")
+    @ApiOperation(value = "测验实例列表", notes = "根据课程Id查询测验实例信息列表")
     @LoginRequired(teacherRequired = "1")
     public CommonResponse listByCourseId(@RequestBody ListInput listInput, @NotNull(message = "课程Id不能为空") @PathVariable Integer courseId, @ApiIgnore User loginUser) throws BusinessException {
         Course course = this.courseService.get(courseId);
@@ -105,7 +105,7 @@ public class TestInstanceController {
         }
         CommonResponse commonResponse = CommonResponse.getInstance();
         commonResponse.setResult(testInstanceService.listByCourseId(listInput, courseId));
-        LogUtil.add(this.logRecordRepository, "列表查询", "测验实例", loginUser, null, null);
+        LogUtil.add(this.logRecordRepository, "列表查询", "测验实例", loginUser, course.getId(), course.getName());
         return commonResponse;
     }
 

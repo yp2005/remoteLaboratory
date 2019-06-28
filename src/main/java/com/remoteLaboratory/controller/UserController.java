@@ -3,9 +3,11 @@ package com.remoteLaboratory.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.remoteLaboratory.config.LoginRequired;
 import com.remoteLaboratory.entities.User;
+import com.remoteLaboratory.entities.UserOnlineTime;
 import com.remoteLaboratory.redis.RedisClient;
 import com.remoteLaboratory.repositories.LogRecordRepository;
 import com.remoteLaboratory.repositories.UserRepository;
+import com.remoteLaboratory.service.UserOnlineTimeService;
 import com.remoteLaboratory.service.UserService;
 import com.remoteLaboratory.utils.CommonResponse;
 import com.remoteLaboratory.utils.Constants;
@@ -16,6 +18,7 @@ import com.remoteLaboratory.utils.message.Messages;
 import com.remoteLaboratory.vo.ListInput;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +47,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserOnlineTimeService userOnlineTimeService;
 
     @Autowired
     private UserRepository userRepository;
@@ -156,9 +162,9 @@ public class UserController {
         if(encoder.matches(password, user.getPassword())) {
             user.setLastLoginTime(new Date());
             user = this.userRepository.save(user);
-            // TODO 记录在线时间
             String token = UUID.randomUUID().toString();
             redisClient.set(Constants.USER_TOKEN + token, JSONObject.toJSONString(user), Constants.TOKEN_EXPIRE_TIME);
+            redisClient.set(Constants.USER_LOGIN_TIME + token, JSONObject.toJSONString(user));
             user.setToken(token);
             CommonResponse commonResponse = CommonResponse.getInstance(user);
             LogUtil.add(this.logRecordRepository, "登陆", "用户", user, null, null);
@@ -173,7 +179,15 @@ public class UserController {
     @LoginRequired
     public CommonResponse loginout( @ApiIgnore User loginUser) throws Exception {
         redisClient.remove(Constants.USER_TOKEN + loginUser.getToken());
-        // TODO 记录在线时间
+        // 记录在线时间
+        UserOnlineTime userOnlineTime = new UserOnlineTime();
+        userOnlineTime.setUserId(loginUser.getId());
+        userOnlineTime.setUserName(StringUtils.isEmpty(loginUser.getPersonName()) ? loginUser.getUserName() : loginUser.getPersonName());
+        userOnlineTime.setLoginTime(loginUser.getLastLoginTime());
+        userOnlineTime.setLoginOutTime(new Date());
+        userOnlineTime.setOnlineTime(userOnlineTime.getLoginOutTime().getTime() - userOnlineTime.getLoginTime().getTime());
+        userOnlineTime = this.userOnlineTimeService.add(userOnlineTime);
+        this.redisClient.remove(Constants.USER_LOGIN_TIME + loginUser.getToken());
         LogUtil.add(this.logRecordRepository, "登出", "用户", loginUser, null, null);
         return CommonResponse.getInstance();
     }
