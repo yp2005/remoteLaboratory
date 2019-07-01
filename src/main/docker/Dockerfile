@@ -1,2 +1,2 @@
 FROM busybox
-ADD tremoteLaboratory-1.0-SNAPSHOT.jar /app/tremoteLaboratory.jar
+ADD remoteLaboratory-1.0-SNAPSHOT.jar /app/remoteLaboratory.jar

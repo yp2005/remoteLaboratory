@@ -39,8 +39,8 @@ services:
       - ${UPLOAD_DATA}:/static/upload
       - ${LOG_DIR}:/log
     volumes_from:
-      - tremoteLaboratory
-    command: ["/wait-for.sh","mysql:3306","-t","120","--","java","-Xmx128M","-Djava.security.egd=file:/dev/./urandom","-Dlogging.file=/log/app.log","-Dlogging.level=debug","-jar","/app/tremoteLaboratory.jar"]
+      - remoteLaboratory
+    command: ["/wait-for.sh","mysql:3306","-t","120","--","java","-Xmx128M","-Djava.security.egd=file:/dev/./urandom","-Dlogging.file=/log/app.log","-Dlogging.level=debug","-jar","/app/remoteLaboratory.jar"]
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
@@ -48,7 +48,7 @@ services:
     networks:
       app_net:
         ipv4_address: 10.10.10.3
-  tremoteLaboratory:
+  remoteLaboratory:
     image: public/tremote_laboratory:1.0-SNAPSHOT
     volumes:
       - /app
