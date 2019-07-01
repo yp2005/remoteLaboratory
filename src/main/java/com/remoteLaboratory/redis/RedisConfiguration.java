@@ -1,5 +1,8 @@
 package com.remoteLaboratory.redis;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,12 +23,13 @@ public class RedisConfiguration {
 
     @Autowired
     private RedisConnectionFactory redisConnectionFactory;
-
+    private static Logger log = LoggerFactory.getLogger(RedisConfiguration.class);
     @Bean(name = "jedis.pool")
     @Autowired
     public JedisPool jedisPool(@Qualifier("jedis.pool.config") JedisPoolConfig config,
                                @Value("${jedis.pool.host}") String host,
                                @Value("${jedis.pool.port}") int port) {
+        log.info("jedis pool "+host+" "+port);
         return new JedisPool(config, host, port);
     }
 
