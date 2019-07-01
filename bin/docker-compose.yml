@@ -19,7 +19,7 @@ services:
 #        ipv4_address: 10.10.10.1
 
   redis:
-    image: redis:5-alpine
+    image: redis:3-alpine
 
     ports:
       - 6379:6379
