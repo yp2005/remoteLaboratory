@@ -61,6 +61,7 @@ logging:
   level:
     root: info
     redis: debug
+    org.springframework.data.redis: debug
 UPLOAD_FILE_PATH: /static/upload
 jedis:
   pool:
