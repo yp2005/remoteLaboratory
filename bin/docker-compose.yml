@@ -49,7 +49,7 @@ services:
       app_net:
         ipv4_address: 10.10.10.3
   remoteLaboratory:
-    image: public/tremote_laboratory:1.0-SNAPSHOT
+    image: public/remote_laboratory:1.0-SNAPSHOT
     volumes:
       - /app
 

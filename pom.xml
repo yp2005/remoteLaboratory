@@ -204,7 +204,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <imageName>public/tremote_laboratory:${project.version}
+                    <imageName>public/remote_laboratory:${project.version}
                     </imageName>
                     <pushImage>false</pushImage>
                     <dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>
