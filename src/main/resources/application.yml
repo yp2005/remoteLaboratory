@@ -65,7 +65,7 @@ logging:
 UPLOAD_FILE_PATH: /static/upload
 jedis:
   pool:
-    host: redis
+    host: 10.10.10.2
     port: 6379
     config:
       maxTotal: 100
