@@ -1,4 +1,4 @@
-package com.remoteLaboratory.utils;
+package com.remoteLaboratory.utils.scheduler;
 
 import com.remoteLaboratory.utils.date.DateTimeUtil;
 import org.quartz.*;
@@ -17,10 +17,7 @@ public class LogCleanUtil {
     public void execute() {
         // 创建一个JobDetail实例 并指定Job在Scheduler中所属组及名称
         JobDetail jobDetail = JobBuilder.newJob(LogCleanJob.class).withIdentity("jobLogClean", "logClean").build();
-        Date now = new Date();
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(now);
-        calendar.set(Calendar.DATE, calendar.get(Calendar.DATE) + 1);
         calendar.set(Calendar.HOUR_OF_DAY, 3);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);

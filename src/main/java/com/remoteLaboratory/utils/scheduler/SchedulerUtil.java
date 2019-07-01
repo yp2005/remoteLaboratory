@@ -1,4 +1,4 @@
-package com.remoteLaboratory.utils;
+package com.remoteLaboratory.utils.scheduler;
 
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;

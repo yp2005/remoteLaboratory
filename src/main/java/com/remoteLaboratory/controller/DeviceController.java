@@ -6,8 +6,10 @@ import com.remoteLaboratory.entities.User;
 import com.remoteLaboratory.repositories.LogRecordRepository;
 import com.remoteLaboratory.service.DeviceService;
 import com.remoteLaboratory.utils.CommonResponse;
+import com.remoteLaboratory.utils.Constants;
 import com.remoteLaboratory.utils.LogUtil;
 import com.remoteLaboratory.utils.exception.BusinessException;
+import com.remoteLaboratory.utils.message.Messages;
 import com.remoteLaboratory.vo.ListInput;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -42,6 +44,7 @@ public class DeviceController {
 
     @PostMapping(path = "/list")
     @ApiOperation(value = "设备列表", notes = "查询设备信息列表")
+    @LoginRequired(teacherRequired = "1")
     public CommonResponse list(@RequestBody ListInput listInput,  @ApiIgnore User loginUser) throws BusinessException {
         CommonResponse commonResponse = CommonResponse.getInstance();
         commonResponse.setResult(deviceService.list(listInput));
@@ -82,6 +85,10 @@ public class DeviceController {
     @ApiOperation(value = "查询设备", notes = "根据ID查询设备")
     public CommonResponse get(@NotNull(message = "设备编号不能为空") @PathVariable Integer id, @ApiIgnore User loginUser) throws BusinessException {
         Device device = deviceService.get(id);
+        // 学生不能直接获取在线实验设备的详情
+        if(device.getType().equals(1) && loginUser.getUserType().equals(Constants.USER_TYPE_STUDENT)) {
+            throw new BusinessException(Messages.CODE_50200);
+        }
         CommonResponse commonResponse = CommonResponse.getInstance(device);
         LogUtil.add(this.logRecordRepository, "查询", "设备", loginUser, device.getId(), device.getName());
         return commonResponse;

@@ -54,6 +54,47 @@ public class SysSettingController {
             logRetainTime.setDescription("值为正整数，单位: 天");
             this.sysSettingRepository.save(logRetainTime);
         }
+
+        SysSetting deviceOrderTime = this.sysSettingRepository.findByKeyName(Constants.DEVICE_ORDER_TIME);
+        if (deviceOrderTime == null) {
+            deviceOrderTime = new SysSetting();
+            deviceOrderTime.setZhName("设备预约可提前天数");
+            deviceOrderTime.setKeyName(Constants.DEVICE_ORDER_TIME);
+            deviceOrderTime.setValue("5");
+            deviceOrderTime.setDescription("值为正整数，单位: 天");
+            this.sysSettingRepository.save(deviceOrderTime);
+        }
+
+        SysSetting deviceOpenTimeStart = this.sysSettingRepository.findByKeyName(Constants.DEVICE_OPEN_TIME_START);
+        if (deviceOpenTimeStart == null) {
+            deviceOpenTimeStart = new SysSetting();
+            deviceOpenTimeStart.setZhName("设备开放时间-开始时间");
+            deviceOpenTimeStart.setKeyName(Constants.DEVICE_OPEN_TIME_START);
+            deviceOpenTimeStart.setValue("9");
+            deviceOpenTimeStart.setDescription("值为整点小时");
+            this.sysSettingRepository.save(deviceOpenTimeStart);
+        }
+
+        SysSetting deviceOpenTimeEnd = this.sysSettingRepository.findByKeyName(Constants.DEVICE_OPEN_TIME_END);
+        if (deviceOpenTimeEnd == null) {
+            deviceOpenTimeEnd = new SysSetting();
+            deviceOpenTimeEnd.setZhName("设备开放时间-结束时间");
+            deviceOpenTimeEnd.setKeyName(Constants.DEVICE_OPEN_TIME_END);
+            deviceOpenTimeEnd.setValue("18");
+            deviceOpenTimeEnd.setDescription("值为整点小时");
+            this.sysSettingRepository.save(deviceOpenTimeEnd);
+        }
+
+        SysSetting deviceOpenWeekend = this.sysSettingRepository.findByKeyName(Constants.DEVICE_OPEN_WEEKEND);
+        if (deviceOpenWeekend == null) {
+            deviceOpenWeekend = new SysSetting();
+            deviceOpenWeekend.setZhName("设备周末是否开放");
+            deviceOpenWeekend.setKeyName(Constants.DEVICE_OPEN_WEEKEND);
+            deviceOpenWeekend.setValue("1");
+            deviceOpenWeekend.setDescription("0-不开放 1-开放");
+            this.sysSettingRepository.save(deviceOpenWeekend);
+        }
+
     }
 
     @PostMapping(path = "/list")
@@ -80,18 +121,58 @@ public class SysSettingController {
         return commonResponse;
     }
 
+    @GetMapping(path = "/getDeviceOrderTime")
+    @ApiOperation(value = "查询设备预约可提前天数设置", notes = "查询设备预约可提前天数设置接口")
+    public CommonResponse getDeviceOrderTime() throws BusinessException {
+        CommonResponse commonResponse = CommonResponse.getInstance();
+        commonResponse.setResult(sysSettingService.getByKeyName(Constants.DEVICE_ORDER_TIME));
+        return commonResponse;
+    }
+
+    @GetMapping(path = "/getDeviceOpenTimeStart")
+    @ApiOperation(value = "查询设备开放时间-开始时间设置", notes = "查询设备开放时间-开始时间设置接口")
+    public CommonResponse getDeviceOpenTimeStart() throws BusinessException {
+        CommonResponse commonResponse = CommonResponse.getInstance();
+        commonResponse.setResult(sysSettingService.getByKeyName(Constants.DEVICE_OPEN_TIME_START));
+        return commonResponse;
+    }
+
+    @GetMapping(path = "/getDeviceOpenTimeEnd")
+    @ApiOperation(value = "查询设备开放时间-结束时间设置", notes = "查询设备开放时间-结束时间设置接口")
+    public CommonResponse getDeviceOpenTimeEnd() throws BusinessException {
+        CommonResponse commonResponse = CommonResponse.getInstance();
+        commonResponse.setResult(sysSettingService.getByKeyName(Constants.DEVICE_OPEN_TIME_END));
+        return commonResponse;
+    }
+
+    @GetMapping(path = "/getDeviceOpenWeekend")
+    @ApiOperation(value = "查询设备周末是否开放设置", notes = "查询设备周末是否开放设置接口")
+    public CommonResponse getDeviceOpenWeekend() throws BusinessException {
+        CommonResponse commonResponse = CommonResponse.getInstance();
+        commonResponse.setResult(sysSettingService.getByKeyName(Constants.DEVICE_OPEN_WEEKEND));
+        return commonResponse;
+    }
+
     @PutMapping
     @ApiOperation(value = "更新系统设置", notes = "更新系统设置接口")
     public CommonResponse update(@RequestBody SysSettingInput sysSettingInput) throws BusinessException {
-        if(sysSettingInput.getKeyName().equals(Constants.LOG_RETAIN_TIME)) {
+        SysSetting sysSetting = this.sysSettingService.getByKeyName(sysSettingInput.getKeyName());
+        if(sysSettingInput.getKeyName().equals(Constants.LOG_RETAIN_TIME)
+                || sysSettingInput.getKeyName().equals(Constants.DEVICE_OPEN_TIME_START)
+                || sysSettingInput.getKeyName().equals(Constants.DEVICE_OPEN_TIME_END)
+                || sysSettingInput.getKeyName().equals(Constants.DEVICE_ORDER_TIME)) {
             try {
                 Integer.valueOf(sysSettingInput.getValue());
             } catch (Exception e) {
                 e.printStackTrace();
-                throw new BusinessException(Messages.CODE_40010, "值为正整数，单位: 天");
+                throw new BusinessException(Messages.CODE_40010, sysSetting.getDescription());
             }
         }
-        SysSetting sysSetting = this.sysSettingService.getByKeyName(sysSettingInput.getKeyName());
+        else if(sysSettingInput.getKeyName().equals(Constants.DEVICE_OPEN_WEEKEND)) {
+            if(!sysSettingInput.getValue().equals("0") && !sysSettingInput.getValue().equals("1")) {
+                throw new BusinessException(Messages.CODE_40010, sysSetting.getDescription());
+            }
+        }
         sysSetting.setValue(sysSettingInput.getValue());
         return CommonResponse.getInstance(this.sysSettingService.update(sysSetting));
     }

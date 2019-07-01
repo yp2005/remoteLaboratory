@@ -23,4 +23,8 @@ public interface Constants {
 
     /***************系统设置key*****************/
     String LOG_RETAIN_TIME = "logRetainTime"; // 日志保存时间
+    String DEVICE_ORDER_TIME = "deviceOrderTime"; // 设备预约可提前天数
+    String DEVICE_OPEN_TIME_START = "deviceOpenTimeStart"; // 设备开放时间-开始时间
+    String DEVICE_OPEN_TIME_END = "deviceOpenTimeEnd"; // 设备开放时间-结束时间
+    String DEVICE_OPEN_WEEKEND = "deviceOpenWeekend"; // 设备周末是否开放
 }

@@ -1,6 +1,7 @@
 package com.remoteLaboratory;
 
-import com.remoteLaboratory.utils.LogCleanUtil;
+import com.remoteLaboratory.utils.scheduler.DeviceOrderUtil;
+import com.remoteLaboratory.utils.scheduler.LogCleanUtil;
 import com.remoteLaboratory.utils.SpringUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -18,5 +19,6 @@ public class RemoteLaboratoryApplication {
         ApplicationContext applicationContext = SpringApplication.run(RemoteLaboratoryApplication.class, args);
         SpringUtil.setApplicationContext(applicationContext);
         new LogCleanUtil().execute(); // 日志清理调度
+        new DeviceOrderUtil().execute(); // 设备预约生成调度
     }
 }

@@ -12,7 +12,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 课程设备
+ * 课程设备(只能选择在线实验设备)
  *
  * @Author: yupeng
  */
@@ -51,6 +51,12 @@ public class CourseDevice implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotNull
     private String deviceName;
+
+    @Column(length = 255)
+    @ApiModelProperty(value = "资源类型 如：示波器")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
+    private String resourceClass;
 
     @Column(updatable = false)
     @ApiModelProperty(value = "创建时间", hidden = true)
@@ -119,6 +125,14 @@ public class CourseDevice implements Serializable {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getResourceClass() {
+        return resourceClass;
+    }
+
+    public void setResourceClass(String resourceClass) {
+        this.resourceClass = resourceClass;
     }
 
     public interface Validation{};

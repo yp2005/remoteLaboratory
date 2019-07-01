@@ -1,8 +1,10 @@
-package com.remoteLaboratory.utils;
+package com.remoteLaboratory.utils.scheduler;
 
 import com.remoteLaboratory.entities.SysSetting;
 import com.remoteLaboratory.repositories.LogRecordRepository;
 import com.remoteLaboratory.repositories.SysSettingRepository;
+import com.remoteLaboratory.utils.Constants;
+import com.remoteLaboratory.utils.SpringUtil;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -12,11 +14,10 @@ import org.slf4j.LoggerFactory;
 import java.util.Calendar;
 
 /**
- * 每天早上和晚上8点10分对所有在场内的车辆进行费用计算
+ * 日志清理
  */
 public class LogCleanJob implements Job {
     private static Logger log = LoggerFactory.getLogger(LogCleanUtil.class);
-
 
     private LogRecordRepository logRecordRepository;
 

@@ -36,7 +36,13 @@ public class Device {
     @Column(length = 10)
     @ApiModelProperty(value = "类型 1-在线实验设备 2-实时数据设备")
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
     private Integer type;
+
+    @Column(length = 255)
+    @ApiModelProperty(value = "和第三方系统资源进行关联的key")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String relationKey;
 
     @Column(length = 255)
     @ApiModelProperty(value = "在线实验设备需要嵌入的实验页面url")
@@ -51,6 +57,7 @@ public class Device {
     @Column(length = 255)
     @ApiModelProperty(value = "资源类型 如：示波器")
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
     private String resourceClass;
 
     @Column(updatable = false)
@@ -128,6 +135,14 @@ public class Device {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getRelationKey() {
+        return relationKey;
+    }
+
+    public void setRelationKey(String relationKey) {
+        this.relationKey = relationKey;
     }
 
     public interface Validation{}
