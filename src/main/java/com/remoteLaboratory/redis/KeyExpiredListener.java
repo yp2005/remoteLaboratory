@@ -23,12 +23,16 @@ public class KeyExpiredListener extends KeyExpirationEventMessageListener {
 
     public KeyExpiredListener(RedisMessageListenerContainer listenerContainer) {
         super(listenerContainer);
-        this.redisClient = SpringUtil.getBean(RedisClient.class);
-        this.userOnlineTimeRepository = SpringUtil.getBean(UserOnlineTimeRepository.class);
     }
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
+        if(this.redisClient == null) {
+            this.redisClient = SpringUtil.getBean(RedisClient.class);
+        }
+        if(this.userOnlineTimeRepository == null) {
+            this.userOnlineTimeRepository = SpringUtil.getBean(UserOnlineTimeRepository.class);
+        }
         String key = new String(message.getBody(),StandardCharsets.UTF_8);
         log.info("redis key expired: " + key);
         if(key.indexOf(Constants.USER_TOKEN) != -1) {
