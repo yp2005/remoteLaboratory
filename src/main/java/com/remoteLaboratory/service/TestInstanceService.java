@@ -90,5 +90,5 @@ public interface TestInstanceService {
      * @param id
      * @return TestInstancePublicVo
      */
-    public TestInstancePublicVo submit(Integer id, Integer status) throws BusinessException;
+    public TestInstancePublicVo submit(Integer id, Integer status, User user) throws BusinessException;
 }

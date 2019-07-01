@@ -1,12 +1,12 @@
 package com.remoteLaboratory.controller;
 
 import com.remoteLaboratory.config.LoginRequired;
-import com.remoteLaboratory.entities.CourseStudyRecord;
 import com.remoteLaboratory.entities.Course;
+import com.remoteLaboratory.entities.CourseStudyRecord;
 import com.remoteLaboratory.entities.User;
 import com.remoteLaboratory.repositories.LogRecordRepository;
-import com.remoteLaboratory.service.CourseStudyRecordService;
 import com.remoteLaboratory.service.CourseService;
+import com.remoteLaboratory.service.CourseStudyRecordService;
 import com.remoteLaboratory.utils.CommonResponse;
 import com.remoteLaboratory.utils.Constants;
 import com.remoteLaboratory.utils.LogUtil;
@@ -16,16 +16,13 @@ import com.remoteLaboratory.vo.CourseStudyRecordPublicVo;
 import com.remoteLaboratory.vo.ListInput;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 /**
  * 课程学习记录接口

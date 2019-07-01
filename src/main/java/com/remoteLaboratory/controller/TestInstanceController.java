@@ -190,7 +190,7 @@ public class TestInstanceController {
             throw new BusinessException(Messages.CODE_40010, "已交卷不可重复提交");
         }
         CommonResponse commonResponse = CommonResponse.getInstance();
-        commonResponse.setResult(testInstanceService.submit(id, 1));
+        commonResponse.setResult(testInstanceService.submit(id, 1, loginUser));
         LogUtil.add(this.logRecordRepository, "交卷", "测验实例", loginUser, testInstance.getId(), testInstance.getName());
         return commonResponse;
     }
@@ -208,7 +208,7 @@ public class TestInstanceController {
             throw new BusinessException(Messages.CODE_40010, "学生尚未交卷");
         }
         CommonResponse commonResponse = CommonResponse.getInstance();
-        commonResponse.setResult(testInstanceService.submit(id, 2));
+        commonResponse.setResult(testInstanceService.submit(id, 2, null));
         LogUtil.add(this.logRecordRepository, "阅卷完成", "测验实例", loginUser, testInstance.getId(), testInstance.getName());
         return commonResponse;
     }

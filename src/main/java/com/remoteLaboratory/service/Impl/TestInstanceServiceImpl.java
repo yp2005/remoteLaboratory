@@ -3,10 +3,8 @@ package com.remoteLaboratory.service.Impl;
 import com.remoteLaboratory.bo.SearchPara;
 import com.remoteLaboratory.bo.SearchParas;
 import com.remoteLaboratory.entities.*;
-import com.remoteLaboratory.repositories.ExerciseRepository;
-import com.remoteLaboratory.repositories.TestExerciseInstanceRepository;
-import com.remoteLaboratory.repositories.TestInstanceRepository;
-import com.remoteLaboratory.repositories.TestPartInstanceRepository;
+import com.remoteLaboratory.repositories.*;
+import com.remoteLaboratory.service.CourseStudyRecordService;
 import com.remoteLaboratory.service.TestInstanceService;
 import com.remoteLaboratory.service.TestTemplateService;
 import com.remoteLaboratory.utils.MySpecification;
@@ -47,19 +45,27 @@ public class TestInstanceServiceImpl implements TestInstanceService {
 
     private TestTemplateService testTemplateService;
 
-    private ExerciseRepository exerciseRepository;
+    private SectionStudyRecordRepository sectionStudyRecordRepository;
+
+    private CourseStudyRecordService courseStudyRecordService;
+
+    private CourseStudyRecordRepository courseStudyRecordRepository;
 
     @Autowired
     public TestInstanceServiceImpl(TestInstanceRepository testInstanceRepository,
                                    TestPartInstanceRepository testPartInstanceRepository,
                                    TestExerciseInstanceRepository testExerciseInstanceRepository,
-                                   ExerciseRepository exerciseRepository,
+                                   SectionStudyRecordRepository sectionStudyRecordRepository,
+                                   CourseStudyRecordService courseStudyRecordService,
+                                   CourseStudyRecordRepository courseStudyRecordRepository,
                                    TestTemplateService testTemplateService) {
         this.testInstanceRepository = testInstanceRepository;
         this.testPartInstanceRepository = testPartInstanceRepository;
         this.testExerciseInstanceRepository = testExerciseInstanceRepository;
         this.testTemplateService = testTemplateService;
-        this.exerciseRepository = exerciseRepository;
+        this.sectionStudyRecordRepository = sectionStudyRecordRepository;
+        this.courseStudyRecordService = courseStudyRecordService;
+        this.courseStudyRecordRepository = courseStudyRecordRepository;
     }
 
     @Override
@@ -134,7 +140,29 @@ public class TestInstanceServiceImpl implements TestInstanceService {
             TestInstancePublicVo testInstancePublicVo = new TestInstancePublicVo(testTemplatePublicVo);
             testInstancePublicVo.setUserId(user.getId());
             testInstancePublicVo.setUserName(StringUtils.isEmpty(user.getPersonName()) ? user.getUserName() : user.getPersonName());
-            return this.add(testInstancePublicVo);
+            testInstancePublicVo = this.add(testInstancePublicVo);
+            SectionStudyRecord sectionStudyRecord = this.sectionStudyRecordRepository.findBySectionIdAndUserId(testInstancePublicVo.getSectionId(), user.getId());
+            if(sectionStudyRecord != null) {
+                if(sectionStudyRecord.getTestStatus().equals(0)) {
+                    sectionStudyRecord.setTestStatus(2); // 设置作业状态为正在进行
+                    sectionStudyRecord = this.sectionStudyRecordRepository.save(sectionStudyRecord);
+                }
+            }
+            else {
+                this.courseStudyRecordService.startStudy(testInstancePublicVo.getCourseId(), user);
+                sectionStudyRecord = this.sectionStudyRecordRepository.findBySectionIdAndUserId(testInstancePublicVo.getSectionId(), user.getId());
+                sectionStudyRecord.setTestStatus(2); // 设置作业状态为正在进行
+                sectionStudyRecord = this.sectionStudyRecordRepository.save(sectionStudyRecord);
+            }
+            CourseStudyRecord courseStudyRecord = this.courseStudyRecordRepository.findOne(sectionStudyRecord.getCourseStudyRecordId());
+            courseStudyRecord.setChapterId(sectionStudyRecord.getChapterId());
+            courseStudyRecord.setChapterName(sectionStudyRecord.getChapterName());
+            courseStudyRecord.setChapterTitle(sectionStudyRecord.getChapterTitle());
+            courseStudyRecord.setSectionId(sectionStudyRecord.getSectionId());
+            courseStudyRecord.setSectionName(sectionStudyRecord.getSectionName());
+            courseStudyRecord.setSectionTitle(sectionStudyRecord.getSectionTitle());
+            this.courseStudyRecordRepository.save(courseStudyRecord);
+            return testInstancePublicVo;
         }
     }
 
@@ -264,11 +292,30 @@ public class TestInstanceServiceImpl implements TestInstanceService {
     }
 
     @Override
-    public TestInstancePublicVo submit(Integer id, Integer status) throws BusinessException {
+    public TestInstancePublicVo submit(Integer id, Integer status, User user) throws BusinessException {
         TestInstancePublicVo testInstancePublicVo = this.getDetail(id);
         testInstancePublicVo = this.calculateScore(testInstancePublicVo);
         testInstancePublicVo.setStatus(status);
         testInstancePublicVo = this.update(testInstancePublicVo);
+        if(status.equals(1)) {
+            SectionStudyRecord sectionStudyRecord = this.sectionStudyRecordRepository.findBySectionIdAndUserId(id, user.getId());
+            if(sectionStudyRecord != null) {
+                if(!sectionStudyRecord.getTestStatus().equals(1)) {
+                    sectionStudyRecord.setTestStatus(1); // 状态设置为已完成
+                    sectionStudyRecord.setStudied(sectionStudyRecord.getStudied() + 0.5);
+                    sectionStudyRecord = this.sectionStudyRecordRepository.save(sectionStudyRecord);
+                    this.courseStudyRecordService.update(sectionStudyRecord.getCourseStudyRecordId());
+                }
+            }
+            else {
+                this.courseStudyRecordService.startStudy(testInstancePublicVo.getCourseId(), user);
+                sectionStudyRecord = this.sectionStudyRecordRepository.findBySectionIdAndUserId(id, user.getId());
+                sectionStudyRecord.setTestStatus(1); // 状态设置为已完成
+                sectionStudyRecord.setStudied(sectionStudyRecord.getStudied() + 0.5);
+                sectionStudyRecord = this.sectionStudyRecordRepository.save(sectionStudyRecord);
+                this.courseStudyRecordService.update(sectionStudyRecord.getCourseStudyRecordId());
+            }
+        }
         return testInstancePublicVo;
     }
 
