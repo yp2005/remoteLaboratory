@@ -13,6 +13,8 @@ services:
     networks:
       app_net:
         ipv4_address: 10.10.10.2
+    depends_on:
+      - mysql
   mysql:
     image: mysql:5.7.17
     ports:
@@ -29,8 +31,7 @@ services:
     networks:
       app_net:
         ipv4_address: 10.10.10.1
-    depends_on:
-      - redis
+
 
   webserver:
     image: public/java
@@ -42,7 +43,7 @@ services:
       - ${LOG_DIR}:/log
     volumes_from:
       - remoteLaboratory
-    command: ["/wait-for.sh","mysql:3306","-t","120","--","java","-Xmx128M","-Djava.security.egd=file:/dev/./urandom","-Dlogging.file=/log/app.log","-Dlogging.level=debug","-jar","/app/remoteLaboratory.jar"]
+    command: ["/wait-for.sh","redis:6379","-t","120","--","java","-Xmx128M","-Djava.security.egd=file:/dev/./urandom","-Dlogging.file=/log/app.log","-Dlogging.level=debug","-jar","/app/remoteLaboratory.jar"]
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
