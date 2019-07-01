@@ -14,9 +14,9 @@ services:
       - MYSQL_USER=laboratory
       - MYSQL_PASSWORD=laboratory
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --innodb-buffer-pool-size=5368709120 --innodb_buffer_pool_chunk_size=671088640 --max_allowed_packet=1073741824
-    networks:
-      app_net:
-        ipv4_address: 10.10.10.1
+#    networks:
+#      app_net:
+#        ipv4_address: 10.10.10.1
 
   redis:
     image: redis:5-alpine
@@ -28,9 +28,9 @@ services:
       - ${REDIS_DATA}:/data
 
     command: redis-server --appendonly yes
-    networks:
-      app_net:
-        ipv4_address: 10.10.10.2
+#    networks:
+#      app_net:
+#        ipv4_address: 10.10.10.2
     depends_on:
       - mysql
   webserver:
@@ -47,21 +47,13 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
-      - mysql
-    networks:
-      app_net:
-        ipv4_address: 10.10.10.3
+      - redis
+#    networks:
+#      app_net:
+#        ipv4_address: 10.10.10.3
   remoteLaboratory:
     image: public/remote_laboratory:1.0-SNAPSHOT
     volumes:
       - /app
 
-networks:
-# 配置docker network
-  app_net:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-                # 子网络
-      - subnet: 10.10.0.0/16
+
