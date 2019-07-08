@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * 测验实例接口
@@ -119,11 +120,20 @@ public class TestInstanceController {
     }
 
     @GetMapping(path = "/getMyBySectionId/{sectionId}")
-    @ApiOperation(value = "查询测验实例详情", notes = "根据课程小节ID查询测验实例详情接口")
+    @ApiOperation(value = "根据课程小节ID查询我的测验实例详情", notes = "根据课程小节ID查询我的测验实例详情接口")
     public CommonResponse getMyBySectionId(@NotNull(message = "测验实例编号不能为空") @PathVariable Integer sectionId, @ApiIgnore User loginUser) throws BusinessException {
         TestInstancePublicVo testInstancePublicVo = testInstanceService.getMyBySectionId(sectionId, loginUser);
         CommonResponse commonResponse = CommonResponse.getInstance(testInstancePublicVo);
         LogUtil.add(this.logRecordRepository, "查询详情", "测验实例", loginUser, testInstancePublicVo.getId(), testInstancePublicVo.getName());
+        return commonResponse;
+    }
+
+    @GetMapping(path = "/getMy")
+    @ApiOperation(value = "查询我的测验实例", notes = "查询我的测验实例接口")
+    public CommonResponse getMy(@ApiIgnore User loginUser) throws BusinessException {
+        CommonResponse commonResponse = CommonResponse.getInstance();
+        commonResponse.setResult(testInstanceService.getByUserId(loginUser.getId()));
+        LogUtil.add(this.logRecordRepository, "查询我的测验实例", "测验实例", loginUser, null, null);
         return commonResponse;
     }
 

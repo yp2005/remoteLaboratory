@@ -250,6 +250,11 @@ public class TestInstanceServiceImpl implements TestInstanceService {
     }
 
     @Override
+    public List<TestInstance> getByUserId(Integer userId) throws BusinessException {
+        return this.testInstanceRepository.findByUserId(userId);
+    }
+
+    @Override
     public TestInstancePublicVo getDetail(Integer id) throws BusinessException {
         TestInstance testInstance = testInstanceRepository.findOne(id);
         if (testInstance == null) {

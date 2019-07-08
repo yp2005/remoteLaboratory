@@ -114,6 +114,12 @@ public class User implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastLoginTime;
 
+    @Column(length = 10)
+    @ApiModelProperty(value = "论坛禁言状态 0-正常 1-禁言")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
+    private Integer forumForbidden;
+
     @Column(updatable = false)
     @ApiModelProperty(value = "创建时间", hidden = true)
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -279,6 +285,14 @@ public class User implements Serializable {
 
     public void setClass1(String class1) {
         this.class1 = class1;
+    }
+
+    public Integer getForumForbidden() {
+        return forumForbidden;
+    }
+
+    public void setForumForbidden(Integer forumForbidden) {
+        this.forumForbidden = forumForbidden;
     }
 
     public interface Validation{};

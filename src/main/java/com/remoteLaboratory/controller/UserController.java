@@ -94,6 +94,18 @@ public class UserController {
         return commonResponse;
     }
 
+    @PostMapping(path = "/forumForbidden/{userId}/{status}")
+    @ApiOperation(value = "禁言(0-解禁 1-禁言)", notes = "禁言接口(0-解禁 1-禁言)")
+    @LoginRequired(adminRequired = "1")
+    public CommonResponse forumForbidden(@PathVariable("userId") Integer userId, @PathVariable("status") Integer status, @ApiIgnore User loginUser) throws BusinessException {
+        User user = this.userService.get(userId);
+        user.setForumForbidden(status);
+        user = this.userService.update(user);
+        CommonResponse commonResponse = CommonResponse.getInstance(user);
+        LogUtil.add(this.logRecordRepository, status.equals(1) ? "禁言" : "解禁", "用户", loginUser, user.getId(), user.getUserName());
+        return commonResponse;
+    }
+
     @PostMapping(path = "/register")
     @ApiOperation(value = "注册", notes = "注册接口")
     public CommonResponse register(@Validated({User.Validation.class}) @RequestBody User user, @ApiIgnore User loginUser) throws BusinessException {

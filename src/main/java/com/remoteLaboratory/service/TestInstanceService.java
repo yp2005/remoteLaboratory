@@ -71,6 +71,13 @@ public interface TestInstanceService {
     public TestInstance get(Integer id) throws BusinessException;
 
     /**
+     * 根据userId获取测验实例
+     * @param userId
+     * @return TestInstance
+     */
+    public List<TestInstance> getByUserId(Integer userId) throws BusinessException;
+
+    /**
      * 根据id获取测验实例信息
      * @param id
      * @return TestInstance
