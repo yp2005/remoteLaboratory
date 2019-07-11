@@ -167,6 +167,16 @@ public class UserController {
         return commonResponse;
     }
 
+    @GetMapping(path = "/current")
+    @ApiOperation(value = "查询当前用户信息", notes = "查询当前用户信息接口")
+    @LoginRequired
+    public CommonResponse current(@ApiIgnore User loginUser) throws BusinessException {
+        User user = userService.get(loginUser.getId());
+        CommonResponse commonResponse = CommonResponse.getInstance(user);
+        LogUtil.add(this.logRecordRepository, "查询", "用户", loginUser, user.getId(), user.getUserName());
+        return commonResponse;
+    }
+
     @PostMapping(path = "/login")
     public CommonResponse login(@RequestParam("username") String username, @RequestParam("password") String password) throws Exception {
         User user = this.userRepository.findByUserName(username);
