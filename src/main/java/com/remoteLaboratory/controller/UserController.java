@@ -74,6 +74,16 @@ public class UserController {
         }
     }
 
+    @PostMapping(path = "/teacherList")
+    @ApiOperation(value = "老师列表", notes = "查询老师信息列表")
+    @LoginRequired(adminRequired = "1")
+    public CommonResponse teacherList(@RequestBody ListInput listInput,  @ApiIgnore User loginUser) throws BusinessException {
+        CommonResponse commonResponse = CommonResponse.getInstance();
+        commonResponse.setResult(userService.listByUserType(listInput, 1));
+        LogUtil.add(this.logRecordRepository, "查询老师列表", "用户", loginUser, null, null);
+        return commonResponse;
+    }
+
     @PostMapping(path = "/list")
     @ApiOperation(value = "用户列表", notes = "查询用户信息列表")
     @LoginRequired(adminRequired = "1")

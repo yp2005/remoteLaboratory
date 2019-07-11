@@ -32,7 +32,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/course")
 @Api(description = "课程")
-@LoginRequired
 public class CourseController {
 
     private static Logger log = LoggerFactory.getLogger(CourseController.class);
@@ -87,7 +86,7 @@ public class CourseController {
     }
 
     @PutMapping(path = "/updateStatus/{courseId}/{status}")
-    @ApiOperation(value = "修改课程状态(1-发布 0-草稿(已发布编辑前调用))", notes = "修改课程状态接口(1-发布 0-草稿(已发布编辑前调用))")
+    @ApiOperation(value = "修改课程状态(0-草稿(即将开始) 1-发布(进行中) 2-结束)", notes = "修改课程状态接口(0-草稿(即将开始) 1-发布(进行中) 2-结束)")
     @LoginRequired(teacherRequired = "1")
     public CommonResponse updateStatus(@NotNull(message = "课程编号不能为空") @PathVariable("courseId") Integer courseId,
                                        @NotNull(message = "课程状态不能为空") @PathVariable("status") Integer status,
@@ -102,7 +101,7 @@ public class CourseController {
         course.setStatus(status);
         course = courseService.update(course);
         CommonResponse commonResponse = CommonResponse.getInstance(course);
-        LogUtil.add(this.logRecordRepository, "修改状态-" + (status.equals("0") ? "草稿" : "发布"), "课程", loginUser, course.getId(), course.getName());
+        LogUtil.add(this.logRecordRepository, "修改状态", "课程", loginUser, course.getId(), course.getName());
         return commonResponse;
     }
 

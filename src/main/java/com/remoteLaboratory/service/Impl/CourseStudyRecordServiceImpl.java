@@ -82,6 +82,9 @@ public class CourseStudyRecordServiceImpl implements CourseStudyRecordService {
         CourseStudyRecord courseStudyRecord = this.courseStudyRecordRepository.findByCourseIdAndUserId(courseId, user.getId());
         if(courseStudyRecord == null) {
             Course course = this.courseService.get(courseId);
+            if(!course.getStatus().equals(1)) {
+                throw new BusinessException(Messages.CODE_40010, "课程已结束或尚未开始");
+            }
             courseStudyRecord = new CourseStudyRecord();
             courseStudyRecord.setStudied(0.0);
             courseStudyRecord.setUserId(user.getId());

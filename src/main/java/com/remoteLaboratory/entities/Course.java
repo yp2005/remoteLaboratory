@@ -58,7 +58,7 @@ public class Course implements Serializable {
     private String description;
 
     @Column(length = 10)
-    @ApiModelProperty(value = "状态 0-草稿 1-发布")
+    @ApiModelProperty(value = "状态 0-草稿(即将开始) 1-发布(进行中) 2-结束")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer status;
 

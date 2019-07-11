@@ -1,5 +1,7 @@
 package com.remoteLaboratory.service.Impl;
 
+import com.remoteLaboratory.bo.SearchPara;
+import com.remoteLaboratory.bo.SearchParas;
 import com.remoteLaboratory.entities.LogRecord;
 import com.remoteLaboratory.entities.User;
 import com.remoteLaboratory.repositories.LogRecordRepository;
@@ -107,6 +109,22 @@ public class UserServiceImpl implements UserService {
             listOutput.setList(list);
         }
         return listOutput;
+    }
+
+    @Override
+    public ListOutput listByUserType(ListInput listInput, Integer userType) throws BusinessException {
+        SearchPara searchPara = new SearchPara();
+        searchPara.setName("userType");
+        searchPara.setOp("eq");
+        searchPara.setValue(userType);
+        if (listInput.getSearchParas() == null) {
+            listInput.setSearchParas(new SearchParas());
+        }
+        if (listInput.getSearchParas().getConditions() == null) {
+            listInput.getSearchParas().setConditions(new ArrayList<>());
+        }
+        listInput.getSearchParas().getConditions().add(searchPara);
+        return this.list(listInput);
     }
 
     @Override
