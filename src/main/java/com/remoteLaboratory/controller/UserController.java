@@ -172,6 +172,7 @@ public class UserController {
     @LoginRequired
     public CommonResponse current(@ApiIgnore User loginUser) throws BusinessException {
         User user = userService.get(loginUser.getId());
+        user.setToken(loginUser.getToken());
         CommonResponse commonResponse = CommonResponse.getInstance(user);
         LogUtil.add(this.logRecordRepository, "查询", "用户", loginUser, user.getId(), user.getUserName());
         return commonResponse;

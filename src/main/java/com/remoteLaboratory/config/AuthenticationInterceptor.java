@@ -39,10 +39,11 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         LoginRequired methodAnnotation = handlerMethod.getMethod().getAnnotation(LoginRequired.class);
         // 有 @LoginRequired 注解，需要认证
         if (classAnnotation != null || methodAnnotation != null) {
-            String token = request.getHeader("token");  // 从 http 请求头中取出 token
+            String token = request.getHeader("Authorization");  // 从 http 请求头中取出 token
             if (token == null) {
                 throw new BusinessException(Messages.CODE_50401);
             } else {
+                token = token.replace("Bearer ", "");
                 String userStr = redisClient.get(Constants.USER_TOKEN + token);
                 if (userStr != null) {
                     User user = JSONObject.parseObject(userStr, User.class);
