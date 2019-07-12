@@ -114,10 +114,11 @@ public class User implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastLoginTime;
 
-    @Column(length = 10, columnDefinition = "int default 0")
+    @Column(length = 10)
     @ApiModelProperty(value = "论坛禁言状态 0-正常 1-禁言")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Integer forumForbidden ;
+    @NotNull
+    private Integer forumForbidden;
 
     @Column(updatable = false)
     @ApiModelProperty(value = "创建时间", hidden = true)

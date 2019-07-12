@@ -68,6 +68,7 @@ public class UserController {
             user.setPersonName(Constants.ADMIN_USER_NAME);
             user.setUserName(Constants.ADMIN_USER_NAME);
             user.setUserType(Constants.USER_TYPE_ADMIN);
+            user.setForumForbidden(0);
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             user.setPassword(encoder.encode(EncodeUtils.encodeSHA("123456".getBytes())));
             userService.add(user);
