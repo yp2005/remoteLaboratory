@@ -28,7 +28,6 @@ import javax.validation.constraints.NotNull;
 @RestController
 @RequestMapping("/sysSetting")
 @Api(description = "系统设置")
-@LoginRequired(adminRequired = "1")
 public class SysSettingController {
 
     private static Logger log = LoggerFactory.getLogger(SysSettingController.class);
@@ -95,10 +94,21 @@ public class SysSettingController {
             this.sysSettingRepository.save(deviceOpenWeekend);
         }
 
+        SysSetting homePageImages = this.sysSettingRepository.findByKeyName(Constants.HOME_PAGE_IMAGES);
+        if (homePageImages == null) {
+            homePageImages = new SysSetting();
+            homePageImages.setZhName("首页轮播图片");
+            homePageImages.setKeyName(Constants.HOME_PAGE_IMAGES);
+            homePageImages.setValue("[]");
+            homePageImages.setDescription("图片url的json数组字符串");
+            this.sysSettingRepository.save(homePageImages);
+        }
+
     }
 
     @PostMapping(path = "/list")
     @ApiOperation(value = "系统设置列表", notes = "查询系统设置信息列表")
+    @LoginRequired(adminRequired = "1")
     public CommonResponse list(@RequestBody ListInput listInput) throws BusinessException {
         CommonResponse commonResponse = CommonResponse.getInstance();
         commonResponse.setResult(sysSettingService.list(listInput));
@@ -107,6 +117,7 @@ public class SysSettingController {
 
     @GetMapping(path = "/{id}")
     @ApiOperation(value = "查询系统设置", notes = "根据ID查询系统设置接口")
+    @LoginRequired(adminRequired = "1")
     public CommonResponse get(@NotNull(message = "系统设置编号不能为空") @PathVariable String id) throws BusinessException {
         CommonResponse commonResponse = CommonResponse.getInstance();
         commonResponse.setResult(sysSettingService.get(id));
@@ -115,6 +126,7 @@ public class SysSettingController {
 
     @GetMapping(path = "/getLogRetainTimeSetting")
     @ApiOperation(value = "查询日志保留时间设置", notes = "查询日志保留时间设置接口")
+    @LoginRequired(adminRequired = "1")
     public CommonResponse getLogRetainTimeSetting() throws BusinessException {
         CommonResponse commonResponse = CommonResponse.getInstance();
         commonResponse.setResult(sysSettingService.getByKeyName(Constants.LOG_RETAIN_TIME));
@@ -123,6 +135,7 @@ public class SysSettingController {
 
     @GetMapping(path = "/getDeviceOrderTime")
     @ApiOperation(value = "查询设备预约可提前天数设置", notes = "查询设备预约可提前天数设置接口")
+    @LoginRequired(adminRequired = "1")
     public CommonResponse getDeviceOrderTime() throws BusinessException {
         CommonResponse commonResponse = CommonResponse.getInstance();
         commonResponse.setResult(sysSettingService.getByKeyName(Constants.DEVICE_ORDER_TIME));
@@ -131,6 +144,7 @@ public class SysSettingController {
 
     @GetMapping(path = "/getDeviceOpenTimeStart")
     @ApiOperation(value = "查询设备开放时间-开始时间设置", notes = "查询设备开放时间-开始时间设置接口")
+    @LoginRequired(adminRequired = "1")
     public CommonResponse getDeviceOpenTimeStart() throws BusinessException {
         CommonResponse commonResponse = CommonResponse.getInstance();
         commonResponse.setResult(sysSettingService.getByKeyName(Constants.DEVICE_OPEN_TIME_START));
@@ -139,6 +153,7 @@ public class SysSettingController {
 
     @GetMapping(path = "/getDeviceOpenTimeEnd")
     @ApiOperation(value = "查询设备开放时间-结束时间设置", notes = "查询设备开放时间-结束时间设置接口")
+    @LoginRequired(adminRequired = "1")
     public CommonResponse getDeviceOpenTimeEnd() throws BusinessException {
         CommonResponse commonResponse = CommonResponse.getInstance();
         commonResponse.setResult(sysSettingService.getByKeyName(Constants.DEVICE_OPEN_TIME_END));
@@ -147,14 +162,24 @@ public class SysSettingController {
 
     @GetMapping(path = "/getDeviceOpenWeekend")
     @ApiOperation(value = "查询设备周末是否开放设置", notes = "查询设备周末是否开放设置接口")
+    @LoginRequired(adminRequired = "1")
     public CommonResponse getDeviceOpenWeekend() throws BusinessException {
         CommonResponse commonResponse = CommonResponse.getInstance();
         commonResponse.setResult(sysSettingService.getByKeyName(Constants.DEVICE_OPEN_WEEKEND));
         return commonResponse;
     }
 
+    @GetMapping(path = "/getHomePageImages")
+    @ApiOperation(value = "查询首页轮播图片", notes = "查询首页轮播图片接口")
+    public CommonResponse getHomePageImages() throws BusinessException {
+        CommonResponse commonResponse = CommonResponse.getInstance();
+        commonResponse.setResult(sysSettingService.getByKeyName(Constants.HOME_PAGE_IMAGES));
+        return commonResponse;
+    }
+
     @PutMapping
     @ApiOperation(value = "更新系统设置", notes = "更新系统设置接口")
+    @LoginRequired(adminRequired = "1")
     public CommonResponse update(@RequestBody SysSettingInput sysSettingInput) throws BusinessException {
         SysSetting sysSetting = this.sysSettingService.getByKeyName(sysSettingInput.getKeyName());
         if(sysSettingInput.getKeyName().equals(Constants.LOG_RETAIN_TIME)

@@ -38,7 +38,7 @@ public class SysSetting implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String keyName;
 
-    @Column(length = 255)
+    @Column(length = 3000)
     @ApiModelProperty(value = "参数值")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String value;

@@ -52,7 +52,7 @@ public class Course implements Serializable {
     @NotNull
     private String teacherName;
 
-    @Column(length = 5000)
+    @Lob
     @ApiModelProperty(value = "描述")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String description;
