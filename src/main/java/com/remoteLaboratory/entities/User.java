@@ -117,7 +117,6 @@ public class User implements Serializable {
     @Column(length = 10, columnDefinition = "int default 0")
     @ApiModelProperty(value = "论坛禁言状态 0-正常 1-禁言")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotNull
     private Integer forumForbidden ;
 
     @Column(updatable = false)
