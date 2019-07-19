@@ -60,6 +60,8 @@ public class UserController {
     @Autowired
     private LogRecordRepository logRecordRepository;
 
+    private static final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
     @PostConstruct
     private void initUser() throws Exception {
         User user = this.userRepository.findByUserName(Constants.ADMIN_USER_NAME);
@@ -99,6 +101,7 @@ public class UserController {
     @ApiOperation(value = "添加用户", notes = "添加用户信息接口")
     @LoginRequired(adminRequired = "1")
     public CommonResponse add(@Validated({User.Validation.class}) @RequestBody User user, @ApiIgnore User loginUser) throws BusinessException {
+        user.setPassword(encoder.encode(user.getPassword()));
         user = userService.add(user);
         CommonResponse commonResponse = CommonResponse.getInstance(user);
         LogUtil.add(this.logRecordRepository, "添加", "用户", loginUser, user.getId(), user.getUserName());
@@ -123,6 +126,7 @@ public class UserController {
         if(!user.getUserType().equals(Constants.USER_TYPE_STUDENT)) {
             throw new BusinessException(Messages.CODE_40010, "只能注册学生账号！");
         }
+        user.setPassword(encoder.encode(user.getPassword()));
         user = userService.add(user);
         CommonResponse commonResponse = CommonResponse.getInstance(user);
         LogUtil.add(this.logRecordRepository, "注册", "用户", user, null, null);
@@ -133,6 +137,7 @@ public class UserController {
     @ApiOperation(value = "修改用户(管理员接口)", notes = "修改用户信息接口(管理员接口)")
     @LoginRequired(adminRequired = "1")
     public CommonResponse update(@Validated({User.Validation.class}) @RequestBody User user, @ApiIgnore User loginUser) throws BusinessException {
+        user.setPassword(encoder.encode(user.getPassword()));
         user = userService.update(user);
         CommonResponse commonResponse = CommonResponse.getInstance(user);
         LogUtil.add(this.logRecordRepository, "修改", "用户", loginUser, user.getId(), user.getUserName());
@@ -149,9 +154,11 @@ public class UserController {
         if(!newUser.getUserName().equals(loginUser.getUserName())) {
             throw new BusinessException(Messages.CODE_40010, "用户名不允许修改！");
         }
-        loginUser = userService.update(loginUser);
+        User user = this.userRepository.findOne(newUser.getId());
+        newUser.setPassword(user.getPassword());
+        newUser = userService.update(newUser);
         CommonResponse commonResponse = CommonResponse.getInstance(loginUser);
-        LogUtil.add(this.logRecordRepository, "修改", "用户", loginUser, loginUser.getId(), loginUser.getUserName());
+        LogUtil.add(this.logRecordRepository, "修改", "用户", loginUser, newUser.getId(), newUser.getUserName());
         return commonResponse;
     }
 
@@ -229,10 +236,10 @@ public class UserController {
     @PostMapping(path = "/modifyPassword")
     @LoginRequired
     public CommonResponse modifyPassword(@RequestParam("password") String password, @ApiIgnore User loginUser) throws Exception {
-        loginUser = this.userRepository.findByUserName(loginUser.getUserName());
-        loginUser.setPassword(password);
-        this.userService.update(loginUser);
-        LogUtil.add(this.logRecordRepository, "修改密码", "用户", loginUser, null, null);
+        loginUser = this.userRepository.findOne(loginUser.getId());
+        loginUser.setPassword(encoder.encode(password));
+        loginUser = this.userService.update(loginUser);
+        LogUtil.add(this.logRecordRepository, "修改密码", "用户", loginUser, loginUser.getId(), loginUser.getUserName());
         return CommonResponse.getInstance();
     }
 }
