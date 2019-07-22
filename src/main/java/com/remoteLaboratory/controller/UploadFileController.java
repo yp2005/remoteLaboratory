@@ -125,7 +125,7 @@ public class UploadFileController {
 
     @DeleteMapping(path = "/deleteById/{id}")
     @ApiOperation(value = "根据ID删除上传文件", notes = "根据ID删除上传文件信息接口")
-    public CommonResponse deleteById(@NotNull(message = "上传文件编号不能为空") Integer id, @ApiIgnore User loginUser) throws BusinessException {
+    public CommonResponse deleteById(@NotNull(message = "上传文件编号不能为空") @PathVariable Integer id, @ApiIgnore User loginUser) throws BusinessException {
         UploadFile uploadFile = this.uploadFileService.get(id);
         if(!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !uploadFile.getUserId().equals(loginUser.getId())) {
             throw new BusinessException(Messages.CODE_50200);
