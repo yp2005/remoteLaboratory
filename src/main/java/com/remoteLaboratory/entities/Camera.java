@@ -87,11 +87,6 @@ public class Camera {
     private Integer srsServerId;
 
     @Column(length = 10)
-    @ApiModelProperty(value = "关联设备ID")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Integer deviceId;
-
-    @Column(length = 10)
     @ApiModelProperty(value = "是否强制rtsp一开始就使用tcp方式 0-否 1-是")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer forceTcp;
@@ -227,14 +222,6 @@ public class Camera {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
-    }
-
-    public Integer getDeviceId() {
-        return deviceId;
-    }
-
-    public void setDeviceId(Integer deviceId) {
-        this.deviceId = deviceId;
     }
 
     public interface Validation{}

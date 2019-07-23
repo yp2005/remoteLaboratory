@@ -60,6 +60,11 @@ public class Device {
     @NotNull
     private String resourceClass;
 
+    @Column(length = 10)
+    @ApiModelProperty(value = "关联摄像头ID")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer cameraId;
+
     @Column(updatable = false)
     @ApiModelProperty(value = "创建时间",hidden = true)
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -143,6 +148,14 @@ public class Device {
 
     public void setRelationKey(String relationKey) {
         this.relationKey = relationKey;
+    }
+
+    public Integer getCameraId() {
+        return cameraId;
+    }
+
+    public void setCameraId(Integer cameraId) {
+        this.cameraId = cameraId;
     }
 
     public interface Validation{}
