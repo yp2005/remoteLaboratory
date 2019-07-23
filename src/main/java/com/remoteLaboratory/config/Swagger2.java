@@ -12,7 +12,7 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
-@ConditionalOnProperty(prefix = "swagger", value = "enabled", matchIfMissing = true)
+@ConditionalOnProperty(name = "swagger.enable", havingValue = "true")
 @EnableSwagger2
 public class Swagger2 {
 

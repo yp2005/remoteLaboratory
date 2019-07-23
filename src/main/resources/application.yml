@@ -41,6 +41,8 @@ jedis:
       maxTotal: 100
       maxIdle: 10
       maxWaitMillis: 100000
+
+swagger.enable: true
 ---
 spring:
   redis:
@@ -63,8 +65,6 @@ spring:
 logging:
   level:
     root: info
-    redis: debug
-    org.springframework.data.redis: debug
 UPLOAD_FILE_PATH: /static/upload
 jedis:
   pool:
@@ -75,4 +75,6 @@ jedis:
       maxIdle: 10
       maxWaitMillis: 100000
 
+#close in product
+swagger.enable: true
 

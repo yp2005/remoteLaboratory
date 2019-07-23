@@ -3,12 +3,14 @@ package com.remoteLaboratory.config;
 import com.alibaba.fastjson.JSONObject;
 import com.remoteLaboratory.entities.User;
 import com.remoteLaboratory.redis.RedisClient;
+import com.remoteLaboratory.repositories.UserRepository;
 import com.remoteLaboratory.utils.Constants;
 import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.utils.message.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -29,11 +31,22 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     @Autowired
     private RedisClient redisClient;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Value("${swagger.enable}")
+    private Boolean swaggerEnable;
+
     @Override
     public boolean preHandle(HttpServletRequest request,
                              HttpServletResponse response, Object handler) throws Exception {
         HandlerMethod handlerMethod = (HandlerMethod) handler;
-
+        String referer = request.getHeader("Referer");  // 从 http 请求头中取出 Referer
+        if(swaggerEnable && referer != null && referer.indexOf("swagger-ui.html") != -1) { // 给swagger测试开发admin权限
+            User admin = this.userRepository.findByUserName(Constants.ADMIN_USER_NAME);
+            request.setAttribute("loginUser", admin);
+            return true;
+        }
         // 判断接口是否需要登录
         LoginRequired classAnnotation = handlerMethod.getBeanType().getAnnotation(LoginRequired.class);
         LoginRequired methodAnnotation = handlerMethod.getMethod().getAnnotation(LoginRequired.class);
