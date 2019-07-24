@@ -89,7 +89,7 @@ public class SectionStudyRecord implements Serializable {
     private Integer testStatus;
 
     @Column(length = 10)
-    @ApiModelProperty(value = "节标题")
+    @ApiModelProperty(value = "测验实例ID")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer testInstanceId;
 

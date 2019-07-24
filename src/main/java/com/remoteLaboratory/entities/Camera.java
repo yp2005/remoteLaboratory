@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
@@ -90,6 +89,12 @@ public class Camera {
     @ApiModelProperty(value = "是否强制rtsp一开始就使用tcp方式 0-否 1-是")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer forceTcp;
+
+    @Column(length = 10)
+    @ApiModelProperty(value = "是否被设备绑定 0-否 1-是")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
+    private Integer bindStatus;
 
     @Column(updatable = false)
     @ApiModelProperty(value = "创建时间",hidden = true)
@@ -222,6 +227,14 @@ public class Camera {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public Integer getBindStatus() {
+        return bindStatus;
+    }
+
+    public void setBindStatus(Integer bindStatus) {
+        this.bindStatus = bindStatus;
     }
 
     public interface Validation{}

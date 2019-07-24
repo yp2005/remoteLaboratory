@@ -70,17 +70,21 @@ public class DeviceOrderJob implements Job {
                 if(CollectionUtils.isNotEmpty(deviceList)) {
                     for(Device device : deviceList) {
                         calendar.set(Calendar.HOUR_OF_DAY, deviceOpenTimeStartValue);
-                        for(int j = deviceOpenTimeStartValue; j < deviceOpenTimeEndValue; j++) {
+                        int j = deviceOpenTimeStartValue;
+                        while (true) {
                             DeviceOrder deviceOrder = new DeviceOrder();
+                            deviceOrder.setStartHour(j);
+                            j += device.getDuration();
+                            if(j > deviceOpenTimeEndValue) break;
+                            deviceOrder.setEndHour(j);
                             deviceOrder.setYear(year);
                             deviceOrder.setMonth(month);
                             deviceOrder.setDay(day);
-                            deviceOrder.setHour(j);
                             deviceOrder.setDeviceId(device.getId());
                             deviceOrder.setDeviceName(device.getName());
                             deviceOrder.setStartTime(calendar.getTime());
                             deviceOrder.setStatus(0);
-                            calendar.set(Calendar.HOUR_OF_DAY, j + 1);
+                            calendar.set(Calendar.HOUR_OF_DAY, j);
                             deviceOrder.setEndTime(calendar.getTime());
                             deviceOrder = this.deviceOrderRepository.save(deviceOrder);
                         }

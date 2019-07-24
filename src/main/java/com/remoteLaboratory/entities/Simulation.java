@@ -11,15 +11,15 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
- * 设备
+ * 仿真实验
  *
  * @Author: yupeng
  */
 
 @Entity
-@Table(name = "rl_device")
-@ApiModel(value = "设备表")
-public class Device {
+@Table(name = "rl_simulation")
+@ApiModel(value = "仿真实验")
+public class Simulation {
     @Id
     @Column(length = 10, nullable = false)
     @ApiModelProperty(value = "ID", hidden = true)
@@ -33,17 +33,6 @@ public class Device {
     @NotNull
     private String name;
 
-    @Column(length = 10)
-    @ApiModelProperty(value = "类型 1-在线实验设备 2-实时数据设备")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotNull
-    private Integer type;
-
-    @Column(length = 10)
-    @ApiModelProperty(value = "实验时长(设备预约时长) 单位：小时")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Integer duration;
-
     @Lob
     @ApiModelProperty(value = "图片")
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -51,40 +40,26 @@ public class Device {
     private String picture;
 
     @Column(length = 255)
-    @ApiModelProperty(value = "和第三方系统资源进行关联的key")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String relationKey;
-
-    @Column(length = 255)
-    @ApiModelProperty(value = "在线实验设备需要嵌入的实验页面url")
+    @ApiModelProperty(value = "实验页面url")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String pageUrl;
-
-    @Column(length = 255)
-    @ApiModelProperty(value = "数据类型：实时数据设备根据数据类型使用不同的展示页面")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String dataType;
-
-    @Column(length = 255)
-    @ApiModelProperty(value = "资源类型 如：示波器")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotNull
-    private String resourceClass;
-
-    @Column(length = 10)
-    @ApiModelProperty(value = "关联摄像头ID")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Integer cameraId;
-
-    @Column(length = 255)
-    @ApiModelProperty(value = "关联摄像头名称")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String cameraName;
 
     @Column(length = 3000)
     @ApiModelProperty(value = "描述")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String description;
+
+    @Column(length = 10)
+    @ApiModelProperty(value = "所属课程ID")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
+    private Integer courseId;
+
+    @Column(length = 255)
+    @ApiModelProperty(value = "所属课程名称")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
+    private String courseName;
 
     @Column(updatable = false)
     @ApiModelProperty(value = "创建时间",hidden = true)
@@ -115,36 +90,12 @@ public class Device {
         this.name = name;
     }
 
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
-    }
-
     public String getPageUrl() {
         return pageUrl;
     }
 
     public void setPageUrl(String pageUrl) {
         this.pageUrl = pageUrl;
-    }
-
-    public String getDataType() {
-        return dataType;
-    }
-
-    public void setDataType(String dataType) {
-        this.dataType = dataType;
-    }
-
-    public String getResourceClass() {
-        return resourceClass;
-    }
-
-    public void setResourceClass(String resourceClass) {
-        this.resourceClass = resourceClass;
     }
 
     public Date getCreateTime() {
@@ -163,30 +114,6 @@ public class Device {
         this.updateTime = updateTime;
     }
 
-    public String getRelationKey() {
-        return relationKey;
-    }
-
-    public void setRelationKey(String relationKey) {
-        this.relationKey = relationKey;
-    }
-
-    public Integer getCameraId() {
-        return cameraId;
-    }
-
-    public void setCameraId(Integer cameraId) {
-        this.cameraId = cameraId;
-    }
-
-    public String getCameraName() {
-        return cameraName;
-    }
-
-    public void setCameraName(String cameraName) {
-        this.cameraName = cameraName;
-    }
-
     public String getPicture() {
         return picture;
     }
@@ -203,12 +130,20 @@ public class Device {
         this.description = description;
     }
 
-    public Integer getDuration() {
-        return duration;
+    public Integer getCourseId() {
+        return courseId;
     }
 
-    public void setDuration(Integer duration) {
-        this.duration = duration;
+    public void setCourseId(Integer courseId) {
+        this.courseId = courseId;
+    }
+
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
     }
 
     public interface Validation{}

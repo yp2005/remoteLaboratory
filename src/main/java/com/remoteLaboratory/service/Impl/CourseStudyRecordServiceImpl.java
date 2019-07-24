@@ -46,6 +46,8 @@ public class CourseStudyRecordServiceImpl implements CourseStudyRecordService {
 
     private CourseService courseService;
 
+    private CourseRepository courseRepository;
+
     private ChapterRepository chapterRepository;
 
     private SectionRepository sectionRepository;
@@ -61,6 +63,7 @@ public class CourseStudyRecordServiceImpl implements CourseStudyRecordService {
                                         SectionRepository sectionRepository,
                                         ChapterStudyRecordRepository chapterStudyRecordRepository,
                                         SectionStudyRecordRepository sectionStudyRecordRepository,
+                                        CourseRepository courseRepository,
                                         CourseService courseService) {
         this.courseStudyRecordRepository = courseStudyRecordRepository;
         this.logRecordRepository = logRecordRepository;
@@ -69,6 +72,7 @@ public class CourseStudyRecordServiceImpl implements CourseStudyRecordService {
         this.sectionRepository = sectionRepository;
         this.chapterStudyRecordRepository = chapterStudyRecordRepository;
         this.sectionStudyRecordRepository = sectionStudyRecordRepository;
+        this.courseRepository = courseRepository;
     }
 
     @Override
@@ -87,10 +91,13 @@ public class CourseStudyRecordServiceImpl implements CourseStudyRecordService {
             }
             courseStudyRecord = new CourseStudyRecord();
             courseStudyRecord.setStudied(0.0);
+            courseStudyRecord.setScore(0.0);
             courseStudyRecord.setUserId(user.getId());
             courseStudyRecord.setUserName(StringUtils.isEmpty(user.getPersonName()) ? user.getUserName() : user.getPersonName());
             courseStudyRecord.setCourseId(course.getId());
             courseStudyRecord.setCourseName(course.getName());
+            courseStudyRecord.setCourseMainImg(course.getMainImg());
+            courseStudyRecord.setCourseIntroduction(course.getIntroduction());
             courseStudyRecord = this.courseStudyRecordRepository.save(courseStudyRecord);
             CourseStudyRecordPublicVo courseStudyRecordPublicVo = new CourseStudyRecordPublicVo(courseStudyRecord);
             List<ChapterStudyRecordPublicVo> chapterStudyRecordPublicVoList = new ArrayList<>();
@@ -142,6 +149,8 @@ public class CourseStudyRecordServiceImpl implements CourseStudyRecordService {
                 courseStudyRecord = this.courseStudyRecordRepository.save(courseStudyRecord);
             }
             courseStudyRecordPublicVo.setChapterStudyRecordPublicVoList(chapterStudyRecordPublicVoList);
+            course.setStudentNumber(course.getStudentNumber() + 1);
+            course = this.courseRepository.save(course);
             return courseStudyRecordPublicVo;
         }
         else {
@@ -180,6 +189,9 @@ public class CourseStudyRecordServiceImpl implements CourseStudyRecordService {
             courseStudied = 1.0;
         }
         courseStudyRecord.setStudied(courseStudied);
+        if(courseStudied.equals(1.0)) { // TODO 计算课程总分
+
+        }
         courseStudyRecord = this.courseStudyRecordRepository.save(courseStudyRecord);
     }
 

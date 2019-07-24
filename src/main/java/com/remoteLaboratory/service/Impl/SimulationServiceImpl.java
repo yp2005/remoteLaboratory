@@ -1,17 +1,17 @@
 package com.remoteLaboratory.service.Impl;
 
-import com.remoteLaboratory.entities.Camera;
-import com.remoteLaboratory.entities.Device;
+import com.remoteLaboratory.entities.Simulation;
+import com.remoteLaboratory.entities.Course;
 import com.remoteLaboratory.entities.LogRecord;
 import com.remoteLaboratory.entities.User;
-import com.remoteLaboratory.repositories.CameraRepository;
-import com.remoteLaboratory.repositories.DeviceRepository;
+import com.remoteLaboratory.repositories.SimulationRepository;
 import com.remoteLaboratory.repositories.LogRecordRepository;
-import com.remoteLaboratory.service.DeviceService;
+import com.remoteLaboratory.service.SimulationService;
+import com.remoteLaboratory.service.CourseService;
+import com.remoteLaboratory.utils.Constants;
 import com.remoteLaboratory.utils.MySpecification;
 import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.utils.message.Messages;
-import com.remoteLaboratory.vo.BindCameraInput;
 import com.remoteLaboratory.vo.ListInput;
 import com.remoteLaboratory.vo.ListOutput;
 import org.apache.commons.lang.StringUtils;
@@ -29,81 +29,59 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 设备服务接口实现
+ * 仿真实验服务接口实现
  *
  * @Author: yupeng
  */
 
 @Service
 @Transactional
-public class DeviceServiceImpl implements DeviceService {
-    private static Logger log = LoggerFactory.getLogger(DeviceServiceImpl.class);
+public class SimulationServiceImpl implements SimulationService {
+    private static Logger log = LoggerFactory.getLogger(SimulationServiceImpl.class);
 
-    private DeviceRepository deviceRepository;
+    private SimulationRepository simulationRepository;
 
     private LogRecordRepository logRecordRepository;
 
-    private CameraRepository cameraRepository;
+    private CourseService courseService;
 
     @Autowired
-    public DeviceServiceImpl(DeviceRepository deviceRepository,
-                             CameraRepository cameraRepository,
-                             LogRecordRepository logRecordRepository) {
-        this.deviceRepository = deviceRepository;
+    public SimulationServiceImpl(SimulationRepository simulationRepository, LogRecordRepository logRecordRepository, CourseService courseService) {
+        this.simulationRepository = simulationRepository;
         this.logRecordRepository = logRecordRepository;
-        this.cameraRepository = cameraRepository;
+        this.courseService = courseService;
     }
 
     @Override
-    public Device add(Device device) throws BusinessException {
-        device = deviceRepository.save(device);
-        return device;
+    public Simulation add(Simulation simulation) throws BusinessException {
+        simulation = simulationRepository.save(simulation);
+        return simulation;
     }
 
     @Override
-    public Device update(Device device) throws BusinessException {
-        device = deviceRepository.save(device);
-        return device;
-    }
-
-    @Override
-    public Device bindCamera(BindCameraInput bindCameraInput) throws BusinessException {
-        Camera camera = this.cameraRepository.findOne(bindCameraInput.getCameraId());
-        if(bindCameraInput.getStatus().equals(1) && camera.getBindStatus().equals(1)) {
-            throw new BusinessException(Messages.CODE_40010, "摄像头已被绑定");
-        }
-        Device device = this.deviceRepository.findOne(bindCameraInput.getDeviceId());
-        if(bindCameraInput.getStatus().equals(1)) {
-            if(device.getCameraId() != null) {
-                throw new BusinessException(Messages.CODE_40010, "设备已绑定摄像头");
-            }
-            device.setCameraId(camera.getId());
-            device.setCameraName(camera.getName());
-        }
-        else {
-            device.setCameraId(null);
-            device.setCameraName(null);
-        }
-        device = this.deviceRepository.save(device);
-        camera.setBindStatus(bindCameraInput.getStatus());
-        camera = this.cameraRepository.save(camera);
-        return device;
+    public Simulation update(Simulation simulation) throws BusinessException {
+        simulation = simulationRepository.save(simulation);
+        return simulation;
     }
 
     @Override
     public void delete(List<Integer> ids, User loginUser) throws BusinessException {
         List<LogRecord> logRecords = new ArrayList<>();
         for (int id : ids) {
-            Device device = deviceRepository.findOne(id);
-            if (device != null) {
-                deviceRepository.delete(id);
+            Simulation simulation = this.simulationRepository.findOne(id);
+            if(simulation != null) {
+                Course course = this.courseService.get(simulation.getCourseId());
+                if(!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
+                    throw new BusinessException(Messages.CODE_50200);
+                }
+                simulationRepository.delete(id);
                 LogRecord logRecord = new LogRecord();
                 logRecord.setType("删除");
-                logRecord.setObject("设备");
+                logRecord.setObject("仿真实验");
                 logRecord.setUserId(loginUser.getId());
                 logRecord.setUserName(StringUtils.isEmpty(loginUser.getPersonName()) ? loginUser.getUserName() : loginUser.getPersonName());
-                logRecord.setObjectId(device.getId());
-                logRecord.setObjectName(device.getName());
+                logRecord.setObjectId(simulation.getId());
+                logRecord.setObjectName(simulation.getName());
                 logRecords.add(logRecord);
             }
         }
@@ -125,13 +103,13 @@ public class DeviceServiceImpl implements DeviceService {
         }
         ListOutput listOutput = new ListOutput();
         if (pageable != null) {
-            Page<Device> list = deviceRepository.findAll(new MySpecification<Device>(listInput.getSearchParas()), pageable);
+            Page<Simulation> list = simulationRepository.findAll(new MySpecification<Simulation>(listInput.getSearchParas()), pageable);
             listOutput.setPage(listInput.getPage());
             listOutput.setPageSize(listInput.getPageSize());
             listOutput.setTotalNum((int) list.getTotalElements());
             listOutput.setList(list.getContent());
         } else {
-            List<Device> list = deviceRepository.findAll(new MySpecification<Device>(listInput.getSearchParas()));
+            List<Simulation> list = simulationRepository.findAll(new MySpecification<Simulation>(listInput.getSearchParas()));
             listOutput.setTotalNum(list.size());
             listOutput.setList(list);
         }
@@ -139,11 +117,12 @@ public class DeviceServiceImpl implements DeviceService {
     }
 
     @Override
-    public Device get(Integer id) throws BusinessException {
-        Device device = deviceRepository.findOne(id);
-        if (device == null) {
+    public Simulation get(Integer id) throws BusinessException {
+        Simulation simulation = simulationRepository.findOne(id);
+        if (simulation == null) {
             throw new BusinessException(Messages.CODE_20001);
         }
-        return device;
+        return simulation;
     }
+
 }

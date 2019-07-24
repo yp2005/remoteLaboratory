@@ -60,6 +60,8 @@ public class CourseController {
             course.setTeacherName(StringUtils.isEmpty(loginUser.getPersonName()) ? loginUser.getUserName() : loginUser.getPersonName());
         }
         course.setStatus(0);
+        course.setStudentNumber(0);
+        course.setSubjectNumber(0);
         course = courseService.add(course);
         CommonResponse commonResponse = CommonResponse.getInstance(course);
         LogUtil.add(this.logRecordRepository, "添加", "课程", loginUser, course.getId(), course.getName());
@@ -94,9 +96,6 @@ public class CourseController {
         Course course = this.courseService.get(courseId);
         if(!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
             throw new BusinessException(Messages.CODE_50200);
-        }
-        if(status.equals("1")) { // TODO 检查课程是否完成配置
-
         }
         course.setStatus(status);
         course = courseService.update(course);

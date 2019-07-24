@@ -81,7 +81,6 @@ public class CourseDeviceServiceImpl implements CourseDeviceService {
                 if(!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
                     throw new BusinessException(Messages.CODE_50200);
                 }
-                // TODO 判断设备是否已经被预约
                 courseDeviceRepository.delete(id);
                 LogRecord logRecord = new LogRecord();
                 logRecord.setType("删除");

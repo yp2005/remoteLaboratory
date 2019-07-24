@@ -1,6 +1,7 @@
 package com.remoteLaboratory.service.Impl;
 
 import com.remoteLaboratory.entities.*;
+import com.remoteLaboratory.repositories.CourseRepository;
 import com.remoteLaboratory.repositories.ReplyRepository;
 import com.remoteLaboratory.repositories.SubjectRepository;
 import com.remoteLaboratory.repositories.LogRecordRepository;
@@ -45,16 +46,25 @@ public class SubjectServiceImpl implements SubjectService {
 
     private CourseService courseService;
 
+    private CourseRepository courseRepository;
+
     @Autowired
-    public SubjectServiceImpl(SubjectRepository subjectRepository, LogRecordRepository logRecordRepository, CourseService courseService) {
+    public SubjectServiceImpl(SubjectRepository subjectRepository,
+                              LogRecordRepository logRecordRepository,
+                              CourseRepository courseRepository,
+                              CourseService courseService) {
         this.subjectRepository = subjectRepository;
         this.logRecordRepository = logRecordRepository;
         this.courseService = courseService;
+        this.courseRepository = courseRepository;
     }
 
     @Override
     public Subject add(Subject subject) throws BusinessException {
         subject = subjectRepository.save(subject);
+        Course course = this.courseService.get(subject.getCourseId());
+        course.setSubjectNumber(course.getSubjectNumber() + 1);
+        course = this.courseRepository.save(course);
         return subject;
     }
 

@@ -98,6 +98,12 @@ public class TestExerciseInstance implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Double scored;
 
+    @Column(length = 10)
+    @ApiModelProperty(value = "状态 1-正确 0-错误")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
+    private Integer status;
+
     @Column(updatable = false)
     @ApiModelProperty(value = "创建时间", hidden = true)
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -223,14 +229,20 @@ public class TestExerciseInstance implements Serializable {
         this.answer = answer;
     }
 
-    @JsonIgnore
     public String getCorrectAnswer() {
         return correctAnswer;
     }
 
-    @JsonProperty
     public void setCorrectAnswer(String correctAnswer) {
         this.correctAnswer = correctAnswer;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
     public interface Validation{};

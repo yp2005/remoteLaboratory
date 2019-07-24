@@ -302,8 +302,8 @@ public class TestInstanceServiceImpl implements TestInstanceService {
         testInstancePublicVo = this.calculateScore(testInstancePublicVo);
         testInstancePublicVo.setStatus(status);
         testInstancePublicVo = this.update(testInstancePublicVo);
+        SectionStudyRecord sectionStudyRecord = this.sectionStudyRecordRepository.findBySectionIdAndUserId(id, user.getId());
         if(status.equals(1)) {
-            SectionStudyRecord sectionStudyRecord = this.sectionStudyRecordRepository.findBySectionIdAndUserId(id, user.getId());
             if(sectionStudyRecord != null) {
                 if(!sectionStudyRecord.getTestStatus().equals(1)) {
                     sectionStudyRecord.setTestStatus(1); // 状态设置为已完成
@@ -320,6 +320,9 @@ public class TestInstanceServiceImpl implements TestInstanceService {
                 sectionStudyRecord = this.sectionStudyRecordRepository.save(sectionStudyRecord);
                 this.courseStudyRecordService.update(sectionStudyRecord.getCourseStudyRecordId());
             }
+        }
+        else {
+            this.courseStudyRecordService.update(sectionStudyRecord.getCourseStudyRecordId());
         }
         return testInstancePublicVo;
     }
@@ -341,8 +344,10 @@ public class TestInstanceServiceImpl implements TestInstanceService {
                             if (testExerciseInstance.getAnswer() != null && testExerciseInstance.getAnswer().equals(testExerciseInstance.getCorrectAnswer())) {
                                 testExerciseInstance.setScored(testExerciseInstance.getScore());
                                 partScore += testExerciseInstance.getScored();
+                                testExerciseInstance.setStatus(1);
                             } else {
                                 testExerciseInstance.setScored(0.0);
+                                testExerciseInstance.setStatus(0);
                             }
                         }
                     }

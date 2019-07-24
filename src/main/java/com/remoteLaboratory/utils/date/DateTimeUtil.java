@@ -512,7 +512,7 @@ public class DateTimeUtil {
     }
 
     /**
-     * todo 通过字典设置读取
+     * 通过字典设置读取
      *
      * @param date
      * @return

@@ -3,6 +3,7 @@ package com.remoteLaboratory.service;
 import com.remoteLaboratory.entities.Device;
 import com.remoteLaboratory.entities.User;
 import com.remoteLaboratory.utils.exception.BusinessException;
+import com.remoteLaboratory.vo.BindCameraInput;
 import com.remoteLaboratory.vo.ListInput;
 import com.remoteLaboratory.vo.ListOutput;
 
@@ -28,6 +29,13 @@ public interface DeviceService {
      * @return
      */
     public Device update(Device device) throws BusinessException;
+
+    /**
+     * 绑定摄像头
+     * @param bindCameraInput
+     * @return
+     */
+    public Device bindCamera(BindCameraInput bindCameraInput) throws BusinessException;
 
     /**
      * 删除设备信息

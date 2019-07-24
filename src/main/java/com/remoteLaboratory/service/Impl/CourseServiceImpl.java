@@ -70,7 +70,6 @@ public class CourseServiceImpl implements CourseService {
                     throw new BusinessException(Messages.CODE_50200);
                 }
                 courseRepository.delete(id);
-                // TODO 删除关联的各种对象
                 LogRecord logRecord = new LogRecord();
                 logRecord.setType("删除");
                 logRecord.setObject("课程");

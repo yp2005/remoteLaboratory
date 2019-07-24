@@ -35,10 +35,16 @@ public class Course implements Serializable {
     private String name;
 
     @Lob
-    @ApiModelProperty(value = "logo")
+    @ApiModelProperty(value = "logo(首页显示)")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotNull
     private String logo;
+
+    @Lob
+    @ApiModelProperty(value = "主图(列表、详情、推荐等显示)")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
+    private String mainImg;
 
     @Column(length = 10)
     @ApiModelProperty(value = "老师ID")
@@ -53,6 +59,16 @@ public class Course implements Serializable {
     private String teacherName;
 
     @Lob
+    @ApiModelProperty(value = "评分标准")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String standard;
+
+    @Column(length = 2000)
+    @ApiModelProperty(value = "简介")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String introduction;
+
+    @Lob
     @ApiModelProperty(value = "描述")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String description;
@@ -61,6 +77,16 @@ public class Course implements Serializable {
     @ApiModelProperty(value = "状态 0-草稿(即将开始) 1-发布(进行中) 2-结束")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer status;
+
+    @Column(length = 10)
+    @ApiModelProperty(value = "已参加学习人数")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer studentNumber;
+
+    @Column(length = 10)
+    @ApiModelProperty(value = "评价数(讨论区主题数量)")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer subjectNumber;
 
     @Column(updatable = false)
     @ApiModelProperty(value = "创建时间", hidden = true)
@@ -145,6 +171,46 @@ public class Course implements Serializable {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getMainImg() {
+        return mainImg;
+    }
+
+    public void setMainImg(String mainImg) {
+        this.mainImg = mainImg;
+    }
+
+    public String getIntroduction() {
+        return introduction;
+    }
+
+    public void setIntroduction(String introduction) {
+        this.introduction = introduction;
+    }
+
+    public String getStandard() {
+        return standard;
+    }
+
+    public void setStandard(String standard) {
+        this.standard = standard;
+    }
+
+    public Integer getStudentNumber() {
+        return studentNumber;
+    }
+
+    public void setStudentNumber(Integer studentNumber) {
+        this.studentNumber = studentNumber;
+    }
+
+    public Integer getSubjectNumber() {
+        return subjectNumber;
+    }
+
+    public void setSubjectNumber(Integer subjectNumber) {
+        this.subjectNumber = subjectNumber;
     }
 
     public interface Validation{};

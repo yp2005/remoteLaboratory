@@ -10,6 +10,7 @@ import com.remoteLaboratory.utils.Constants;
 import com.remoteLaboratory.utils.LogUtil;
 import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.utils.message.Messages;
+import com.remoteLaboratory.vo.BindCameraInput;
 import com.remoteLaboratory.vo.ListInput;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -69,6 +70,16 @@ public class DeviceController {
         device = deviceService.update(device);
         CommonResponse commonResponse = CommonResponse.getInstance(device);
         LogUtil.add(this.logRecordRepository, "修改", "设备", loginUser, device.getId(), device.getName());
+        return commonResponse;
+    }
+
+    @PutMapping(path = "/bindCamera")
+    @ApiOperation(value = "绑定摄像头", notes = "绑定摄像头接口")
+    @LoginRequired(adminRequired = "1")
+    public CommonResponse bindCamera(@Validated({Device.Validation.class}) @RequestBody BindCameraInput bindCameraInput, @ApiIgnore User loginUser) throws BusinessException {
+        Device device = deviceService.bindCamera(bindCameraInput);
+        CommonResponse commonResponse = CommonResponse.getInstance(device);
+        LogUtil.add(this.logRecordRepository, "绑定摄像头", "设备", loginUser, device.getId(), device.getName());
         return commonResponse;
     }
 

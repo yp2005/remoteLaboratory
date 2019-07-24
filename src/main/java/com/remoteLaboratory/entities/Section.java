@@ -47,12 +47,6 @@ public class Section implements Serializable {
     private String content;
 
     @Column(length = 10)
-    @ApiModelProperty(value = "类型 1-图文 2-pdf 3-视频")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotNull
-    private Integer type;
-
-    @Column(length = 10)
     @ApiModelProperty(value = "所属课程ID")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotNull
@@ -165,14 +159,6 @@ public class Section implements Serializable {
 
     public void setChapterTitle(String chapterTitle) {
         this.chapterTitle = chapterTitle;
-    }
-
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
     }
 
     public Date getCreateTime() {

@@ -40,6 +40,17 @@ public class CourseStudyRecord implements Serializable {
     @NotNull
     private String courseName;
 
+    @Lob
+    @ApiModelProperty(value = "课程主图")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
+    private String courseMainImg;
+
+    @Column(length = 2000)
+    @ApiModelProperty(value = "课程简介")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String courseIntroduction;
+
     @Column(length = 10)
     @ApiModelProperty(value = "用户ID")
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -54,6 +65,12 @@ public class CourseStudyRecord implements Serializable {
     @ApiModelProperty(value = "已学习进度 如：0.5=50%")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Double studied;
+
+    @Column(length = 20)
+    @ApiModelProperty(value = "课程得分")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
+    private Double score;
 
     @Column(length = 10)
     @ApiModelProperty(value = "正在学习章ID")
@@ -208,6 +225,30 @@ public class CourseStudyRecord implements Serializable {
 
     public void setSectionTitle(String sectionTitle) {
         this.sectionTitle = sectionTitle;
+    }
+
+    public String getCourseMainImg() {
+        return courseMainImg;
+    }
+
+    public void setCourseMainImg(String courseMainImg) {
+        this.courseMainImg = courseMainImg;
+    }
+
+    public String getCourseIntroduction() {
+        return courseIntroduction;
+    }
+
+    public void setCourseIntroduction(String courseIntroduction) {
+        this.courseIntroduction = courseIntroduction;
+    }
+
+    public Double getScore() {
+        return score;
+    }
+
+    public void setScore(Double score) {
+        this.score = score;
     }
 
     public interface Validation{};

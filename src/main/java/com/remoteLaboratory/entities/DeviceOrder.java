@@ -76,9 +76,14 @@ public class DeviceOrder implements Serializable {
     private Integer day;
 
     @Column(length = 10)
-    @ApiModelProperty(value = "时")
+    @ApiModelProperty(value = "开始时")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Integer hour;
+    private Integer startHour;
+
+    @Column(length = 10)
+    @ApiModelProperty(value = "结束时")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer endHour;
 
     @Column(length = 10)
     @ApiModelProperty(value = "状态 0-未被预约 1-已被预约")
@@ -202,12 +207,20 @@ public class DeviceOrder implements Serializable {
         this.day = day;
     }
 
-    public Integer getHour() {
-        return hour;
+    public Integer getStartHour() {
+        return startHour;
     }
 
-    public void setHour(Integer hour) {
-        this.hour = hour;
+    public void setStartHour(Integer startHour) {
+        this.startHour = startHour;
+    }
+
+    public Integer getEndHour() {
+        return endHour;
+    }
+
+    public void setEndHour(Integer endHour) {
+        this.endHour = endHour;
     }
 
     public interface Validation{};
