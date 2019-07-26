@@ -7,6 +7,7 @@ import com.remoteLaboratory.repositories.UserRepository;
 import com.remoteLaboratory.utils.Constants;
 import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.utils.message.Messages;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,9 +51,9 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         // 判断接口是否需要登录
         LoginRequired classAnnotation = handlerMethod.getBeanType().getAnnotation(LoginRequired.class);
         LoginRequired methodAnnotation = handlerMethod.getMethod().getAnnotation(LoginRequired.class);
+        String token = request.getHeader("Authorization");  // 从 http 请求头中取出 token
         // 有 @LoginRequired 注解，需要认证
         if (classAnnotation != null || methodAnnotation != null) {
-            String token = request.getHeader("Authorization");  // 从 http 请求头中取出 token
             if (token == null) {
                 throw new BusinessException(Messages.CODE_50401);
             } else {
@@ -86,6 +87,16 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                 }
             }
 
+        }
+        else if(StringUtils.isNotEmpty(token)) {
+            token = token.replace("Bearer ", "");
+            String userStr = redisClient.get(Constants.USER_TOKEN + token);
+            if (userStr != null) {
+                User user = JSONObject.parseObject(userStr, User.class);
+                user.setToken(token);
+                request.setAttribute("loginUser", user);
+                redisClient.set(Constants.USER_TOKEN + token, userStr, Constants.TOKEN_EXPIRE_TIME);
+            }
         }
         return true;
     }

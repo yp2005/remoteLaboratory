@@ -7,13 +7,15 @@ import org.apache.commons.lang.StringUtils;
 
 public class LogUtil {
     public static void add(LogRecordRepository logRecordRepository, String type, String object, User user, Integer objectId, String objectName) {
-        LogRecord logRecord = new LogRecord();
-        logRecord.setType(type);
-        logRecord.setObject(object);
-        logRecord.setUserId(user.getId());
-        logRecord.setUserName(StringUtils.isEmpty(user.getPersonName()) ? user.getUserName() : user.getPersonName());
-        logRecord.setObjectId(objectId);
-        logRecord.setObjectName(objectName);
-        logRecordRepository.save(logRecord);
+        if(user != null) {
+            LogRecord logRecord = new LogRecord();
+            logRecord.setType(type);
+            logRecord.setObject(object);
+            logRecord.setUserId(user.getId());
+            logRecord.setUserName(StringUtils.isEmpty(user.getPersonName()) ? user.getUserName() : user.getPersonName());
+            logRecord.setObjectId(objectId);
+            logRecord.setObjectName(objectName);
+            logRecordRepository.save(logRecord);
+        }
     }
 }
