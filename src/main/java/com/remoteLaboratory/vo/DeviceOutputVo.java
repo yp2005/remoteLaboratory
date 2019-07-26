@@ -27,7 +27,6 @@ public class DeviceOutputVo extends Device {
         this.setName(device.getName());
         this.setUpdateTime(device.getUpdateTime());
         this.setCameraId(device.getCameraId());
-        this.setDataType(device.getDataType());
         this.setPageUrl(device.getPageUrl());
         this.setRelationKey(device.getRelationKey());
         this.setResourceClass(device.getResourceClass());

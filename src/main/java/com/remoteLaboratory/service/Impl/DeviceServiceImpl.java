@@ -1,12 +1,10 @@
 package com.remoteLaboratory.service.Impl;
 
-import com.remoteLaboratory.entities.Camera;
-import com.remoteLaboratory.entities.Device;
-import com.remoteLaboratory.entities.LogRecord;
-import com.remoteLaboratory.entities.User;
+import com.remoteLaboratory.entities.*;
 import com.remoteLaboratory.repositories.CameraRepository;
 import com.remoteLaboratory.repositories.DeviceRepository;
 import com.remoteLaboratory.repositories.LogRecordRepository;
+import com.remoteLaboratory.repositories.SignalChannelRepository;
 import com.remoteLaboratory.service.DeviceService;
 import com.remoteLaboratory.utils.MySpecification;
 import com.remoteLaboratory.utils.exception.BusinessException;
@@ -45,13 +43,17 @@ public class DeviceServiceImpl implements DeviceService {
 
     private CameraRepository cameraRepository;
 
+    private SignalChannelRepository signalChannelRepository;
+
     @Autowired
     public DeviceServiceImpl(DeviceRepository deviceRepository,
                              CameraRepository cameraRepository,
+                             SignalChannelRepository signalChannelRepository,
                              LogRecordRepository logRecordRepository) {
         this.deviceRepository = deviceRepository;
         this.logRecordRepository = logRecordRepository;
         this.cameraRepository = cameraRepository;
+        this.signalChannelRepository = signalChannelRepository;
     }
 
     @Override
@@ -143,6 +145,9 @@ public class DeviceServiceImpl implements DeviceService {
         Device device = deviceRepository.findOne(id);
         if (device == null) {
             throw new BusinessException(Messages.CODE_20001);
+        }
+        if(device.getType().equals(2)) { // 信号检测设备查询信道
+            device.setSignalChannelList(this.signalChannelRepository.findByDeviceId(id));
         }
         return device;
     }

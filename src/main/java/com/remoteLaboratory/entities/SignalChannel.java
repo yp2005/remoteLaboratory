@@ -9,18 +9,17 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
-import java.util.List;
 
 /**
- * 设备
+ * 信号通道
  *
  * @Author: yupeng
  */
 
 @Entity
-@Table(name = "rl_device")
-@ApiModel(value = "设备表")
-public class Device {
+@Table(name = "rl_signal_channel")
+@ApiModel(value = "信号通道表")
+public class SignalChannel {
     @Id
     @Column(length = 10, nullable = false)
     @ApiModelProperty(value = "ID", hidden = true)
@@ -34,17 +33,6 @@ public class Device {
     @NotNull
     private String name;
 
-    @Column(length = 10)
-    @ApiModelProperty(value = "类型 1-在线实验设备 2-实时数据设备")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotNull
-    private Integer type;
-
-    @Column(length = 10)
-    @ApiModelProperty(value = "实验时长(设备预约时长) 单位：小时")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Integer duration;
-
     @Lob
     @ApiModelProperty(value = "图片")
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -52,30 +40,24 @@ public class Device {
     private String picture;
 
     @Column(length = 255)
-    @ApiModelProperty(value = "和第三方系统资源进行关联的key")
+    @ApiModelProperty(value = "信道编号")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String relationKey;
+    private String channelId;
 
     @Column(length = 255)
-    @ApiModelProperty(value = "在线实验设备需要嵌入的实验页面url")
+    @ApiModelProperty(value = "数据类型：实时数据信号通道根据数据类型使用不同的展示页面")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String pageUrl;
-
-    @Column(length = 255)
-    @ApiModelProperty(value = "资源类型 如：示波器")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotNull
-    private String resourceClass;
+    private String dataType;
 
     @Column(length = 10)
-    @ApiModelProperty(value = "关联摄像头ID")
+    @ApiModelProperty(value = "所属设备ID")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Integer cameraId;
+    private Integer deviceId;
 
     @Column(length = 255)
-    @ApiModelProperty(value = "关联摄像头名称")
+    @ApiModelProperty(value = "所属设备名称")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String cameraName;
+    private String deviceName;
 
     @Column(length = 3000)
     @ApiModelProperty(value = "描述")
@@ -95,10 +77,6 @@ public class Device {
     @UpdateTimestamp
     private Date updateTime;
 
-    @Transient
-    @ApiModelProperty(value = "信号通道集合")
-    private List<SignalChannel> signalChannelList;
-
     public Integer getId() {
         return id;
     }
@@ -113,30 +91,6 @@ public class Device {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
-    }
-
-    public String getPageUrl() {
-        return pageUrl;
-    }
-
-    public void setPageUrl(String pageUrl) {
-        this.pageUrl = pageUrl;
-    }
-
-    public String getResourceClass() {
-        return resourceClass;
-    }
-
-    public void setResourceClass(String resourceClass) {
-        this.resourceClass = resourceClass;
     }
 
     public Date getCreateTime() {
@@ -155,30 +109,6 @@ public class Device {
         this.updateTime = updateTime;
     }
 
-    public String getRelationKey() {
-        return relationKey;
-    }
-
-    public void setRelationKey(String relationKey) {
-        this.relationKey = relationKey;
-    }
-
-    public Integer getCameraId() {
-        return cameraId;
-    }
-
-    public void setCameraId(Integer cameraId) {
-        this.cameraId = cameraId;
-    }
-
-    public String getCameraName() {
-        return cameraName;
-    }
-
-    public void setCameraName(String cameraName) {
-        this.cameraName = cameraName;
-    }
-
     public String getPicture() {
         return picture;
     }
@@ -195,20 +125,36 @@ public class Device {
         this.description = description;
     }
 
-    public Integer getDuration() {
-        return duration;
+    public String getChannelId() {
+        return channelId;
     }
 
-    public void setDuration(Integer duration) {
-        this.duration = duration;
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
     }
 
-    public List<SignalChannel> getSignalChannelList() {
-        return signalChannelList;
+    public String getDataType() {
+        return dataType;
     }
 
-    public void setSignalChannelList(List<SignalChannel> signalChannelList) {
-        this.signalChannelList = signalChannelList;
+    public void setDataType(String dataType) {
+        this.dataType = dataType;
+    }
+
+    public Integer getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(Integer deviceId) {
+        this.deviceId = deviceId;
+    }
+
+    public String getDeviceName() {
+        return deviceName;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
     }
 
     public interface Validation{}
