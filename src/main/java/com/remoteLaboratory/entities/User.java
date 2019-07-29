@@ -97,6 +97,12 @@ public class User implements Serializable {
     @NotNull
     private String userType;
 
+
+    @Column(length = 255)
+    @ApiModelProperty(value = "职称-老师填入")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String title;
+
     @Column(length = 255)
     @ApiModelProperty(value = "用户密码")
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -293,6 +299,14 @@ public class User implements Serializable {
 
     public void setForumForbidden(Integer forumForbidden) {
         this.forumForbidden = forumForbidden;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public interface Validation{};
