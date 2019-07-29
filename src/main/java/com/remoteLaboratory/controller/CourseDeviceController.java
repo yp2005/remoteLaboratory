@@ -12,6 +12,7 @@ import com.remoteLaboratory.utils.Constants;
 import com.remoteLaboratory.utils.LogUtil;
 import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.utils.message.Messages;
+import com.remoteLaboratory.vo.CourseDeviceListAddInput;
 import com.remoteLaboratory.vo.ListInput;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -67,6 +68,21 @@ public class CourseDeviceController {
         courseDevice = courseDeviceService.add(courseDevice);
         CommonResponse commonResponse = CommonResponse.getInstance(courseDevice);
         LogUtil.add(this.logRecordRepository, "添加", "课程设备", loginUser, courseDevice.getId(), courseDevice.getCourseName() + "->" + courseDevice.getDeviceName());
+        return commonResponse;
+    }
+
+    @PostMapping("/listAdd")
+    @ApiOperation(value = "批量添加课程设备", notes = "批量添加课程设备信息接口")
+    @LoginRequired(teacherRequired = "1")
+    public CommonResponse listAdd(@RequestBody CourseDeviceListAddInput courseDeviceListAddInput, @ApiIgnore User loginUser) throws BusinessException {
+        Course course = this.courseService.get(courseDeviceListAddInput.getCourseId());
+        if(!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
+            throw new BusinessException(Messages.CODE_50200);
+        }
+        courseDeviceListAddInput.setCourseName(course.getName());
+        List<CourseDevice> courseDeviceList = courseDeviceService.listAdd(courseDeviceListAddInput);
+        CommonResponse commonResponse = CommonResponse.getInstance(courseDeviceList);
+        LogUtil.add(this.logRecordRepository, "批量添加", "课程设备", loginUser, null, null);
         return commonResponse;
     }
 

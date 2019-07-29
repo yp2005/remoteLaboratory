@@ -58,6 +58,18 @@ public class CourseDevice implements Serializable {
     @NotNull
     private String resourceClass;
 
+    @Column(length = 10)
+    @ApiModelProperty(value = "类型 1-在线实验设备 2-实时数据设备")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
+    private Integer type;
+
+    @Lob
+    @ApiModelProperty(value = "图片")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
+    private String picture;
+
     @Column(updatable = false)
     @ApiModelProperty(value = "创建时间", hidden = true)
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -133,6 +145,22 @@ public class CourseDevice implements Serializable {
 
     public void setResourceClass(String resourceClass) {
         this.resourceClass = resourceClass;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
     }
 
     public interface Validation{};

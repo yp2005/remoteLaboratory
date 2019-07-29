@@ -1,18 +1,17 @@
 package com.remoteLaboratory.service.Impl;
 
-import com.remoteLaboratory.entities.Course;
-import com.remoteLaboratory.entities.CourseDevice;
-import com.remoteLaboratory.entities.LogRecord;
-import com.remoteLaboratory.entities.User;
+import com.remoteLaboratory.entities.*;
 import com.remoteLaboratory.repositories.CourseDeviceRepository;
 import com.remoteLaboratory.repositories.LogRecordRepository;
 import com.remoteLaboratory.service.CourseDeviceService;
 import com.remoteLaboratory.service.CourseService;
+import com.remoteLaboratory.service.DeviceService;
 import com.remoteLaboratory.utils.Constants;
 import com.remoteLaboratory.utils.LogUtil;
 import com.remoteLaboratory.utils.MySpecification;
 import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.utils.message.Messages;
+import com.remoteLaboratory.vo.CourseDeviceListAddInput;
 import com.remoteLaboratory.vo.ListInput;
 import com.remoteLaboratory.vo.ListOutput;
 import org.apache.commons.lang.StringUtils;
@@ -46,13 +45,17 @@ public class CourseDeviceServiceImpl implements CourseDeviceService {
 
     private CourseService courseService;
 
+    private DeviceService deviceService;
+
     @Autowired
     public CourseDeviceServiceImpl(CourseDeviceRepository courseDeviceRepository,
                                    CourseService courseService,
+                                   DeviceService deviceService,
                                    LogRecordRepository logRecordRepository) {
         this.courseDeviceRepository = courseDeviceRepository;
         this.logRecordRepository = logRecordRepository;
         this.courseService = courseService;
+        this.deviceService = deviceService;
     }
 
     @Override
@@ -63,6 +66,29 @@ public class CourseDeviceServiceImpl implements CourseDeviceService {
         }
         courseDevice = courseDeviceRepository.save(courseDevice);
         return courseDevice;
+    }
+
+    @Override
+    public List<CourseDevice> listAdd(CourseDeviceListAddInput courseDeviceListAddInput) throws BusinessException {
+        List<CourseDevice> courseDeviceList = new ArrayList<>();
+        for(int deviceId : courseDeviceListAddInput.getDeviceIds()) {
+            CourseDevice cd = this.courseDeviceRepository.findByCourseIdAndDeviceId(courseDeviceListAddInput.getCourseId(), deviceId);
+            if(cd != null) {
+                throw new BusinessException(Messages.CODE_40010, "该课程已存在该设备");
+            }
+            Device device = this.deviceService.get(deviceId);
+            CourseDevice courseDevice = new CourseDevice();
+            courseDevice.setCourseId(courseDeviceListAddInput.getCourseId());
+            courseDevice.setCourseName(courseDeviceListAddInput.getCourseName());
+            courseDevice.setDeviceId(deviceId);
+            courseDevice.setDeviceName(device.getName());
+            courseDevice.setResourceClass(device.getResourceClass());
+            courseDevice.setPicture(device.getPicture());
+            courseDevice.setType(device.getType());
+            courseDevice = this.courseDeviceRepository.save(courseDevice);
+            courseDeviceList.add(courseDevice);
+        }
+        return courseDeviceList;
     }
 
     @Override

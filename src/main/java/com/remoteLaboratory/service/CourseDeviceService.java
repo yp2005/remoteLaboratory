@@ -3,6 +3,7 @@ package com.remoteLaboratory.service;
 import com.remoteLaboratory.entities.CourseDevice;
 import com.remoteLaboratory.entities.User;
 import com.remoteLaboratory.utils.exception.BusinessException;
+import com.remoteLaboratory.vo.CourseDeviceListAddInput;
 import com.remoteLaboratory.vo.ListInput;
 import com.remoteLaboratory.vo.ListOutput;
 
@@ -21,7 +22,15 @@ public interface CourseDeviceService {
      * @return
      */
     public CourseDevice add(CourseDevice courseDevice) throws BusinessException;
-    
+
+    /**
+     * 批量添加课程设备信息
+     * @param courseDeviceListAddInput
+     * @return
+     */
+    public List<CourseDevice> listAdd(CourseDeviceListAddInput courseDeviceListAddInput) throws BusinessException;
+
+
     /**
      * 修改课程设备信息
      * @param courseDevice
