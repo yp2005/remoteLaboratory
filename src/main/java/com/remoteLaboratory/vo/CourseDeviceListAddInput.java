@@ -8,11 +8,11 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.List;
 
 /**
- * 课程设备添加接口
+ * 课程设备添加入参
  *
  * @Author: yupeng
  */
-@ApiModel(value = "答题入参")
+@ApiModel(value = "课程设备添加入参")
 public class CourseDeviceListAddInput {
     @ApiModelProperty(value = "课程ID")
     @JsonInclude(JsonInclude.Include.NON_NULL)
