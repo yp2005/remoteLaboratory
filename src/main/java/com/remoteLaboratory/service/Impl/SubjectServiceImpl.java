@@ -51,12 +51,14 @@ public class SubjectServiceImpl implements SubjectService {
     @Autowired
     public SubjectServiceImpl(SubjectRepository subjectRepository,
                               LogRecordRepository logRecordRepository,
+                              ReplyRepository replyRepository,
                               CourseRepository courseRepository,
                               CourseService courseService) {
         this.subjectRepository = subjectRepository;
         this.logRecordRepository = logRecordRepository;
         this.courseService = courseService;
         this.courseRepository = courseRepository;
+        this.replyRepository = replyRepository;
     }
 
     @Override
