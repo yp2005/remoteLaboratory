@@ -81,7 +81,7 @@ public class UserController {
     @ApiOperation(value = "老师列表", notes = "查询老师信息列表")
     public CommonResponse teacherList(@RequestBody ListInput listInput,  @ApiIgnore User loginUser) throws BusinessException {
         CommonResponse commonResponse = CommonResponse.getInstance();
-        commonResponse.setResult(userService.listByUserType(listInput, 1));
+        commonResponse.setResult(userService.listByUserType(listInput, Constants.USER_TYPE_TEACHER));
         LogUtil.add(this.logRecordRepository, "查询老师列表", "用户", loginUser, null, null);
         return commonResponse;
     }

@@ -112,7 +112,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ListOutput listByUserType(ListInput listInput, Integer userType) throws BusinessException {
+    public ListOutput listByUserType(ListInput listInput, String userType) throws BusinessException {
         SearchPara searchPara = new SearchPara();
         searchPara.setName("userType");
         searchPara.setOp("eq");

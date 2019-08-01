@@ -41,7 +41,7 @@ public interface UserService {
      * @param listInput
      * @return ListOutput
      */
-    public ListOutput listByUserType(ListInput listInput, Integer userType) throws BusinessException;
+    public ListOutput listByUserType(ListInput listInput, String userType) throws BusinessException;
 
     /**
      * 根据id获取用户信息
