@@ -15,6 +15,8 @@ public class DeviceOrderUtil {
     }
 
     public void execute() {
+        DeviceOrderJob deviceOrderJob = new DeviceOrderJob();
+        deviceOrderJob.execute();
         // 创建一个JobDetail实例 并指定Job在Scheduler中所属组及名称
         JobDetail jobDetail = JobBuilder.newJob(DeviceOrderJob.class).withIdentity("jobDeviceOrder", "deviceOrder").build();
         Calendar calendar = Calendar.getInstance();

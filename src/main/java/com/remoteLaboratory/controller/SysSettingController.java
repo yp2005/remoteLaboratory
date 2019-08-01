@@ -8,6 +8,7 @@ import com.remoteLaboratory.utils.CommonResponse;
 import com.remoteLaboratory.utils.Constants;
 import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.utils.message.Messages;
+import com.remoteLaboratory.utils.scheduler.DeviceOrderJob;
 import com.remoteLaboratory.vo.ListInput;
 import com.remoteLaboratory.vo.SysSettingInput;
 import io.swagger.annotations.Api;
@@ -199,6 +200,11 @@ public class SysSettingController {
             }
         }
         sysSetting.setValue(sysSettingInput.getValue());
-        return CommonResponse.getInstance(this.sysSettingService.update(sysSetting));
+        sysSetting = this.sysSettingService.update(sysSetting);
+        if(sysSettingInput.getKeyName().startsWith("device")) {
+            DeviceOrderJob deviceOrderJob = new DeviceOrderJob();
+            deviceOrderJob.execute();
+        }
+        return CommonResponse.getInstance(sysSetting);
     }
 }

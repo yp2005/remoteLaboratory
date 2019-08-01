@@ -26,8 +26,6 @@ import java.util.List;
 public class DeviceOrderJob implements Job {
     private static Logger log = LoggerFactory.getLogger(LogCleanUtil.class);
 
-    private LogRecordRepository logRecordRepository;
-
     private SysSettingRepository sysSettingRepository;
 
     private DeviceRepository deviceRepository;
@@ -36,7 +34,6 @@ public class DeviceOrderJob implements Job {
 
     public DeviceOrderJob() {
         super();
-        this.logRecordRepository = SpringUtil.getBean(LogRecordRepository.class);
         this.sysSettingRepository = SpringUtil.getBean(SysSettingRepository.class);
         this.deviceRepository = SpringUtil.getBean(DeviceRepository.class);
         this.deviceOrderRepository = SpringUtil.getBean(DeviceOrderRepository.class);
@@ -45,6 +42,10 @@ public class DeviceOrderJob implements Job {
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         log.info("start generate device order...");
+        List<Device> deviceList = this.deviceRepository.findOnlineDevice();
+        if(CollectionUtils.isEmpty(deviceList)) {
+            return;
+        }
         SysSetting deviceOrderTime = this.sysSettingRepository.findByKeyName(Constants.DEVICE_ORDER_TIME);
         Integer deviceOrderTimeValue = Integer.valueOf(deviceOrderTime.getValue());
         SysSetting deviceOpenTimeStart = this.sysSettingRepository.findByKeyName(Constants.DEVICE_OPEN_TIME_START);
@@ -66,7 +67,60 @@ public class DeviceOrderJob implements Job {
             Integer day = calendar.get(Calendar.DAY_OF_MONTH);
             DeviceOrder d = this.deviceOrderRepository.findFirstByYearAndMonthAndDay(year, month, day);
             if(d == null) {
-                List<Device> deviceList = this.deviceRepository.findOnlineDevice();
+                if(CollectionUtils.isNotEmpty(deviceList)) {
+                    for(Device device : deviceList) {
+                        calendar.set(Calendar.HOUR_OF_DAY, deviceOpenTimeStartValue);
+                        int j = deviceOpenTimeStartValue;
+                        while (true) {
+                            DeviceOrder deviceOrder = new DeviceOrder();
+                            deviceOrder.setStartHour(j);
+                            j += device.getDuration();
+                            if(j > deviceOpenTimeEndValue) break;
+                            deviceOrder.setEndHour(j);
+                            deviceOrder.setYear(year);
+                            deviceOrder.setMonth(month);
+                            deviceOrder.setDay(day);
+                            deviceOrder.setDeviceId(device.getId());
+                            deviceOrder.setDeviceName(device.getName());
+                            deviceOrder.setStartTime(calendar.getTime());
+                            deviceOrder.setStatus(0);
+                            calendar.set(Calendar.HOUR_OF_DAY, j);
+                            deviceOrder.setEndTime(calendar.getTime());
+                            deviceOrder = this.deviceOrderRepository.save(deviceOrder);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void execute() {
+        log.info("start generate device order...");
+        List<Device> deviceList = this.deviceRepository.findOnlineDevice();
+        if(CollectionUtils.isEmpty(deviceList)) {
+            return;
+        }
+        SysSetting deviceOrderTime = this.sysSettingRepository.findByKeyName(Constants.DEVICE_ORDER_TIME);
+        Integer deviceOrderTimeValue = Integer.valueOf(deviceOrderTime.getValue());
+        SysSetting deviceOpenTimeStart = this.sysSettingRepository.findByKeyName(Constants.DEVICE_OPEN_TIME_START);
+        Integer deviceOpenTimeStartValue = Integer.valueOf(deviceOpenTimeStart.getValue());
+        SysSetting deviceOpenTimeEnd = this.sysSettingRepository.findByKeyName(Constants.DEVICE_OPEN_TIME_END);
+        Integer deviceOpenTimeEndValue = Integer.valueOf(deviceOpenTimeEnd.getValue());
+        SysSetting deviceOpenWeekend = this.sysSettingRepository.findByKeyName(Constants.DEVICE_OPEN_WEEKEND);
+        Integer deviceOpenWeekendValue = Integer.valueOf(deviceOpenWeekend.getValue());
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        for(int i = 1; i < deviceOrderTimeValue; i++) {
+            if(deviceOpenWeekendValue.equals(0) && DateTimeUtil.isWeekend(calendar.getTime())) {
+                continue;
+            }
+            Integer year = calendar.get(Calendar.YEAR);
+            Integer month = calendar.get(Calendar.MONTH) + 1;
+            Integer day = calendar.get(Calendar.DAY_OF_MONTH);
+            DeviceOrder d = this.deviceOrderRepository.findFirstByYearAndMonthAndDay(year, month, day);
+            if(d == null) {
                 if(CollectionUtils.isNotEmpty(deviceList)) {
                     for(Device device : deviceList) {
                         calendar.set(Calendar.HOUR_OF_DAY, deviceOpenTimeStartValue);
