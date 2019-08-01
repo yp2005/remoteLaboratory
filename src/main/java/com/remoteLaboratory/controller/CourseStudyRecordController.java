@@ -64,9 +64,16 @@ public class CourseStudyRecordController {
         if (!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
             throw new BusinessException(Messages.CODE_50200);
         }
-        CommonResponse commonResponse = CommonResponse.getInstance();
-        commonResponse.setResult(courseStudyRecordService.listByCourseId(listInput, courseId));
+        CommonResponse commonResponse = CommonResponse.getInstance(courseStudyRecordService.listByCourseId(listInput, courseId));
         LogUtil.add(this.logRecordRepository, "列表查询", "课程学习记录", loginUser, course.getId(), course.getName());
+        return commonResponse;
+    }
+
+    @GetMapping(path = "/getMy")
+    @ApiOperation(value = "查询我的课程学习记录列表", notes = "查询我的课程学习记录列表接口")
+    public CommonResponse getMy(@RequestBody ListInput listInput, @ApiIgnore User loginUser) throws BusinessException {
+        CommonResponse commonResponse = CommonResponse.getInstance(courseStudyRecordService.listByUserId(listInput, loginUser.getId()));
+        LogUtil.add(this.logRecordRepository, "列表查询", "课程学习记录", loginUser, null, null);
         return commonResponse;
     }
 
@@ -82,11 +89,12 @@ public class CourseStudyRecordController {
 
     @GetMapping(path = "/getDetail/{id}")
     @ApiOperation(value = "查询课程学习记录详情", notes = "根据ID查询课程学习记录详情接口")
-    @LoginRequired(teacherRequired = "1")
     public CommonResponse getDetail(@NotNull(message = "课程学习记录编号不能为空") @PathVariable Integer id, @ApiIgnore User loginUser) throws BusinessException {
         CourseStudyRecord courseStudyRecord = this.courseStudyRecordService.get(id);
         Course course = this.courseService.get(courseStudyRecord.getCourseId());
-        if(!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
+        if(!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN)
+                && !course.getTeacherId().equals(loginUser.getId())
+                && !courseStudyRecord.getUserId().equals(loginUser.getId())) {
             throw new BusinessException(Messages.CODE_50200);
         }
         CourseStudyRecordPublicVo courseStudyRecordPublicVo = courseStudyRecordService.getDetailById(id);
@@ -96,7 +104,7 @@ public class CourseStudyRecordController {
     }
 
     @GetMapping(path = "/getMyDetailByCourseId/{courseId}")
-    @ApiOperation(value = "查询我的课程学习记录详情", notes = "根据课程ID查询我的课程学习记录详情接口()")
+    @ApiOperation(value = "查询我的课程学习记录详情", notes = "根据课程ID查询我的课程学习记录详情接口")
     public CommonResponse getDetailByCourseId(@NotNull(message = "课程学习记录编号不能为空") @PathVariable Integer courseId, @ApiIgnore User loginUser) throws BusinessException {
         CourseStudyRecordPublicVo courseStudyRecordPublicVo = courseStudyRecordService.getDetailByCourseId(courseId, loginUser.getId());
         CommonResponse commonResponse = CommonResponse.getInstance(courseStudyRecordPublicVo);

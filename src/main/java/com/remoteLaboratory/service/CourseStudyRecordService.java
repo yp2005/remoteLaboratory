@@ -62,6 +62,14 @@ public interface CourseStudyRecordService {
     public ListOutput listByCourseId(ListInput listInput, Integer courseId) throws BusinessException;
 
     /**
+     * 根据条件查询某个用户的课程学习记录列表
+     * @param listInput
+     * @param userId
+     * @return ListOutput
+     */
+    public ListOutput listByUserId(ListInput listInput, Integer userId) throws BusinessException;
+
+    /**
      * 根据id获取课程学习记录信息
      * @param id
      * @return CourseStudyRecord

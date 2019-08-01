@@ -270,6 +270,22 @@ public class CourseStudyRecordServiceImpl implements CourseStudyRecordService {
     }
 
     @Override
+    public ListOutput listByUserId(ListInput listInput, Integer userId) throws BusinessException {
+        SearchPara searchPara = new SearchPara();
+        searchPara.setName("userId");
+        searchPara.setOp("eq");
+        searchPara.setValue(userId);
+        if (listInput.getSearchParas() == null) {
+            listInput.setSearchParas(new SearchParas());
+        }
+        if (listInput.getSearchParas().getConditions() == null) {
+            listInput.getSearchParas().setConditions(new ArrayList<>());
+        }
+        listInput.getSearchParas().getConditions().add(searchPara);
+        return this.list(listInput);
+    }
+
+    @Override
     public CourseStudyRecord get(Integer id) throws BusinessException {
         CourseStudyRecord courseStudyRecord = courseStudyRecordRepository.findOne(id);
         if (courseStudyRecord == null) {
