@@ -79,7 +79,6 @@ public class UserController {
 
     @PostMapping(path = "/teacherList")
     @ApiOperation(value = "老师列表", notes = "查询老师信息列表")
-    @LoginRequired(adminRequired = "1")
     public CommonResponse teacherList(@RequestBody ListInput listInput,  @ApiIgnore User loginUser) throws BusinessException {
         CommonResponse commonResponse = CommonResponse.getInstance();
         commonResponse.setResult(userService.listByUserType(listInput, 1));
