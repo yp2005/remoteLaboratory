@@ -69,7 +69,7 @@ public class CourseStudyRecordController {
         return commonResponse;
     }
 
-    @GetMapping(path = "/getMy")
+    @PostMapping(path = "/getMy")
     @ApiOperation(value = "查询我的课程学习记录列表", notes = "查询我的课程学习记录列表接口")
     public CommonResponse getMy(@RequestBody ListInput listInput, @ApiIgnore User loginUser) throws BusinessException {
         CommonResponse commonResponse = CommonResponse.getInstance(courseStudyRecordService.listByUserId(listInput, loginUser.getId()));
