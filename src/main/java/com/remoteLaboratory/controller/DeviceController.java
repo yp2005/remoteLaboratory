@@ -10,6 +10,7 @@ import com.remoteLaboratory.utils.Constants;
 import com.remoteLaboratory.utils.LogUtil;
 import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.utils.message.Messages;
+import com.remoteLaboratory.utils.scheduler.DeviceOrderJob;
 import com.remoteLaboratory.vo.BindCameraInput;
 import com.remoteLaboratory.vo.ListInput;
 import io.swagger.annotations.Api;
@@ -60,6 +61,10 @@ public class DeviceController {
         device = deviceService.add(device);
         CommonResponse commonResponse = CommonResponse.getInstance(device);
         LogUtil.add(this.logRecordRepository, "添加", "设备", loginUser, device.getId(), device.getName());
+        if(device.getType().equals(1)) { // 在线实验设备生产预约信息
+            DeviceOrderJob deviceOrderJob = new DeviceOrderJob();
+            deviceOrderJob.execute(device.getId());
+        }
         return commonResponse;
     }
 

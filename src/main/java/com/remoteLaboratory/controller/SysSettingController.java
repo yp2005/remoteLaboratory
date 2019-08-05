@@ -2,10 +2,13 @@ package com.remoteLaboratory.controller;
 
 import com.remoteLaboratory.config.LoginRequired;
 import com.remoteLaboratory.entities.SysSetting;
+import com.remoteLaboratory.entities.User;
+import com.remoteLaboratory.repositories.LogRecordRepository;
 import com.remoteLaboratory.repositories.SysSettingRepository;
 import com.remoteLaboratory.service.SysSettingService;
 import com.remoteLaboratory.utils.CommonResponse;
 import com.remoteLaboratory.utils.Constants;
+import com.remoteLaboratory.utils.LogUtil;
 import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.utils.message.Messages;
 import com.remoteLaboratory.utils.scheduler.DeviceOrderJob;
@@ -17,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
@@ -36,6 +40,9 @@ public class SysSettingController {
     private SysSettingService sysSettingService;
 
     private SysSettingRepository sysSettingRepository;
+
+    @Autowired
+    private LogRecordRepository logRecordRepository;
 
     @Autowired
     public SysSettingController(SysSettingService sysSettingService, SysSettingRepository sysSettingRepository) {
@@ -110,78 +117,86 @@ public class SysSettingController {
     @PostMapping(path = "/list")
     @ApiOperation(value = "系统设置列表", notes = "查询系统设置信息列表")
     @LoginRequired(adminRequired = "1")
-    public CommonResponse list(@RequestBody ListInput listInput) throws BusinessException {
+    public CommonResponse list(@RequestBody ListInput listInput, @ApiIgnore User loginUser) throws BusinessException {
         CommonResponse commonResponse = CommonResponse.getInstance();
         commonResponse.setResult(sysSettingService.list(listInput));
+        LogUtil.add(this.logRecordRepository, "列表查询", "系统设置", loginUser, null, null);
         return commonResponse;
     }
 
     @GetMapping(path = "/{id}")
     @ApiOperation(value = "查询系统设置", notes = "根据ID查询系统设置接口")
     @LoginRequired(adminRequired = "1")
-    public CommonResponse get(@NotNull(message = "系统设置编号不能为空") @PathVariable String id) throws BusinessException {
-        CommonResponse commonResponse = CommonResponse.getInstance();
-        commonResponse.setResult(sysSettingService.get(id));
+    public CommonResponse get(@NotNull(message = "系统设置编号不能为空") @PathVariable String id, @ApiIgnore User loginUser) throws BusinessException {
+        SysSetting sysSetting = sysSettingService.get(id);
+        CommonResponse commonResponse = CommonResponse.getInstance(sysSetting);
+        LogUtil.add(this.logRecordRepository, "查询", "系统设置", loginUser, sysSetting.getId(), sysSetting.getZhName());
         return commonResponse;
     }
 
     @GetMapping(path = "/getLogRetainTimeSetting")
     @ApiOperation(value = "查询日志保留时间设置", notes = "查询日志保留时间设置接口")
     @LoginRequired(adminRequired = "1")
-    public CommonResponse getLogRetainTimeSetting() throws BusinessException {
-        CommonResponse commonResponse = CommonResponse.getInstance();
-        commonResponse.setResult(sysSettingService.getByKeyName(Constants.LOG_RETAIN_TIME));
+    public CommonResponse getLogRetainTimeSetting(@ApiIgnore User loginUser) throws BusinessException {
+        SysSetting sysSetting = sysSettingService.getByKeyName(Constants.LOG_RETAIN_TIME);
+        CommonResponse commonResponse = CommonResponse.getInstance(sysSetting);
+        LogUtil.add(this.logRecordRepository, "查询", "系统设置", loginUser, sysSetting.getId(), sysSetting.getZhName());
         return commonResponse;
     }
 
     @GetMapping(path = "/getDeviceOrderTime")
     @ApiOperation(value = "查询设备预约可提前天数设置", notes = "查询设备预约可提前天数设置接口")
     @LoginRequired(adminRequired = "1")
-    public CommonResponse getDeviceOrderTime() throws BusinessException {
-        CommonResponse commonResponse = CommonResponse.getInstance();
-        commonResponse.setResult(sysSettingService.getByKeyName(Constants.DEVICE_ORDER_TIME));
+    public CommonResponse getDeviceOrderTime(@ApiIgnore User loginUser) throws BusinessException {
+        SysSetting sysSetting = sysSettingService.getByKeyName(Constants.DEVICE_ORDER_TIME);
+        CommonResponse commonResponse = CommonResponse.getInstance(sysSetting);
+        LogUtil.add(this.logRecordRepository, "查询", "系统设置", loginUser, sysSetting.getId(), sysSetting.getZhName());
         return commonResponse;
     }
 
     @GetMapping(path = "/getDeviceOpenTimeStart")
     @ApiOperation(value = "查询设备开放时间-开始时间设置", notes = "查询设备开放时间-开始时间设置接口")
     @LoginRequired(adminRequired = "1")
-    public CommonResponse getDeviceOpenTimeStart() throws BusinessException {
-        CommonResponse commonResponse = CommonResponse.getInstance();
-        commonResponse.setResult(sysSettingService.getByKeyName(Constants.DEVICE_OPEN_TIME_START));
+    public CommonResponse getDeviceOpenTimeStart(@ApiIgnore User loginUser) throws BusinessException {
+        SysSetting sysSetting = sysSettingService.getByKeyName(Constants.DEVICE_OPEN_TIME_START);
+        CommonResponse commonResponse = CommonResponse.getInstance(sysSetting);
+        LogUtil.add(this.logRecordRepository, "查询", "系统设置", loginUser, sysSetting.getId(), sysSetting.getZhName());
         return commonResponse;
     }
 
     @GetMapping(path = "/getDeviceOpenTimeEnd")
     @ApiOperation(value = "查询设备开放时间-结束时间设置", notes = "查询设备开放时间-结束时间设置接口")
     @LoginRequired(adminRequired = "1")
-    public CommonResponse getDeviceOpenTimeEnd() throws BusinessException {
-        CommonResponse commonResponse = CommonResponse.getInstance();
-        commonResponse.setResult(sysSettingService.getByKeyName(Constants.DEVICE_OPEN_TIME_END));
+    public CommonResponse getDeviceOpenTimeEnd(@ApiIgnore User loginUser) throws BusinessException {
+        SysSetting sysSetting = sysSettingService.getByKeyName(Constants.DEVICE_OPEN_TIME_END);
+        CommonResponse commonResponse = CommonResponse.getInstance(sysSetting);
+        LogUtil.add(this.logRecordRepository, "查询", "系统设置", loginUser, sysSetting.getId(), sysSetting.getZhName());
         return commonResponse;
     }
 
     @GetMapping(path = "/getDeviceOpenWeekend")
     @ApiOperation(value = "查询设备周末是否开放设置", notes = "查询设备周末是否开放设置接口")
     @LoginRequired(adminRequired = "1")
-    public CommonResponse getDeviceOpenWeekend() throws BusinessException {
-        CommonResponse commonResponse = CommonResponse.getInstance();
-        commonResponse.setResult(sysSettingService.getByKeyName(Constants.DEVICE_OPEN_WEEKEND));
+    public CommonResponse getDeviceOpenWeekend(@ApiIgnore User loginUser) throws BusinessException {
+        SysSetting sysSetting = sysSettingService.getByKeyName(Constants.DEVICE_OPEN_WEEKEND);
+        CommonResponse commonResponse = CommonResponse.getInstance(sysSetting);
+        LogUtil.add(this.logRecordRepository, "查询", "系统设置", loginUser, sysSetting.getId(), sysSetting.getZhName());
         return commonResponse;
     }
 
     @GetMapping(path = "/getHomePageImages")
     @ApiOperation(value = "查询首页轮播图片", notes = "查询首页轮播图片接口")
-    public CommonResponse getHomePageImages() throws BusinessException {
-        CommonResponse commonResponse = CommonResponse.getInstance();
-        commonResponse.setResult(sysSettingService.getByKeyName(Constants.HOME_PAGE_IMAGES));
+    public CommonResponse getHomePageImages(@ApiIgnore User loginUser) throws BusinessException {
+        SysSetting sysSetting = sysSettingService.getByKeyName(Constants.HOME_PAGE_IMAGES);
+        CommonResponse commonResponse = CommonResponse.getInstance(sysSetting);
+        LogUtil.add(this.logRecordRepository, "查询", "系统设置", loginUser, sysSetting.getId(), sysSetting.getZhName());
         return commonResponse;
     }
 
     @PutMapping
     @ApiOperation(value = "更新系统设置", notes = "更新系统设置接口")
     @LoginRequired(adminRequired = "1")
-    public CommonResponse update(@RequestBody SysSettingInput sysSettingInput) throws BusinessException {
+    public CommonResponse update(@RequestBody SysSettingInput sysSettingInput, @ApiIgnore User loginUser) throws BusinessException {
         SysSetting sysSetting = this.sysSettingService.getByKeyName(sysSettingInput.getKeyName());
         if(sysSettingInput.getKeyName().equals(Constants.LOG_RETAIN_TIME)
                 || sysSettingInput.getKeyName().equals(Constants.DEVICE_OPEN_TIME_START)
@@ -201,10 +216,12 @@ public class SysSettingController {
         }
         sysSetting.setValue(sysSettingInput.getValue());
         sysSetting = this.sysSettingService.update(sysSetting);
+        CommonResponse commonResponse = CommonResponse.getInstance(sysSetting);
+        LogUtil.add(this.logRecordRepository, "更新", "系统设置", loginUser, sysSetting.getId(), sysSetting.getZhName());
         if(sysSettingInput.getKeyName().startsWith("device")) {
             DeviceOrderJob deviceOrderJob = new DeviceOrderJob();
             deviceOrderJob.execute();
         }
-        return CommonResponse.getInstance(sysSetting);
+        return commonResponse;
     }
 }

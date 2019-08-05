@@ -51,7 +51,6 @@ public interface DeviceOrderService {
      */
     public DeviceOrder getByUserId(Integer userId) throws BusinessException;
 
-
     /**
      * 预约设备
      * @param id 设备预约ID

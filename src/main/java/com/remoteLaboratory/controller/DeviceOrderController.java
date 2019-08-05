@@ -23,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * 设备预约接口
  *
@@ -71,7 +73,7 @@ public class DeviceOrderController {
 
     @GetMapping(path = "/getOrderDeviceDetail/{id}")
     @ApiOperation(value = "获取预约设备详情", notes = "获取预约设备详情接口")
-    public CommonResponse getOrderDeviceDetail(@PathVariable Integer id, @ApiIgnore User loginUser) throws BusinessException {
+    public CommonResponse getOrderDeviceDetail(@NotNull(message = "预约ID不能为空") @PathVariable Integer id, @ApiIgnore User loginUser) throws BusinessException {
         DeviceOrder deviceOrder = deviceOrderService.get(id);
         if(!deviceOrder.getUserId().equals(loginUser.getId())) {
             throw new BusinessException(Messages.CODE_50200);
@@ -94,7 +96,7 @@ public class DeviceOrderController {
 
     @PostMapping(path = "/order/{id}")
     @ApiOperation(value = "预约设备", notes = "预约设备接口")
-    public CommonResponse order(@PathVariable Integer id,  @ApiIgnore User loginUser) throws BusinessException {
+    public CommonResponse order(@NotNull(message = "预约ID不能为空") @PathVariable Integer id, @ApiIgnore User loginUser) throws BusinessException {
         DeviceOrder deviceOrder = deviceOrderService.order(id, loginUser);
         CommonResponse commonResponse = CommonResponse.getInstance(deviceOrder);
         LogUtil.add(this.logRecordRepository, "预约设备", "设备预约", loginUser, deviceOrder.getId(), deviceOrder.getUserName() + ": " + deviceOrder.getDeviceName());
