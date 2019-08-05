@@ -46,6 +46,7 @@ public class DeviceOrderJob implements Job {
         if(CollectionUtils.isEmpty(deviceList)) {
             return;
         }
+        log.info("device number:" + deviceList.size());
         SysSetting deviceOrderTime = this.sysSettingRepository.findByKeyName(Constants.DEVICE_ORDER_TIME);
         Integer deviceOrderTimeValue = Integer.valueOf(deviceOrderTime.getValue());
         SysSetting deviceOpenTimeStart = this.sysSettingRepository.findByKeyName(Constants.DEVICE_OPEN_TIME_START);
@@ -59,6 +60,8 @@ public class DeviceOrderJob implements Job {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
+        log.info("deviceOrderTime:" + deviceOrderTime);
+        log.info("deviceOpenWeekend:" + deviceOpenWeekend);
         for(int i = 0; i < deviceOrderTimeValue; i++) {
             if(deviceOpenWeekendValue.equals(0) && DateTimeUtil.isWeekend(calendar.getTime())) {
                 continue;
@@ -66,6 +69,7 @@ public class DeviceOrderJob implements Job {
             Integer year = calendar.get(Calendar.YEAR);
             Integer month = calendar.get(Calendar.MONTH) + 1;
             Integer day = calendar.get(Calendar.DAY_OF_MONTH);
+            log.info("day:" + year + "-" + month + "-" + day);
             DeviceOrder d = this.deviceOrderRepository.findFirstByYearAndMonthAndDay(year, month, day);
             if(d == null) {
                 if(CollectionUtils.isNotEmpty(deviceList)) {
