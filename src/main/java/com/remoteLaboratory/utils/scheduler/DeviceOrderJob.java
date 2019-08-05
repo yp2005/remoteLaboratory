@@ -59,7 +59,7 @@ public class DeviceOrderJob implements Job {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
-        for(int i = 1; i < deviceOrderTimeValue; i++) {
+        for(int i = 0; i < deviceOrderTimeValue; i++) {
             if(deviceOpenWeekendValue.equals(0) && DateTimeUtil.isWeekend(calendar.getTime())) {
                 continue;
             }
@@ -92,6 +92,7 @@ public class DeviceOrderJob implements Job {
                     }
                 }
             }
+            calendar.add(Calendar.DATE, 1);
         }
     }
 
@@ -113,7 +114,8 @@ public class DeviceOrderJob implements Job {
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
-        for(int i = 1; i < deviceOrderTimeValue; i++) {
+        calendar.set(Calendar.MILLISECOND, 0);
+        for(int i = 0; i < deviceOrderTimeValue; i++) {
             if(deviceOpenWeekendValue.equals(0) && DateTimeUtil.isWeekend(calendar.getTime())) {
                 continue;
             }
@@ -146,6 +148,7 @@ public class DeviceOrderJob implements Job {
                     }
                 }
             }
+            calendar.add(Calendar.DATE, 1);
         }
     }
 
@@ -167,7 +170,8 @@ public class DeviceOrderJob implements Job {
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
-        for(int i = 1; i < deviceOrderTimeValue; i++) {
+        calendar.set(Calendar.MILLISECOND, 0);
+        for(int i = 0; i < deviceOrderTimeValue; i++) {
             if(deviceOpenWeekendValue.equals(0) && DateTimeUtil.isWeekend(calendar.getTime())) {
                 continue;
             }
@@ -196,6 +200,7 @@ public class DeviceOrderJob implements Job {
                     deviceOrder = this.deviceOrderRepository.save(deviceOrder);
                 }
             }
+            calendar.add(Calendar.DATE, 1);
         }
     }
 }
