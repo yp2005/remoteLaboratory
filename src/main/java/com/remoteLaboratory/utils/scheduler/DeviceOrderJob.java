@@ -69,8 +69,8 @@ public class DeviceOrderJob implements Job {
             Integer year = calendar.get(Calendar.YEAR);
             Integer month = calendar.get(Calendar.MONTH) + 1;
             Integer day = calendar.get(Calendar.DAY_OF_MONTH);
-            log.info("day:" + year + "-" + month + "-" + day);
             DeviceOrder d = this.deviceOrderRepository.findFirstByYearAndMonthAndDay(year, month, day);
+            log.info("day:" + year + "-" + month + "-" + day + " : " + (d == null));
             if(d == null) {
                 if(CollectionUtils.isNotEmpty(deviceList)) {
                     for(Device device : deviceList) {
@@ -129,8 +129,8 @@ public class DeviceOrderJob implements Job {
             Integer year = calendar.get(Calendar.YEAR);
             Integer month = calendar.get(Calendar.MONTH) + 1;
             Integer day = calendar.get(Calendar.DAY_OF_MONTH);
-            log.info("day:" + year + "-" + month + "-" + day);
             DeviceOrder d = this.deviceOrderRepository.findFirstByYearAndMonthAndDay(year, month, day);
+            log.info("day:" + year + "-" + month + "-" + day + " : " + (d == null));
             if(d == null) {
                 if(CollectionUtils.isNotEmpty(deviceList)) {
                     for(Device device : deviceList) {
