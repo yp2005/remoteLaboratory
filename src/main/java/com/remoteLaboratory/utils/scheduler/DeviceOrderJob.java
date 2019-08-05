@@ -60,10 +60,11 @@ public class DeviceOrderJob implements Job {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
-        log.info("deviceOrderTime:" + deviceOrderTime);
-        log.info("deviceOpenWeekend:" + deviceOpenWeekend);
+        log.info("deviceOrderTime:" + deviceOrderTimeValue);
+        log.info("deviceOpenWeekend:" + deviceOpenWeekendValue);
         for(int i = 0; i < deviceOrderTimeValue; i++) {
             if(deviceOpenWeekendValue.equals(0) && DateTimeUtil.isWeekend(calendar.getTime())) {
+                calendar.add(Calendar.DATE, 1);
                 continue;
             }
             Integer year = calendar.get(Calendar.YEAR);
@@ -120,10 +121,11 @@ public class DeviceOrderJob implements Job {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
-        log.info("deviceOrderTime:" + deviceOrderTime);
-        log.info("deviceOpenWeekend:" + deviceOpenWeekend);
+        log.info("deviceOrderTime:" + deviceOrderTimeValue);
+        log.info("deviceOpenWeekend:" + deviceOpenWeekendValue);
         for(int i = 0; i < deviceOrderTimeValue; i++) {
             if(deviceOpenWeekendValue.equals(0) && DateTimeUtil.isWeekend(calendar.getTime())) {
+                calendar.add(Calendar.DATE, 1);
                 continue;
             }
             Integer year = calendar.get(Calendar.YEAR);
@@ -181,6 +183,7 @@ public class DeviceOrderJob implements Job {
         calendar.set(Calendar.MILLISECOND, 0);
         for(int i = 0; i < deviceOrderTimeValue; i++) {
             if(deviceOpenWeekendValue.equals(0) && DateTimeUtil.isWeekend(calendar.getTime())) {
+                calendar.add(Calendar.DATE, 1);
                 continue;
             }
             Integer year = calendar.get(Calendar.YEAR);
