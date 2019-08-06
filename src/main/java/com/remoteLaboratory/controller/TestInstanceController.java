@@ -54,6 +54,9 @@ public class TestInstanceController {
     private ChapterService chapterService;
 
     @Autowired
+    private TestTemplateService testTemplateService;
+
+    @Autowired
     private LogRecordRepository logRecordRepository;
 
     @PostMapping(path = "/list")
@@ -119,9 +122,19 @@ public class TestInstanceController {
         return commonResponse;
     }
 
+    @PostMapping(path = "/startTestBySectionId/{sectionId}")
+    @ApiOperation(value = "开始测验(生成测验实例)", notes = "开始测验接口(生成测验实例)")
+    public CommonResponse startTestBySectionId(@NotNull(message = "课程小节ID不能为空") @PathVariable Integer sectionId, @ApiIgnore User loginUser) throws BusinessException {
+        TestTemplate testTemplate = testTemplateService.getBySectionId(sectionId);
+        TestInstancePublicVo testInstancePublicVo = testInstanceService.startTest(testTemplate.getId(), loginUser);
+        CommonResponse commonResponse = CommonResponse.getInstance(testInstancePublicVo);
+        LogUtil.add(this.logRecordRepository, "开始测验", "测验实例", loginUser, testInstancePublicVo.getId(), testInstancePublicVo.getName());
+        return commonResponse;
+    }
+
     @GetMapping(path = "/getMyBySectionId/{sectionId}")
     @ApiOperation(value = "根据课程小节ID查询我的测验实例详情", notes = "根据课程小节ID查询我的测验实例详情接口")
-    public CommonResponse getMyBySectionId(@NotNull(message = "测验实例编号不能为空") @PathVariable Integer sectionId, @ApiIgnore User loginUser) throws BusinessException {
+    public CommonResponse getMyBySectionId(@NotNull(message = "课程小节ID不能为空") @PathVariable Integer sectionId, @ApiIgnore User loginUser) throws BusinessException {
         TestInstancePublicVo testInstancePublicVo = testInstanceService.getMyBySectionId(sectionId, loginUser);
         CommonResponse commonResponse = CommonResponse.getInstance(testInstancePublicVo);
         LogUtil.add(this.logRecordRepository, "查询详情", "测验实例", loginUser, testInstancePublicVo.getId(), testInstancePublicVo.getName());

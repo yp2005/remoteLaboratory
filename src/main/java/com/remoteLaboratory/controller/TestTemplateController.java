@@ -104,6 +104,7 @@ public class TestTemplateController {
 
     @GetMapping(path = "/getDetailBySectionId/{sectionId}")
     @ApiOperation(value = "查询测验模板详情", notes = "根据课程小节ID查询测验模板详情接口")
+    @LoginRequired
     public CommonResponse getDetailBySectionId(@NotNull(message = "课程小节编号不能为空") @PathVariable Integer sectionId, @ApiIgnore User loginUser) throws BusinessException {
         TestTemplatePublicVo testTemplatePublicVo = testTemplateService.getDetailBySectionId(sectionId);
         CommonResponse commonResponse = CommonResponse.getInstance(testTemplatePublicVo);
