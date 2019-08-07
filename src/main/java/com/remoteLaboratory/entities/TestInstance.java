@@ -112,7 +112,6 @@ public class TestInstance implements Serializable {
     @Column(length = 10)
     @ApiModelProperty(value = "当前答题位置-小题ID")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotNull
     private Integer testExerciseInstanceId;
 
     @Column(length = 10)

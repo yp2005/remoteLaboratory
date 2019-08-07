@@ -22,6 +22,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -59,6 +60,11 @@ public class LogRecordServiceImpl implements LogRecordService {
         for (int id : ids) {
             logRecordRepository.delete(id);
         }
+    }
+
+    @Override
+    public void deleteByTime(Date logRetainTime) throws BusinessException {
+        this.logRecordRepository.deleteByTime(logRetainTime);
     }
 
     @Override

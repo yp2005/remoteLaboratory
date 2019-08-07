@@ -3,8 +3,10 @@ package com.remoteLaboratory.utils.scheduler;
 import com.remoteLaboratory.entities.SysSetting;
 import com.remoteLaboratory.repositories.LogRecordRepository;
 import com.remoteLaboratory.repositories.SysSettingRepository;
+import com.remoteLaboratory.service.LogRecordService;
 import com.remoteLaboratory.utils.Constants;
 import com.remoteLaboratory.utils.SpringUtil;
+import com.remoteLaboratory.utils.exception.BusinessException;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -19,13 +21,13 @@ import java.util.Calendar;
 public class LogCleanJob implements Job {
     private static Logger log = LoggerFactory.getLogger(LogCleanUtil.class);
 
-    private LogRecordRepository logRecordRepository;
+    private LogRecordService logRecordService;
 
     private SysSettingRepository sysSettingRepository;
 
     public LogCleanJob() {
         super();
-        this.logRecordRepository = SpringUtil.getBean(LogRecordRepository.class);
+        this.logRecordService = SpringUtil.getBean(LogRecordService.class);
         this.sysSettingRepository = SpringUtil.getBean(SysSettingRepository.class);
     }
 
@@ -40,6 +42,10 @@ public class LogCleanJob implements Job {
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
-        this.logRecordRepository.deleteByTime(calendar.getTime());
+        try {
+            this.logRecordService.deleteByTime(calendar.getTime());
+        } catch (BusinessException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -7,6 +7,7 @@ import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.vo.ListInput;
 import com.remoteLaboratory.vo.ListOutput;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -50,4 +51,10 @@ public interface LogRecordService {
      * @param loginUser
      */
     public void delete(List<Integer> ids, User loginUser) throws BusinessException;
+
+    /**
+     * 根据时间删除日志
+     * @param logRetainTime
+     */
+    public void deleteByTime(Date logRetainTime) throws BusinessException;
 }
