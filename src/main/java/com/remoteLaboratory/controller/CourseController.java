@@ -2,7 +2,9 @@ package com.remoteLaboratory.controller;
 
 import com.remoteLaboratory.config.LoginRequired;
 import com.remoteLaboratory.entities.Course;
+import com.remoteLaboratory.entities.CourseStudyRecord;
 import com.remoteLaboratory.entities.User;
+import com.remoteLaboratory.repositories.CourseStudyRecordRepository;
 import com.remoteLaboratory.repositories.LogRecordRepository;
 import com.remoteLaboratory.service.CourseService;
 import com.remoteLaboratory.utils.CommonResponse;
@@ -38,6 +40,9 @@ public class CourseController {
 
     @Autowired
     private CourseService courseService;
+
+    @Autowired
+    private CourseStudyRecordRepository courseStudyRecordRepository;
 
     @Autowired
     private LogRecordRepository logRecordRepository;
@@ -96,6 +101,12 @@ public class CourseController {
         Course course = this.courseService.get(courseId);
         if(!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
             throw new BusinessException(Messages.CODE_50200);
+        }
+        if(course.getStatus().equals(1) && !status.equals(1)) {
+            List<CourseStudyRecord> courseStudyRecordList = this.courseStudyRecordRepository.findByCourseIdAndStatus(courseId, 0);
+            if(courseStudyRecordList.size() > 0) {
+                throw new BusinessException(Messages.CODE_40010, "有学生尚未完成学习，不能结束课程！");
+            }
         }
         course.setStatus(status);
         course = courseService.update(course);

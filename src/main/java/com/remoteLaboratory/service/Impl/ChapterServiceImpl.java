@@ -1,19 +1,20 @@
 package com.remoteLaboratory.service.Impl;
 
-import com.remoteLaboratory.entities.Chapter;
-import com.remoteLaboratory.entities.Course;
-import com.remoteLaboratory.entities.LogRecord;
-import com.remoteLaboratory.entities.User;
+import com.remoteLaboratory.entities.*;
 import com.remoteLaboratory.repositories.ChapterRepository;
+import com.remoteLaboratory.repositories.ChapterStudyRecordRepository;
+import com.remoteLaboratory.repositories.CourseStudyRecordRepository;
 import com.remoteLaboratory.repositories.LogRecordRepository;
 import com.remoteLaboratory.service.ChapterService;
 import com.remoteLaboratory.service.CourseService;
+import com.remoteLaboratory.service.CourseStudyRecordService;
 import com.remoteLaboratory.utils.Constants;
 import com.remoteLaboratory.utils.MySpecification;
 import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.utils.message.Messages;
 import com.remoteLaboratory.vo.ListInput;
 import com.remoteLaboratory.vo.ListOutput;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,18 +46,45 @@ public class ChapterServiceImpl implements ChapterService {
 
     private CourseService courseService;
 
+    private CourseStudyRecordRepository courseStudyRecordRepository;
+
+    private CourseStudyRecordService courseStudyRecordService;
+
+    private ChapterStudyRecordRepository chapterStudyRecordRepository;
+
     @Autowired
     public ChapterServiceImpl(ChapterRepository chapterRepository,
                               CourseService courseService,
+                              CourseStudyRecordRepository courseStudyRecordRepository,
+                              CourseStudyRecordService courseStudyRecordService,
+                              ChapterStudyRecordRepository chapterStudyRecordRepository,
                               LogRecordRepository logRecordRepository) {
         this.chapterRepository = chapterRepository;
         this.logRecordRepository = logRecordRepository;
         this.courseService = courseService;
+        this.courseStudyRecordRepository = courseStudyRecordRepository;
+        this.chapterStudyRecordRepository = chapterStudyRecordRepository;
+        this.courseStudyRecordService = courseStudyRecordService;
     }
 
     @Override
     public Chapter add(Chapter chapter) throws BusinessException {
         chapter = chapterRepository.save(chapter);
+        List<CourseStudyRecord> courseStudyRecordList = this.courseStudyRecordRepository.findByCourseIdAndStatus(chapter.getCourseId(), 0);
+        if(CollectionUtils.isNotEmpty(courseStudyRecordList)) {
+            for(CourseStudyRecord courseStudyRecord : courseStudyRecordList) {
+                ChapterStudyRecord chapterStudyRecord = new ChapterStudyRecord();
+                chapterStudyRecord.setChapterId(chapter.getId());
+                chapterStudyRecord.setChapterName(chapter.getName());
+                chapterStudyRecord.setChapterTitle(chapter.getTitle());
+                chapterStudyRecord.setCourseStudyRecordId(courseStudyRecord.getId());
+                chapterStudyRecord.setStudied(0.0);
+                chapterStudyRecord.setUserId(courseStudyRecord.getUserId());
+                chapterStudyRecord.setUserName(courseStudyRecord.getUserName());
+                chapterStudyRecord = this.chapterStudyRecordRepository.save(chapterStudyRecord);
+                this.courseStudyRecordService.update(courseStudyRecord.getId());
+            }
+        }
         return chapter;
     }
 
@@ -75,6 +103,9 @@ public class ChapterServiceImpl implements ChapterService {
                 Course course = this.courseService.get(chapter.getCourseId());
                 if(!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
                     throw new BusinessException(Messages.CODE_50200);
+                }
+                if(course.getStatus().equals(1)) {
+                    throw new BusinessException(Messages.CODE_40010, "课程进行中不能执行删除操作");
                 }
                 chapterRepository.delete(id);
                 LogRecord logRecord = new LogRecord();

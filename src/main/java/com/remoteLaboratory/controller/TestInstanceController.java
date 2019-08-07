@@ -206,7 +206,7 @@ public class TestInstanceController {
         }
         testExerciseInstance.setAnswer(answerInput.getAnswer());
         CommonResponse commonResponse = CommonResponse.getInstance();
-        commonResponse.setResult(testExerciseInstanceService.answer(testExerciseInstance));
+        commonResponse.setResult(new TestExerciseInstanceOutput(testExerciseInstanceService.answer(testExerciseInstance)));
         LogUtil.add(this.logRecordRepository, "答题", "测验小题实例", loginUser, testExerciseInstance.getId(), ExerciseUtil.getTypeName(testExerciseInstance.getExercisesType()));
         return commonResponse;
     }

@@ -136,17 +136,9 @@ public class CourseStudyRecordServiceImpl implements CourseStudyRecordService {
                             sectionStudyRecordList.add(sectionStudyRecord);
                         }
                     }
-                    else {
-                        chapterStudyRecord.setStudied(1.0);
-                        chapterStudyRecord = this.chapterStudyRecordRepository.save(chapterStudyRecord);
-                    }
                     chapterStudyRecordPublicVo.setSectionStudyRecordList(sectionStudyRecordList);
                     chapterStudyRecordPublicVoList.add(chapterStudyRecordPublicVo);
                 }
-            }
-            else {
-                courseStudyRecord.setStudied(1.0);
-                courseStudyRecord = this.courseStudyRecordRepository.save(courseStudyRecord);
             }
             courseStudyRecordPublicVo.setChapterStudyRecordPublicVoList(chapterStudyRecordPublicVoList);
             course.setStudentNumber(course.getStudentNumber() + 1);
@@ -180,6 +172,7 @@ public class CourseStudyRecordServiceImpl implements CourseStudyRecordService {
                 else {
                     chapterStudied = 1.0;
                 }
+                chapterStudied = Math.round(chapterStudied * 100) / 100.0;
                 chapterStudyRecord.setStudied(chapterStudied);
                 chapterStudyRecord = this.chapterStudyRecordRepository.save(chapterStudyRecord);
                 courseStudied += chapterPercent * chapterStudied;
@@ -188,10 +181,12 @@ public class CourseStudyRecordServiceImpl implements CourseStudyRecordService {
         else {
             courseStudied = 1.0;
         }
+        courseStudied = Math.round(courseStudied * 100) / 100.0;
         courseStudyRecord.setStudied(courseStudied);
         if(courseStudied.equals(1.0)) { // TODO 计算课程总分
 
         }
+        courseStudyRecord.setStatus(courseStudyRecord.getStudied().equals(1.0) ? 1 : 0);
         courseStudyRecord = this.courseStudyRecordRepository.save(courseStudyRecord);
     }
 

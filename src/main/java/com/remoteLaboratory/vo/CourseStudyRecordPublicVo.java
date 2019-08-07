@@ -41,6 +41,7 @@ public class CourseStudyRecordPublicVo extends CourseStudyRecord {
         this.setSectionTitle(courseStudyRecord.getSectionTitle());
         this.setCourseMainImg(courseStudyRecord.getCourseMainImg());
         this.setCourseIntroduction(courseStudyRecord.getCourseIntroduction());
+        this.setStatus(courseStudyRecord.getStatus());
     }
 
     public CourseStudyRecord voToEntity() {

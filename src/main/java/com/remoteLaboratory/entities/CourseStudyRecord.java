@@ -102,6 +102,11 @@ public class CourseStudyRecord implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String sectionTitle;
 
+    @Column(length = 10)
+    @ApiModelProperty(value = "学习状态 0-学习中 1-已完成")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer status;
+
     @Column(updatable = false)
     @ApiModelProperty(value = "创建时间", hidden = true)
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -249,6 +254,14 @@ public class CourseStudyRecord implements Serializable {
 
     public void setScore(Double score) {
         this.score = score;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
     public interface Validation{};

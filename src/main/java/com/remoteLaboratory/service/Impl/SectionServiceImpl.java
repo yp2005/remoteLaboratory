@@ -12,6 +12,7 @@ import com.remoteLaboratory.utils.message.Messages;
 import com.remoteLaboratory.vo.ListInput;
 import com.remoteLaboratory.vo.ListOutput;
 import com.remoteLaboratory.vo.SectionOutput;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,8 @@ public class SectionServiceImpl implements SectionService {
 
     private CourseStudyRecordRepository courseStudyRecordRepository;
 
+    private ChapterStudyRecordRepository chapterStudyRecordRepository;
+
     private CourseStudyRecordService courseStudyRecordService;
 
     private LogRecordRepository logRecordRepository;
@@ -54,6 +57,7 @@ public class SectionServiceImpl implements SectionService {
                               CourseService courseService,
                               SectionStudyRecordRepository sectionStudyRecordRepository,
                               CourseStudyRecordService courseStudyRecordService,
+                              ChapterStudyRecordRepository chapterStudyRecordRepository,
                               CourseStudyRecordRepository courseStudyRecordRepository,
                               LogRecordRepository logRecordRepository) {
         this.sectionRepository = sectionRepository;
@@ -62,11 +66,34 @@ public class SectionServiceImpl implements SectionService {
         this.sectionStudyRecordRepository = sectionStudyRecordRepository;
         this.courseStudyRecordService = courseStudyRecordService;
         this.courseStudyRecordRepository = courseStudyRecordRepository;
+        this.chapterStudyRecordRepository = chapterStudyRecordRepository;
     }
 
     @Override
     public Section add(Section section) throws BusinessException {
         section = sectionRepository.save(section);
+        List<CourseStudyRecord> courseStudyRecordList = this.courseStudyRecordRepository.findByCourseIdAndStatus(section.getCourseId(), 0);
+        if(CollectionUtils.isNotEmpty(courseStudyRecordList)) {
+            for(CourseStudyRecord courseStudyRecord : courseStudyRecordList) {
+                ChapterStudyRecord chapterStudyRecord = this.chapterStudyRecordRepository.findByCourseStudyRecordIdAndChapterId(courseStudyRecord.getId(), section.getChapterId());
+                SectionStudyRecord sectionStudyRecord = new SectionStudyRecord();
+                sectionStudyRecord.setChapterStudyRecordId(chapterStudyRecord.getId());
+                sectionStudyRecord.setCourseStudyRecordId(courseStudyRecord.getId());
+                sectionStudyRecord.setChapterId(chapterStudyRecord.getChapterId());
+                sectionStudyRecord.setChapterName(chapterStudyRecord.getChapterName());
+                sectionStudyRecord.setChapterTitle(chapterStudyRecord.getChapterTitle());
+                sectionStudyRecord.setSectionId(section.getId());
+                sectionStudyRecord.setSectionName(section.getName());
+                sectionStudyRecord.setSectionTitle(section.getTitle());
+                sectionStudyRecord.setStudied(0.0);
+                sectionStudyRecord.setStudyStatus(0);
+                sectionStudyRecord.setTestStatus(0);
+                sectionStudyRecord.setUserId(chapterStudyRecord.getUserId());
+                sectionStudyRecord.setUserName(chapterStudyRecord.getUserName());
+                sectionStudyRecord = this.sectionStudyRecordRepository.save(sectionStudyRecord);
+                this.courseStudyRecordService.update(courseStudyRecord.getId());
+            }
+        }
         return section;
     }
 
@@ -85,6 +112,9 @@ public class SectionServiceImpl implements SectionService {
                 Course course = this.courseService.get(section.getCourseId());
                 if(!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
                     throw new BusinessException(Messages.CODE_50200);
+                }
+                if(course.getStatus().equals(1)) {
+                    throw new BusinessException(Messages.CODE_40010, "课程进行中不能执行删除操作");
                 }
                 sectionRepository.delete(id);
                 LogRecord logRecord = new LogRecord();
