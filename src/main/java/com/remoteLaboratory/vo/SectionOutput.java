@@ -51,17 +51,12 @@ public class SectionOutput {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String chapterTitle;
 
-    @Column(updatable = false)
     @ApiModelProperty(value = "创建时间", hidden = true)
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @Temporal(TemporalType.TIMESTAMP)
-    @CreationTimestamp
     private Date createTime;
 
     @ApiModelProperty(value = "修改时间", hidden = true)
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @Temporal(TemporalType.TIMESTAMP)
-    @UpdateTimestamp
     private Date updateTime;
 
     public SectionOutput(Section section) {

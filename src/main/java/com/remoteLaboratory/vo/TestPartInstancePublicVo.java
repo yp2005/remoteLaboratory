@@ -20,7 +20,7 @@ import java.util.List;
 public class TestPartInstancePublicVo extends TestPartInstance {
     @ApiModelProperty(value = "测验小题实例列表")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private List<TestExerciseInstance> testExerciseInstanceList;
+    private List testExerciseInstanceList;
 
     public TestPartInstancePublicVo() {
 
@@ -82,11 +82,11 @@ public class TestPartInstancePublicVo extends TestPartInstance {
         return testPartInstance;
     }
 
-    public List<TestExerciseInstance> getTestExerciseInstanceList() {
+    public List getTestExerciseInstanceList() {
         return testExerciseInstanceList;
     }
 
-    public void setTestExerciseInstanceList(List<TestExerciseInstance> testExerciseInstanceList) {
+    public void setTestExerciseInstanceList(List testExerciseInstanceList) {
         this.testExerciseInstanceList = testExerciseInstanceList;
     }
 }

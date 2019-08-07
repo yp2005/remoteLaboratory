@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -116,9 +117,11 @@ public class TestInstanceController {
         TestInstancePublicVo testInstancePublicVo = testInstanceService.startTest(testTemplateId, loginUser);
         if(testInstancePublicVo.getStatus().equals(0)) {
             for(TestPartInstancePublicVo testPartInstancePublicVo : testInstancePublicVo.getTestPartInstancePublicVoList()) {
-                for(TestExerciseInstance testExerciseInstance : testPartInstancePublicVo.getTestExerciseInstanceList()) {
-                    testExerciseInstance.setCorrectAnswer(null);
+                List<TestExerciseInstanceOutput> testExerciseInstanceOutputList = new ArrayList<>();
+                for(TestExerciseInstance testExerciseInstance : (List<TestExerciseInstance>)testPartInstancePublicVo.getTestExerciseInstanceList()) {
+                    testExerciseInstanceOutputList.add(new TestExerciseInstanceOutput(testExerciseInstance));
                 }
+                testPartInstancePublicVo.setTestExerciseInstanceList(testExerciseInstanceOutputList);
             }
         }
         CommonResponse commonResponse = CommonResponse.getInstance(testInstancePublicVo);
@@ -133,9 +136,11 @@ public class TestInstanceController {
         TestInstancePublicVo testInstancePublicVo = testInstanceService.startTest(testTemplate.getId(), loginUser);
         if(testInstancePublicVo.getStatus().equals(0)) {
             for(TestPartInstancePublicVo testPartInstancePublicVo : testInstancePublicVo.getTestPartInstancePublicVoList()) {
-                for(TestExerciseInstance testExerciseInstance : testPartInstancePublicVo.getTestExerciseInstanceList()) {
-                    testExerciseInstance.setCorrectAnswer(null);
+                List<TestExerciseInstanceOutput> testExerciseInstanceOutputList = new ArrayList<>();
+                for(TestExerciseInstance testExerciseInstance : (List<TestExerciseInstance>)testPartInstancePublicVo.getTestExerciseInstanceList()) {
+                    testExerciseInstanceOutputList.add(new TestExerciseInstanceOutput(testExerciseInstance));
                 }
+                testPartInstancePublicVo.setTestExerciseInstanceList(testExerciseInstanceOutputList);
             }
         }
         CommonResponse commonResponse = CommonResponse.getInstance(testInstancePublicVo);
@@ -149,9 +154,11 @@ public class TestInstanceController {
         TestInstancePublicVo testInstancePublicVo = testInstanceService.getMyBySectionId(sectionId, loginUser);
         if(testInstancePublicVo.getStatus().equals(0)) {
             for(TestPartInstancePublicVo testPartInstancePublicVo : testInstancePublicVo.getTestPartInstancePublicVoList()) {
-                for(TestExerciseInstance testExerciseInstance : testPartInstancePublicVo.getTestExerciseInstanceList()) {
-                    testExerciseInstance.setCorrectAnswer(null);
+                List<TestExerciseInstanceOutput> testExerciseInstanceOutputList = new ArrayList<>();
+                for(TestExerciseInstance testExerciseInstance : (List<TestExerciseInstance>)testPartInstancePublicVo.getTestExerciseInstanceList()) {
+                    testExerciseInstanceOutputList.add(new TestExerciseInstanceOutput(testExerciseInstance));
                 }
+                testPartInstancePublicVo.setTestExerciseInstanceList(testExerciseInstanceOutputList);
             }
         }
         CommonResponse commonResponse = CommonResponse.getInstance(testInstancePublicVo);
