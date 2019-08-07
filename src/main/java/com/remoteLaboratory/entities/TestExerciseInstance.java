@@ -101,7 +101,6 @@ public class TestExerciseInstance implements Serializable {
     @Column(length = 10)
     @ApiModelProperty(value = "状态 1-正确 0-错误")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotNull
     private Integer status;
 
     @Column(updatable = false)

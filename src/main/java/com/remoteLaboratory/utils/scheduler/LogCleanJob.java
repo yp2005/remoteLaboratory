@@ -1,7 +1,6 @@
 package com.remoteLaboratory.utils.scheduler;
 
 import com.remoteLaboratory.entities.SysSetting;
-import com.remoteLaboratory.repositories.LogRecordRepository;
 import com.remoteLaboratory.repositories.SysSettingRepository;
 import com.remoteLaboratory.service.LogRecordService;
 import com.remoteLaboratory.utils.Constants;
