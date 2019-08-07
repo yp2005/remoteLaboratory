@@ -11,6 +11,7 @@ import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.utils.message.Messages;
 import com.remoteLaboratory.vo.ListInput;
 import com.remoteLaboratory.vo.ListOutput;
+import com.remoteLaboratory.vo.SectionOutput;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,17 +119,19 @@ public class SectionServiceImpl implements SectionService {
             listOutput.setPage(listInput.getPage());
             listOutput.setPageSize(listInput.getPageSize());
             listOutput.setTotalNum((int) list.getTotalElements());
+            List<SectionOutput> sectionOutputList = new ArrayList<>();
             for(Section section : list.getContent()) {
-                section.setContent(null);
+                sectionOutputList.add(new SectionOutput(section));
             }
-            listOutput.setList(list.getContent());
+            listOutput.setList(sectionOutputList);
         } else {
             List<Section> list = sectionRepository.findAll(new MySpecification<Section>(listInput.getSearchParas()));
+            List<SectionOutput> sectionOutputList = new ArrayList<>();
             for(Section section : list) {
-                section.setContent(null);
+                sectionOutputList.add(new SectionOutput(section));
             }
             listOutput.setTotalNum(list.size());
-            listOutput.setList(list);
+            listOutput.setList(sectionOutputList);
         }
         return listOutput;
     }
