@@ -302,7 +302,7 @@ public class TestInstanceServiceImpl implements TestInstanceService {
         testInstancePublicVo = this.calculateScore(testInstancePublicVo);
         testInstancePublicVo.setStatus(status);
         testInstancePublicVo = this.update(testInstancePublicVo);
-        SectionStudyRecord sectionStudyRecord = this.sectionStudyRecordRepository.findBySectionIdAndUserId(id, user.getId());
+        SectionStudyRecord sectionStudyRecord = this.sectionStudyRecordRepository.findBySectionIdAndUserId(testInstancePublicVo.getSectionId(), user.getId());
         if(status.equals(1)) {
             if(sectionStudyRecord != null) {
                 if(!sectionStudyRecord.getTestStatus().equals(1)) {

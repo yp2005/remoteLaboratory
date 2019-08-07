@@ -13,6 +13,7 @@ import com.remoteLaboratory.utils.message.Messages;
 import com.remoteLaboratory.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -118,10 +120,12 @@ public class TestInstanceController {
         if(testInstancePublicVo.getStatus().equals(0)) {
             for(TestPartInstancePublicVo testPartInstancePublicVo : testInstancePublicVo.getTestPartInstancePublicVoList()) {
                 List<TestExerciseInstanceOutput> testExerciseInstanceOutputList = new ArrayList<>();
-                for(TestExerciseInstance testExerciseInstance : (List<TestExerciseInstance>)testPartInstancePublicVo.getTestExerciseInstanceList()) {
-                    testExerciseInstanceOutputList.add(new TestExerciseInstanceOutput(testExerciseInstance));
+                if(CollectionUtils.isNotEmpty(testPartInstancePublicVo.getTestExerciseInstanceList())) {
+                    for(TestExerciseInstance testExerciseInstance : (List<TestExerciseInstance>)testPartInstancePublicVo.getTestExerciseInstanceList()) {
+                        testExerciseInstanceOutputList.add(new TestExerciseInstanceOutput(testExerciseInstance));
+                    }
+                    testPartInstancePublicVo.setTestExerciseInstanceList(testExerciseInstanceOutputList);
                 }
-                testPartInstancePublicVo.setTestExerciseInstanceList(testExerciseInstanceOutputList);
             }
         }
         CommonResponse commonResponse = CommonResponse.getInstance(testInstancePublicVo);
