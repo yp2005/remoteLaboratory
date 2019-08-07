@@ -10,10 +10,7 @@ import com.remoteLaboratory.utils.ExerciseUtil;
 import com.remoteLaboratory.utils.LogUtil;
 import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.utils.message.Messages;
-import com.remoteLaboratory.vo.AnswerInput;
-import com.remoteLaboratory.vo.GradeInput;
-import com.remoteLaboratory.vo.ListInput;
-import com.remoteLaboratory.vo.TestInstancePublicVo;
+import com.remoteLaboratory.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -117,6 +114,13 @@ public class TestInstanceController {
     @ApiOperation(value = "开始测验(生成测验实例)", notes = "开始测验接口(生成测验实例)")
     public CommonResponse startTest(@NotNull(message = "测验模板编号不能为空") @PathVariable Integer testTemplateId, @ApiIgnore User loginUser) throws BusinessException {
         TestInstancePublicVo testInstancePublicVo = testInstanceService.startTest(testTemplateId, loginUser);
+        if(testInstancePublicVo.getStatus().equals(0)) {
+            for(TestPartInstancePublicVo testPartInstancePublicVo : testInstancePublicVo.getTestPartInstancePublicVoList()) {
+                for(TestExerciseInstance testExerciseInstance : testPartInstancePublicVo.getTestExerciseInstanceList()) {
+                    testExerciseInstance.setCorrectAnswer(null);
+                }
+            }
+        }
         CommonResponse commonResponse = CommonResponse.getInstance(testInstancePublicVo);
         LogUtil.add(this.logRecordRepository, "开始测验", "测验实例", loginUser, testInstancePublicVo.getId(), testInstancePublicVo.getName());
         return commonResponse;
@@ -127,6 +131,13 @@ public class TestInstanceController {
     public CommonResponse startTestBySectionId(@NotNull(message = "课程小节ID不能为空") @PathVariable Integer sectionId, @ApiIgnore User loginUser) throws BusinessException {
         TestTemplate testTemplate = testTemplateService.getBySectionId(sectionId);
         TestInstancePublicVo testInstancePublicVo = testInstanceService.startTest(testTemplate.getId(), loginUser);
+        if(testInstancePublicVo.getStatus().equals(0)) {
+            for(TestPartInstancePublicVo testPartInstancePublicVo : testInstancePublicVo.getTestPartInstancePublicVoList()) {
+                for(TestExerciseInstance testExerciseInstance : testPartInstancePublicVo.getTestExerciseInstanceList()) {
+                    testExerciseInstance.setCorrectAnswer(null);
+                }
+            }
+        }
         CommonResponse commonResponse = CommonResponse.getInstance(testInstancePublicVo);
         LogUtil.add(this.logRecordRepository, "开始测验", "测验实例", loginUser, testInstancePublicVo.getId(), testInstancePublicVo.getName());
         return commonResponse;
@@ -136,6 +147,13 @@ public class TestInstanceController {
     @ApiOperation(value = "根据课程小节ID查询我的测验实例详情", notes = "根据课程小节ID查询我的测验实例详情接口")
     public CommonResponse getMyBySectionId(@NotNull(message = "课程小节ID不能为空") @PathVariable Integer sectionId, @ApiIgnore User loginUser) throws BusinessException {
         TestInstancePublicVo testInstancePublicVo = testInstanceService.getMyBySectionId(sectionId, loginUser);
+        if(testInstancePublicVo.getStatus().equals(0)) {
+            for(TestPartInstancePublicVo testPartInstancePublicVo : testInstancePublicVo.getTestPartInstancePublicVoList()) {
+                for(TestExerciseInstance testExerciseInstance : testPartInstancePublicVo.getTestExerciseInstanceList()) {
+                    testExerciseInstance.setCorrectAnswer(null);
+                }
+            }
+        }
         CommonResponse commonResponse = CommonResponse.getInstance(testInstancePublicVo);
         LogUtil.add(this.logRecordRepository, "查询详情", "测验实例", loginUser, testInstancePublicVo.getId(), testInstancePublicVo.getName());
         return commonResponse;
