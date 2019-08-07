@@ -14,7 +14,6 @@ import com.remoteLaboratory.utils.LogUtil;
 import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.utils.message.Messages;
 import com.remoteLaboratory.vo.ListInput;
-import com.remoteLaboratory.vo.ListOutput;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -53,13 +52,7 @@ public class SectionController {
     @ApiOperation(value = "课程节列表", notes = "查询课程节信息列表")
     public CommonResponse list(@RequestBody ListInput listInput,  @ApiIgnore User loginUser) throws BusinessException {
         CommonResponse commonResponse = CommonResponse.getInstance();
-        ListOutput listOutput = sectionService.list(listInput);
-        List list = listOutput.getList();
-        for(int i = 0; i < list.size(); i++) {
-            Section section = (Section) list.get(i);
-            section.setContent(null);
-        }
-        commonResponse.setResult(listOutput);
+        commonResponse.setResult(sectionService.list(listInput));
         LogUtil.add(this.logRecordRepository, "列表查询", "课程节", loginUser, null, null);
         return commonResponse;
     }

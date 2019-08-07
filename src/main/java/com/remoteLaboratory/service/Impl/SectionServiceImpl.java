@@ -118,9 +118,15 @@ public class SectionServiceImpl implements SectionService {
             listOutput.setPage(listInput.getPage());
             listOutput.setPageSize(listInput.getPageSize());
             listOutput.setTotalNum((int) list.getTotalElements());
+            for(Section section : list.getContent()) {
+                section.setContent(null);
+            }
             listOutput.setList(list.getContent());
         } else {
             List<Section> list = sectionRepository.findAll(new MySpecification<Section>(listInput.getSearchParas()));
+            for(Section section : list) {
+                section.setContent(null);
+            }
             listOutput.setTotalNum(list.size());
             listOutput.setList(list);
         }
