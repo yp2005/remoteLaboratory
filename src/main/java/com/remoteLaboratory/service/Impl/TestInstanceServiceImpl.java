@@ -336,8 +336,7 @@ public class TestInstanceServiceImpl implements TestInstanceService {
                 List<TestExerciseInstance> testExerciseInstanceList = testPartInstancePublicVo.getTestExerciseInstanceList();
                 Double partScore = 0.0;
                 if (CollectionUtils.isNotEmpty(testExerciseInstanceList)) {
-                    for (TestExerciseInstance
-                            testExerciseInstance : testExerciseInstanceList) {
+                    for (TestExerciseInstance testExerciseInstance : testExerciseInstanceList) {
                         if (testExerciseInstance.getScored() != null) {
                             partScore += testExerciseInstance.getScored();
                         } else if (testExerciseInstance.getType().equals(1)) {

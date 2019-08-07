@@ -43,7 +43,6 @@ public class TestPartInstancePublicVo extends TestPartInstance {
                 testExerciseInstance.setExercisesType(testExerciseTemplate.getExercisesType());
                 testExerciseInstance.setOptions(testExerciseTemplate.getOptions());
                 testExerciseInstance.setScore(testExerciseTemplate.getScore());
-                testExerciseInstance.setScored(0.0);
                 testExerciseInstance.setSerialNumber(testExerciseTemplate.getSerialNumber());
                 testExerciseInstance.setType(testExerciseTemplate.getType());
                 testExerciseInstance.setCorrectAnswer(testExerciseTemplate.getAnswer());
