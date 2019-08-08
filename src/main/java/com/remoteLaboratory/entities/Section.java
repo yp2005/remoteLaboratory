@@ -46,6 +46,16 @@ public class Section implements Serializable {
     @NotNull
     private String content;
 
+    @Column(length = 255)
+    @ApiModelProperty(value = "视频URL")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String video;
+
+    @Column(length = 255)
+    @ApiModelProperty(value = "PDF URL")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String pdf;
+
     @Column(length = 10)
     @ApiModelProperty(value = "所属课程ID")
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -175,6 +185,22 @@ public class Section implements Serializable {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getVideo() {
+        return video;
+    }
+
+    public void setVideo(String video) {
+        this.video = video;
+    }
+
+    public String getPdf() {
+        return pdf;
+    }
+
+    public void setPdf(String pdf) {
+        this.pdf = pdf;
     }
 
     public interface Validation{};
