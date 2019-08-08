@@ -141,10 +141,12 @@ public class TestInstanceController {
         if(testInstancePublicVo.getStatus().equals(0)) {
             for(TestPartInstancePublicVo testPartInstancePublicVo : testInstancePublicVo.getTestPartInstancePublicVoList()) {
                 List<TestExerciseInstanceOutput> testExerciseInstanceOutputList = new ArrayList<>();
-                for(TestExerciseInstance testExerciseInstance : (List<TestExerciseInstance>)testPartInstancePublicVo.getTestExerciseInstanceList()) {
-                    testExerciseInstanceOutputList.add(new TestExerciseInstanceOutput(testExerciseInstance));
+                if(CollectionUtils.isNotEmpty(testPartInstancePublicVo.getTestExerciseInstanceList())) {
+                    for(TestExerciseInstance testExerciseInstance : (List<TestExerciseInstance>)testPartInstancePublicVo.getTestExerciseInstanceList()) {
+                        testExerciseInstanceOutputList.add(new TestExerciseInstanceOutput(testExerciseInstance));
+                    }
+                    testPartInstancePublicVo.setTestExerciseInstanceList(testExerciseInstanceOutputList);
                 }
-                testPartInstancePublicVo.setTestExerciseInstanceList(testExerciseInstanceOutputList);
             }
         }
         CommonResponse commonResponse = CommonResponse.getInstance(testInstancePublicVo);
@@ -159,10 +161,12 @@ public class TestInstanceController {
         if(testInstancePublicVo.getStatus().equals(0)) {
             for(TestPartInstancePublicVo testPartInstancePublicVo : testInstancePublicVo.getTestPartInstancePublicVoList()) {
                 List<TestExerciseInstanceOutput> testExerciseInstanceOutputList = new ArrayList<>();
-                for(TestExerciseInstance testExerciseInstance : (List<TestExerciseInstance>)testPartInstancePublicVo.getTestExerciseInstanceList()) {
-                    testExerciseInstanceOutputList.add(new TestExerciseInstanceOutput(testExerciseInstance));
+                if(CollectionUtils.isNotEmpty(testPartInstancePublicVo.getTestExerciseInstanceList())) {
+                    for(TestExerciseInstance testExerciseInstance : (List<TestExerciseInstance>)testPartInstancePublicVo.getTestExerciseInstanceList()) {
+                        testExerciseInstanceOutputList.add(new TestExerciseInstanceOutput(testExerciseInstance));
+                    }
+                    testPartInstancePublicVo.setTestExerciseInstanceList(testExerciseInstanceOutputList);
                 }
-                testPartInstancePublicVo.setTestExerciseInstanceList(testExerciseInstanceOutputList);
             }
         }
         CommonResponse commonResponse = CommonResponse.getInstance(testInstancePublicVo);

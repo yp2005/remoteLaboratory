@@ -12,7 +12,7 @@ import io.swagger.annotations.ApiModel;
 public class TestExerciseInstanceOutput extends TestExerciseInstance{
 
     public TestExerciseInstanceOutput(TestExerciseInstance testExerciseInstance) {
-        this.setId(testExerciseInstance.getTestInstanceId());
+        this.setId(testExerciseInstance.getId());
         this.setUpdateTime(testExerciseInstance.getUpdateTime());
         this.setCreateTime(testExerciseInstance.getCreateTime());
         this.setAnswer(testExerciseInstance.getAnswer());
