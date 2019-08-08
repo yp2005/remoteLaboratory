@@ -10,4 +10,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CourseDeviceRepository extends JpaRepository<CourseDevice, Integer>,JpaSpecificationExecutor<CourseDevice> {
     CourseDevice findByCourseIdAndDeviceId(@Param("courseId") Integer courseId, @Param("deviceId") Integer deviceId);
+
+    void deleteByCourseId(@Param("courseId") Integer courseId);
 }

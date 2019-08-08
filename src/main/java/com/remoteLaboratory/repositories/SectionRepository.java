@@ -12,4 +12,8 @@ import java.util.List;
 @Repository
 public interface SectionRepository extends JpaRepository<Section, Integer>,JpaSpecificationExecutor<Section> {
     List<Section> findByChapterId(@Param("chapterId") Integer chapterId);
+
+    void deleteByCourseId(@Param("courseId") Integer courseId);
+
+    void deleteByChapterId(@Param("chapterId") Integer chapterId);
 }

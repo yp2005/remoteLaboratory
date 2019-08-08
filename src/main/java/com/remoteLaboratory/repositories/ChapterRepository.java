@@ -12,4 +12,6 @@ import java.util.List;
 @Repository
 public interface ChapterRepository extends JpaRepository<Chapter, Integer>,JpaSpecificationExecutor<Chapter> {
     List<Chapter> findByCourseId(@Param("courseId") Integer courseId);
+
+    void deleteByCourseId(@Param("courseId") Integer courseId);
 }

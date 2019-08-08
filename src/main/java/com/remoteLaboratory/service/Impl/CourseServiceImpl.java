@@ -1,9 +1,11 @@
 package com.remoteLaboratory.service.Impl;
 
 import com.remoteLaboratory.entities.Course;
+import com.remoteLaboratory.entities.CourseStudyRecord;
 import com.remoteLaboratory.entities.LogRecord;
 import com.remoteLaboratory.entities.User;
 import com.remoteLaboratory.repositories.CourseRepository;
+import com.remoteLaboratory.repositories.CourseStudyRecordRepository;
 import com.remoteLaboratory.repositories.LogRecordRepository;
 import com.remoteLaboratory.service.CourseService;
 import com.remoteLaboratory.utils.Constants;
@@ -12,6 +14,7 @@ import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.utils.message.Messages;
 import com.remoteLaboratory.vo.ListInput;
 import com.remoteLaboratory.vo.ListOutput;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,11 +44,15 @@ public class CourseServiceImpl implements CourseService {
 
     private LogRecordRepository logRecordRepository;
 
+    private CourseStudyRecordRepository courseStudyRecordRepository;
+
     @Autowired
     public CourseServiceImpl(CourseRepository courseRepository,
+                             CourseStudyRecordRepository courseStudyRecordRepository,
                              LogRecordRepository logRecordRepository) {
         this.courseRepository = courseRepository;
         this.logRecordRepository = logRecordRepository;
+        this.courseStudyRecordRepository = courseStudyRecordRepository;
     }
 
     @Override
@@ -57,6 +64,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public Course update(Course course) throws BusinessException {
         course = courseRepository.save(course);
+        this.courseStudyRecordRepository.updateByCourseId(course.getId(), course.getName(), course.getMainImg(), course.getIntroduction());
         return course;
     }
 
