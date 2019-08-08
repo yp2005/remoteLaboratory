@@ -76,6 +76,17 @@ public class SectionServiceImpl implements SectionService {
         if(CollectionUtils.isNotEmpty(courseStudyRecordList)) {
             for(CourseStudyRecord courseStudyRecord : courseStudyRecordList) {
                 ChapterStudyRecord chapterStudyRecord = this.chapterStudyRecordRepository.findByCourseStudyRecordIdAndChapterId(courseStudyRecord.getId(), section.getChapterId());
+                if(chapterStudyRecord == null) {
+                    chapterStudyRecord = new ChapterStudyRecord();
+                    chapterStudyRecord.setChapterId(section.getChapterId());
+                    chapterStudyRecord.setChapterName(section.getChapterName());
+                    chapterStudyRecord.setChapterTitle(section.getChapterTitle());
+                    chapterStudyRecord.setCourseStudyRecordId(courseStudyRecord.getId());
+                    chapterStudyRecord.setStudied(0.0);
+                    chapterStudyRecord.setUserId(courseStudyRecord.getUserId());
+                    chapterStudyRecord.setUserName(courseStudyRecord.getUserName());
+                    chapterStudyRecord = this.chapterStudyRecordRepository.save(chapterStudyRecord);
+                }
                 SectionStudyRecord sectionStudyRecord = new SectionStudyRecord();
                 sectionStudyRecord.setChapterStudyRecordId(chapterStudyRecord.getId());
                 sectionStudyRecord.setCourseStudyRecordId(courseStudyRecord.getId());
