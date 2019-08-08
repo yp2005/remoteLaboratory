@@ -56,11 +56,14 @@ public class CourseStudyRecordServiceImpl implements CourseStudyRecordService {
 
     private SectionStudyRecordRepository sectionStudyRecordRepository;
 
+    private TestInstanceRepository testInstanceRepository;
+
     @Autowired
     public CourseStudyRecordServiceImpl(CourseStudyRecordRepository courseStudyRecordRepository,
                                         LogRecordRepository logRecordRepository,
                                         ChapterRepository chapterRepository,
                                         SectionRepository sectionRepository,
+                                        TestInstanceRepository testInstanceRepository,
                                         ChapterStudyRecordRepository chapterStudyRecordRepository,
                                         SectionStudyRecordRepository sectionStudyRecordRepository,
                                         CourseRepository courseRepository,
@@ -73,6 +76,7 @@ public class CourseStudyRecordServiceImpl implements CourseStudyRecordService {
         this.chapterStudyRecordRepository = chapterStudyRecordRepository;
         this.sectionStudyRecordRepository = sectionStudyRecordRepository;
         this.courseRepository = courseRepository;
+        this.testInstanceRepository = testInstanceRepository;
     }
 
     @Override
@@ -92,6 +96,7 @@ public class CourseStudyRecordServiceImpl implements CourseStudyRecordService {
             courseStudyRecord = new CourseStudyRecord();
             courseStudyRecord.setStudied(0.0);
             courseStudyRecord.setScore(0.0);
+            courseStudyRecord.setStatus(0);
             courseStudyRecord.setUserId(user.getId());
             courseStudyRecord.setUserName(StringUtils.isEmpty(user.getPersonName()) ? user.getUserName() : user.getPersonName());
             courseStudyRecord.setCourseId(course.getId());
@@ -183,8 +188,15 @@ public class CourseStudyRecordServiceImpl implements CourseStudyRecordService {
         }
         courseStudied = Math.round(courseStudied * 100) / 100.0;
         courseStudyRecord.setStudied(courseStudied);
-        if(courseStudied.equals(1.0)) { // TODO 计算课程总分
-
+        if(courseStudied.equals(1.0)) { // 计算课程总分
+            List<TestInstance> testInstances = this.testInstanceRepository.findByUserIdAndCourseId(courseStudyRecord.getUserId(), courseStudyRecord.getCourseId());
+            Double score = 0.0;
+            if(CollectionUtils.isNotEmpty(testInstances)) {
+                for(TestInstance testInstance : testInstances) {
+                    score += testInstance.getScored();
+                }
+            }
+            courseStudyRecord.setScore(score);
         }
         courseStudyRecord.setStatus(courseStudyRecord.getStudied().equals(1.0) ? 1 : 0);
         courseStudyRecord = this.courseStudyRecordRepository.save(courseStudyRecord);

@@ -16,4 +16,6 @@ public interface TestInstanceRepository extends JpaRepository<TestInstance, Inte
     TestInstance findByUserIdAndTestTemplateId(@Param("userId") Integer userId, @Param("testTemplateId") Integer testTemplateId);
 
     List<TestInstance> findByUserId(@Param("userId") Integer userId);
+
+    List<TestInstance> findByUserIdAndCourseId(@Param("userId") Integer userId, @Param("courseId") Integer courseId);
 }
