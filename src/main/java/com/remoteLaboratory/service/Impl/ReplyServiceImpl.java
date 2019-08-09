@@ -64,7 +64,7 @@ public class ReplyServiceImpl implements ReplyService {
 
     @Override
     public Reply add(Reply reply) throws BusinessException {
-        String sql = "select max(rr.floor_number) number rl_reply rr where rr.subject_id = " + reply.getSubjectId();
+        String sql = "select max(rr.floor_number) number from rl_reply rr where rr.subject_id = " + reply.getSubjectId();
         Map<String, Object> result = this.jdbcTemplate.queryForMap(sql);
         Integer floorNumber = 1;
         if(result.get("number") != null) {
