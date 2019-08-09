@@ -55,7 +55,6 @@ public class Reply implements Serializable {
     @Column(length = 10)
     @ApiModelProperty(value = "回复ID(type = 2)")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotNull
     private Integer replayId;
 
     @Column(length = 10)
