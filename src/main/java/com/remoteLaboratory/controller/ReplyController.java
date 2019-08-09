@@ -68,6 +68,8 @@ public class ReplyController {
         }
         reply.setUserId(loginUser.getId());
         reply.setUserName(StringUtils.isEmpty(loginUser.getPersonName()) ? loginUser.getUserName() : loginUser.getPersonName());
+        reply.setUserImage(loginUser.getUserImage());
+        reply.setUserType(loginUser.getUserType());
         reply.setReplyNumber(0);
         reply = replyService.add(reply);
         CommonResponse commonResponse = CommonResponse.getInstance(reply);

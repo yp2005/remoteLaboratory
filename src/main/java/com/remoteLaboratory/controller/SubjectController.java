@@ -70,6 +70,8 @@ public class SubjectController {
         }
         subject.setUserId(loginUser.getId());
         subject.setUserName(StringUtils.isEmpty(loginUser.getPersonName()) ? loginUser.getUserName() : loginUser.getPersonName());
+        subject.setUserImage(loginUser.getUserImage());
+        subject.setUserType(loginUser.getUserType());
         subject.setReplyNumber(0);
         subject.setOrderNumber(99);
         subject = subjectService.add(subject);

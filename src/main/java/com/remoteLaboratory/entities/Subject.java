@@ -62,6 +62,16 @@ public class Subject implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String userName;
 
+    @Lob
+    @ApiModelProperty(value = "用户头像")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String userImage;
+
+    @Column(length = 255)
+    @ApiModelProperty(value = "用户类型 1-admin 2-老师 3-学生")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String userType;
+
     @Column(length = 10)
     @ApiModelProperty(value = "回复数")
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -171,6 +181,22 @@ public class Subject implements Serializable {
 
     public void setOrderNumber(Integer orderNumber) {
         this.orderNumber = orderNumber;
+    }
+
+    public String getUserImage() {
+        return userImage;
+    }
+
+    public void setUserImage(String userImage) {
+        this.userImage = userImage;
+    }
+
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
     }
 
     public interface Validation{};
