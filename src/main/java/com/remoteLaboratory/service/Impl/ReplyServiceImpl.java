@@ -77,7 +77,7 @@ public class ReplyServiceImpl implements ReplyService {
         subject = this.subjectRepository.save(subject);
         if(reply.getType().equals(2)) {
             Reply pReply = this.replyRepository.findOne(reply.getReplayId());
-            pReply.setReplyNumber(pReply.getReplyNumber());
+            pReply.setReplyNumber(pReply.getReplyNumber() + 1);
             pReply = this.replyRepository.save(pReply);
         }
         return reply;
