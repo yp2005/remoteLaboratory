@@ -55,7 +55,7 @@ public class ReplyServiceImpl implements ReplyService {
                             SubjectRepository subjectRepository,
                             JdbcTemplate jdbcTemplate,
                             CourseService courseService) {
-        this.replyRepository = this.replyRepository;
+        this.replyRepository = replyRepository;
         this.logRecordRepository = logRecordRepository;
         this.courseService = courseService;
         this.subjectRepository = subjectRepository;
