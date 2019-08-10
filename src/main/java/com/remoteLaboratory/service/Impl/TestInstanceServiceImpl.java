@@ -51,11 +51,14 @@ public class TestInstanceServiceImpl implements TestInstanceService {
 
     private CourseStudyRecordRepository courseStudyRecordRepository;
 
+    private UserRepository userRepository;
+
     @Autowired
     public TestInstanceServiceImpl(TestInstanceRepository testInstanceRepository,
                                    TestPartInstanceRepository testPartInstanceRepository,
                                    TestExerciseInstanceRepository testExerciseInstanceRepository,
                                    SectionStudyRecordRepository sectionStudyRecordRepository,
+                                   UserRepository userRepository,
                                    CourseStudyRecordService courseStudyRecordService,
                                    CourseStudyRecordRepository courseStudyRecordRepository,
                                    TestTemplateService testTemplateService) {
@@ -66,6 +69,7 @@ public class TestInstanceServiceImpl implements TestInstanceService {
         this.sectionStudyRecordRepository = sectionStudyRecordRepository;
         this.courseStudyRecordService = courseStudyRecordService;
         this.courseStudyRecordRepository = courseStudyRecordRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -302,6 +306,9 @@ public class TestInstanceServiceImpl implements TestInstanceService {
         testInstancePublicVo = this.calculateScore(testInstancePublicVo);
         testInstancePublicVo.setStatus(status);
         testInstancePublicVo = this.update(testInstancePublicVo);
+        if(user == null) {
+            user = this.userRepository.findOne(testInstancePublicVo.getUserId());
+        }
         SectionStudyRecord sectionStudyRecord = this.sectionStudyRecordRepository.findBySectionIdAndUserId(testInstancePublicVo.getSectionId(), user.getId());
         if(status.equals(1)) {
             if(sectionStudyRecord != null) {
