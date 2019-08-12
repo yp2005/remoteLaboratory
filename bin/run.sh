@@ -7,4 +7,5 @@ export REDIS_DATA=$PWD/redisdata
 mkdir -p redisdata
 export LOG_DIR=$PWD/log
 mkdir -p log
+export WEB_DIST_PATH=$PWD/dist
 docker-compose up -d

@@ -56,4 +56,15 @@ services:
     volumes:
       - /app
 
+  web:
+    image: nginx
+    volumes:
+      - ${WEB_DIST_PATH}:/usr/share/nginx/html
+      - /etc/localtime:/etc/localtime:ro
+
+    ports:
+      - 8800:80
+
+    depends_on:
+      - webserver
 
