@@ -94,10 +94,10 @@ public class DeviceOrderController {
         return commonResponse;
     }
 
-    @PostMapping(path = "/order/{id}")
+    @PostMapping(path = "/order/{courseId}/{deviceOrderId}")
     @ApiOperation(value = "预约设备", notes = "预约设备接口")
-    public CommonResponse order(@NotNull(message = "预约ID不能为空") @PathVariable Integer id, @ApiIgnore User loginUser) throws BusinessException {
-        DeviceOrder deviceOrder = deviceOrderService.order(id, loginUser);
+    public CommonResponse order(@NotNull(message = "课程ID不能为空") @PathVariable Integer courseId, @NotNull(message = "预约ID不能为空") @PathVariable Integer deviceOrderId, @ApiIgnore User loginUser) throws BusinessException {
+        DeviceOrder deviceOrder = deviceOrderService.order(courseId, deviceOrderId, loginUser);
         CommonResponse commonResponse = CommonResponse.getInstance(deviceOrder);
         LogUtil.add(this.logRecordRepository, "预约设备", "设备预约", loginUser, deviceOrder.getId(), deviceOrder.getUserName() + ": " + deviceOrder.getDeviceName());
         return commonResponse;

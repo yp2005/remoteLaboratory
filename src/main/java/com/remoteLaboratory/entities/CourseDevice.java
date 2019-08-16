@@ -28,6 +28,12 @@ public class CourseDevice implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
+    @Column(length = 255)
+    @ApiModelProperty(value = "实验名称")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
+    private String experimenteName;
+
     @Column(length = 10)
     @ApiModelProperty(value = "课程Id")
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -161,6 +167,14 @@ public class CourseDevice implements Serializable {
 
     public void setPicture(String picture) {
         this.picture = picture;
+    }
+
+    public String getExperimenteName() {
+        return experimenteName;
+    }
+
+    public void setExperimenteName(String experimenteName) {
+        this.experimenteName = experimenteName;
     }
 
     public interface Validation{};

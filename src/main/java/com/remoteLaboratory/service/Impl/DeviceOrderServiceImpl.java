@@ -1,9 +1,7 @@
 package com.remoteLaboratory.service.Impl;
 
-import com.remoteLaboratory.entities.DeviceOrder;
-import com.remoteLaboratory.entities.Course;
-import com.remoteLaboratory.entities.LogRecord;
-import com.remoteLaboratory.entities.User;
+import com.remoteLaboratory.entities.*;
+import com.remoteLaboratory.repositories.CourseDeviceRepository;
 import com.remoteLaboratory.repositories.DeviceOrderRepository;
 import com.remoteLaboratory.repositories.LogRecordRepository;
 import com.remoteLaboratory.service.DeviceOrderService;
@@ -46,11 +44,17 @@ public class DeviceOrderServiceImpl implements DeviceOrderService {
 
     private CourseService courseService;
 
+    private CourseDeviceRepository courseDeviceRepository;
+
     @Autowired
-    public DeviceOrderServiceImpl(DeviceOrderRepository deviceOrderRepository, LogRecordRepository logRecordRepository, CourseService courseService) {
+    public DeviceOrderServiceImpl(DeviceOrderRepository deviceOrderRepository,
+                                  LogRecordRepository logRecordRepository,
+                                  CourseDeviceRepository courseDeviceRepository,
+                                  CourseService courseService) {
         this.deviceOrderRepository = deviceOrderRepository;
         this.logRecordRepository = logRecordRepository;
         this.courseService = courseService;
+        this.courseDeviceRepository = courseDeviceRepository;
     }
 
     @Override
@@ -135,17 +139,19 @@ public class DeviceOrderServiceImpl implements DeviceOrderService {
     }
 
     @Override
-    public DeviceOrder order(Integer id, User user) throws BusinessException {
+    public DeviceOrder order(Integer courseId, Integer deviceOrderId, User user) throws BusinessException {
         DeviceOrder deviceOrder = deviceOrderRepository.findByUserIdAndTime(user.getId(), new Date());
         if (deviceOrder != null) {
             throw new BusinessException(Messages.CODE_40010, "您已有预约设备，请完成实验后再进行预约！");
         }
-        deviceOrder = this.deviceOrderRepository.findOne(id);
-        if (deviceOrder == null) {
-            throw new BusinessException(Messages.CODE_20001);
-        }
+        deviceOrder = this.get(deviceOrderId);
+        Course course = this.courseService.get(courseId);
         deviceOrder.setUserId(user.getId());
         deviceOrder.setUserName(StringUtils.isEmpty(user.getPersonName()) ? user.getUserName() : user.getPersonName());
+        deviceOrder.setCourseId(courseId);
+        deviceOrder.setCourseName(course.getName());
+        CourseDevice courseDevice = this.courseDeviceRepository.findByCourseIdAndDeviceId(courseId, deviceOrder.getDeviceId());
+        deviceOrder.setExperimenteName(courseDevice.getExperimenteName());
         deviceOrder.setStatus(1);
         return deviceOrder;
     }
