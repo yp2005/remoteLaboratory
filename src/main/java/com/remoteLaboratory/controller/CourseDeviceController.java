@@ -71,6 +71,20 @@ public class CourseDeviceController {
         return commonResponse;
     }
 
+    @PutMapping
+    @ApiOperation(value = "修改课程设备", notes = "修改课程设备信息接口")
+    @LoginRequired(teacherRequired = "1")
+    public CommonResponse update(@Validated({CourseDevice.Validation.class}) @RequestBody CourseDevice courseDevice, @ApiIgnore User loginUser) throws BusinessException {
+        Course course = this.courseService.get(courseDevice.getCourseId());
+        if(!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
+            throw new BusinessException(Messages.CODE_50200);
+        }
+        courseDevice = courseDeviceService.update(courseDevice);
+        CommonResponse commonResponse = CommonResponse.getInstance(courseDevice);
+        LogUtil.add(this.logRecordRepository, "修改", "课程设备", loginUser, courseDevice.getId(), courseDevice.getCourseName() + "->" + courseDevice.getDeviceName());
+        return commonResponse;
+    }
+
     @PostMapping("/listAdd")
     @ApiOperation(value = "批量添加课程设备", notes = "批量添加课程设备信息接口")
     @LoginRequired(teacherRequired = "1")
