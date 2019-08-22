@@ -53,11 +53,12 @@ public interface DeviceOrderService {
 
     /**
      * 预约设备
-     * @param id 设备预约ID
+     * @param courseId 课程ID
+     * @param deviceOrderId 设备预约ID
      * @param user
      * @return DeviceOrder
      */
-    public DeviceOrder order(Integer id, User user) throws BusinessException;
+    public DeviceOrder order(Integer courseId, Integer deviceOrderId, User user) throws BusinessException;
 
     /**
      * 修改设备预约信息

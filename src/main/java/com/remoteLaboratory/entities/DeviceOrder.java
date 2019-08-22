@@ -41,6 +41,24 @@ public class DeviceOrder implements Serializable {
     private String deviceName;
 
     @Column(length = 10)
+    @ApiModelProperty(value = "课程Id")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
+    private Integer courseId;
+
+    @Column(length = 255)
+    @ApiModelProperty(value = "课程名称")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
+    private String courseName;
+
+    @Column(length = 255)
+    @ApiModelProperty(value = "实验名称")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
+    private String experimenteName;
+
+    @Column(length = 10)
     @ApiModelProperty(value = "用户ID")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer userId;
@@ -221,6 +239,30 @@ public class DeviceOrder implements Serializable {
 
     public void setEndHour(Integer endHour) {
         this.endHour = endHour;
+    }
+
+    public Integer getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(Integer courseId) {
+        this.courseId = courseId;
+    }
+
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
+    }
+
+    public String getExperimenteName() {
+        return experimenteName;
+    }
+
+    public void setExperimenteName(String experimenteName) {
+        this.experimenteName = experimenteName;
     }
 
     public interface Validation{};
