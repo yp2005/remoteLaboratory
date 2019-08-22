@@ -39,6 +39,12 @@ public class Camera {
     @NotNull
     private String ip;
 
+    @Column(length = 255)
+    @ApiModelProperty("视频路径")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
+    private String videoPath;
+
     @Column(length = 10)
     @ApiModelProperty(value = "视频端口")
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -235,6 +241,14 @@ public class Camera {
 
     public void setBindStatus(Integer bindStatus) {
         this.bindStatus = bindStatus;
+    }
+
+    public String getVideoPath() {
+        return videoPath;
+    }
+
+    public void setVideoPath(String videoPath) {
+        this.videoPath = videoPath;
     }
 
     public interface Validation{}
