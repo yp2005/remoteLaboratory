@@ -57,3 +57,27 @@ services:
       - /app
 
 
+  srs:
+    image: registry.linkme8.cn:5000/turbo/srs:2.0-r5-ffmpeg41-dev
+    ports:
+      - 1935
+      - 1985
+      - 443
+      - 8001:80
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+
+      - /dev/shm:/host_shm
+    environment:
+      - SRS_ID=srs1
+      - SERVICE_URL=http://47.93.116.221:8000/remoteLaboratory
+      - AUTH_CAM=false
+      - SERVICE_API_VERSION=edu
+      - USE_DVR=false
+
+
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "10"
