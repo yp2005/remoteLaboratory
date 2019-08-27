@@ -76,6 +76,7 @@ services:
       - SERVICE_API_VERSION=edu
       - USE_DVR=false
       - USE_RABBITMQ=false
+      - FF_LOG_DIR=/tmp
 
 
     logging:
