@@ -55,7 +55,6 @@ public class DeviceOrder implements Serializable {
     @Column(length = 255)
     @ApiModelProperty(value = "实验名称")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotNull
     private String experimenteName;
 
     @Column(length = 10)

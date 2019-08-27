@@ -45,6 +45,7 @@ public class CameraPublicVo extends Camera {
         this.setRetransmitPort(camera.getRetransmitPort());
         this.setForceTcp(camera.getForceTcp());
         this.setBindStatus(camera.getBindStatus());
+        this.setVideoPath(camera.getVideoPath());
     }
 
     public Camera voToEntity() {
@@ -67,6 +68,7 @@ public class CameraPublicVo extends Camera {
         camera.setRetransmitPort(this.getRetransmitPort());
         camera.setForceTcp(this.getForceTcp());
         camera.setBindStatus(this.getBindStatus());
+        camera.setVideoPath(this.getVideoPath());
         return camera;
     }
 
