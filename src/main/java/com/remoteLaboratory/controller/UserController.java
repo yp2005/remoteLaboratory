@@ -65,11 +65,22 @@ public class UserController {
     @PostConstruct
     private void initUser() throws Exception {
         User user = this.userRepository.findByUserName(Constants.ADMIN_USER_NAME);
-        if (user == null) {
+        if (user == null) { // 初始化管理员账号
             user = new User();
             user.setPersonName(Constants.ADMIN_USER_NAME);
             user.setUserName(Constants.ADMIN_USER_NAME);
             user.setUserType(Constants.USER_TYPE_ADMIN);
+            user.setForumForbidden(0);
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            user.setPassword(encoder.encode(EncodeUtils.encodeSHA("123456".getBytes())));
+            userService.add(user);
+        }
+        user = this.userRepository.findByUserName(Constants.GUEST_USER_NAME);
+        if (user == null) { // 初始化游客账号
+            user = new User();
+            user.setPersonName(Constants.GUEST_USER_NAME);
+            user.setUserName(Constants.GUEST_USER_NAME);
+            user.setUserType(Constants.USER_TYPE_GUEST);
             user.setForumForbidden(0);
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             user.setPassword(encoder.encode(EncodeUtils.encodeSHA("123456".getBytes())));

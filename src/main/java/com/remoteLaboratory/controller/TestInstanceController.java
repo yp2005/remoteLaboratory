@@ -33,7 +33,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/testInstance")
 @Api(description = "测验实例")
-@LoginRequired
+@LoginRequired(studentRequired = "1")
 public class TestInstanceController {
 
     private static Logger log = LoggerFactory.getLogger(TestInstanceController.class);

@@ -1,19 +1,13 @@
 package com.remoteLaboratory.service.Impl;
 
-import com.remoteLaboratory.entities.Course;
-import com.remoteLaboratory.entities.CourseStudyRecord;
-import com.remoteLaboratory.entities.LogRecord;
-import com.remoteLaboratory.entities.User;
-import com.remoteLaboratory.repositories.CourseRepository;
-import com.remoteLaboratory.repositories.CourseStudyRecordRepository;
-import com.remoteLaboratory.repositories.LogRecordRepository;
+import com.remoteLaboratory.entities.*;
+import com.remoteLaboratory.repositories.*;
 import com.remoteLaboratory.service.CourseService;
 import com.remoteLaboratory.utils.Constants;
 import com.remoteLaboratory.utils.MySpecification;
 import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.utils.message.Messages;
-import com.remoteLaboratory.vo.ListInput;
-import com.remoteLaboratory.vo.ListOutput;
+import com.remoteLaboratory.vo.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -46,13 +40,21 @@ public class CourseServiceImpl implements CourseService {
 
     private CourseStudyRecordRepository courseStudyRecordRepository;
 
+    private ChapterRepository chapterRepository;
+
+    private SectionRepository sectionRepository;
+
     @Autowired
     public CourseServiceImpl(CourseRepository courseRepository,
                              CourseStudyRecordRepository courseStudyRecordRepository,
+                             ChapterRepository chapterRepository,
+                             SectionRepository sectionRepository,
                              LogRecordRepository logRecordRepository) {
         this.courseRepository = courseRepository;
         this.logRecordRepository = logRecordRepository;
         this.courseStudyRecordRepository = courseStudyRecordRepository;
+        this.chapterRepository = chapterRepository;
+        this.sectionRepository = sectionRepository;
     }
 
     @Override
@@ -129,5 +131,33 @@ public class CourseServiceImpl implements CourseService {
             throw new BusinessException(Messages.CODE_20001);
         }
         return course;
+    }
+
+    @Override
+    public CoursePublicVo getDetail(Integer id) throws BusinessException {
+        Course course = courseRepository.findOne(id);
+        if (course == null) {
+            throw new BusinessException(Messages.CODE_20001);
+        }
+        CoursePublicVo coursePublicVo = new CoursePublicVo(course);
+        List<Chapter> chapterList = this.chapterRepository.findByCourseId(course.getId());
+        if(CollectionUtils.isNotEmpty(chapterList)) {
+            List<ChapterPublicVo> chapterPublicVoList = new ArrayList<>();
+            for(Chapter chapter : chapterList) {
+                ChapterPublicVo chapterPublicVo = new ChapterPublicVo(chapter);
+                List<Section> sectionList = this.sectionRepository.findByChapterId(chapter.getId());
+                if(CollectionUtils.isNotEmpty(chapterList)) {
+                    List<SectionOutput> sectionOutputList = new ArrayList<>();
+                    for(Section section : sectionList) {
+                        SectionOutput sectionOutput = new SectionOutput(section);
+                        sectionOutputList.add(sectionOutput);
+                    }
+                    chapterPublicVo.setSectionList(sectionOutputList);
+                }
+                chapterPublicVoList.add(chapterPublicVo);
+            }
+            coursePublicVo.setChapterList(chapterPublicVoList);
+        }
+        return coursePublicVo;
     }
 }

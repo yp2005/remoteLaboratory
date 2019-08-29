@@ -42,6 +42,7 @@ public class CourseStudyRecordPublicVo extends CourseStudyRecord {
         this.setCourseMainImg(courseStudyRecord.getCourseMainImg());
         this.setCourseIntroduction(courseStudyRecord.getCourseIntroduction());
         this.setStatus(courseStudyRecord.getStatus());
+        this.setCourseVideoDesc(courseStudyRecord.getCourseVideoDesc());
     }
 
     public CourseStudyRecord voToEntity() {
@@ -64,6 +65,8 @@ public class CourseStudyRecordPublicVo extends CourseStudyRecord {
         courseStudyRecord.setSectionTitle(this.getSectionTitle());
         courseStudyRecord.setCourseMainImg(this.getCourseMainImg());
         courseStudyRecord.setCourseIntroduction(this.getCourseIntroduction());
+        courseStudyRecord.setCourseVideoDesc(this.getCourseVideoDesc());
+        courseStudyRecord.setStatus(this.getStatus());
         return courseStudyRecord;
     }
 

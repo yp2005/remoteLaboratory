@@ -64,13 +64,20 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                     user.setToken(token);
                     String teacherRequired = "0";
                     String adminRequired = "0";
+                    String studentRequired = "0";
                     if(classAnnotation != null) {
                         teacherRequired = classAnnotation.teacherRequired();
                         adminRequired = classAnnotation.adminRequired();
+                        studentRequired = classAnnotation.studentRequired();
                     }
                     if(methodAnnotation != null) {
                         teacherRequired = methodAnnotation.teacherRequired();
                         adminRequired = methodAnnotation.adminRequired();
+                        studentRequired = methodAnnotation.studentRequired();
+                    }
+                    // 拦截游客不能访问的接口
+                    if(studentRequired.equals("1") && user.getUserType().equals(Constants.USER_TYPE_GUEST)) {
+                        throw new BusinessException(Messages.CODE_50204);
                     }
                     // 需老师以上权限访问的接口拦截学生用户访问
                     if(teacherRequired.equals("1") && user.getUserType().equals(Constants.USER_TYPE_STUDENT)) {

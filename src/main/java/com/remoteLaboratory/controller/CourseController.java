@@ -132,4 +132,13 @@ public class CourseController {
         LogUtil.add(this.logRecordRepository, "查询", "课程", loginUser, course.getId(), course.getName());
         return commonResponse;
     }
+
+    @GetMapping(path = "/getDetail/{id}")
+    @ApiOperation(value = "查询课程", notes = "根据ID查询课程")
+    public CommonResponse getDetail(@NotNull(message = "课程编号不能为空") @PathVariable Integer id, @ApiIgnore User loginUser) throws BusinessException {
+        Course course = courseService.getDetail(id);
+        CommonResponse commonResponse = CommonResponse.getInstance(course);
+        LogUtil.add(this.logRecordRepository, "查询", "课程", loginUser, course.getId(), course.getName());
+        return commonResponse;
+    }
 }

@@ -46,6 +46,11 @@ public class Course implements Serializable {
     @NotNull
     private String mainImg;
 
+    @Column(length = 255)
+    @ApiModelProperty(value = "课程视频介绍")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String videoDesc;
+
     @Column(length = 10)
     @ApiModelProperty(value = "老师ID")
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -211,6 +216,14 @@ public class Course implements Serializable {
 
     public void setSubjectNumber(Integer subjectNumber) {
         this.subjectNumber = subjectNumber;
+    }
+
+    public String getVideoDesc() {
+        return videoDesc;
+    }
+
+    public void setVideoDesc(String videoDesc) {
+        this.videoDesc = videoDesc;
     }
 
     public interface Validation{};

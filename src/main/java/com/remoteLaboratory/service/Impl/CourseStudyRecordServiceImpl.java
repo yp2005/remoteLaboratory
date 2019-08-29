@@ -103,6 +103,7 @@ public class CourseStudyRecordServiceImpl implements CourseStudyRecordService {
             courseStudyRecord.setCourseName(course.getName());
             courseStudyRecord.setCourseMainImg(course.getMainImg());
             courseStudyRecord.setCourseIntroduction(course.getIntroduction());
+            courseStudyRecord.setCourseVideoDesc(course.getVideoDesc());
             courseStudyRecord = this.courseStudyRecordRepository.save(courseStudyRecord);
             CourseStudyRecordPublicVo courseStudyRecordPublicVo = new CourseStudyRecordPublicVo(courseStudyRecord);
             List<ChapterStudyRecordPublicVo> chapterStudyRecordPublicVoList = new ArrayList<>();

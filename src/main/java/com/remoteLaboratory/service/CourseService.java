@@ -3,6 +3,7 @@ package com.remoteLaboratory.service;
 import com.remoteLaboratory.entities.Course;
 import com.remoteLaboratory.entities.User;
 import com.remoteLaboratory.utils.exception.BusinessException;
+import com.remoteLaboratory.vo.CoursePublicVo;
 import com.remoteLaboratory.vo.ListInput;
 import com.remoteLaboratory.vo.ListOutput;
 
@@ -49,4 +50,10 @@ public interface CourseService {
      */
     public Course get(Integer id) throws BusinessException;
 
+    /**
+     * 根据id获取课程信息详情
+     * @param id
+     * @return
+     */
+    public CoursePublicVo getDetail(Integer id) throws BusinessException;
 }

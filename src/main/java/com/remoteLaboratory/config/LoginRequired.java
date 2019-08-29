@@ -16,4 +16,6 @@ public @interface LoginRequired {
     String adminRequired() default "0";
 
     String teacherRequired() default "0";
+
+    String studentRequired() default "0";
 }

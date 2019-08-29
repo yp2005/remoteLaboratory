@@ -8,12 +8,14 @@ package com.remoteLaboratory.utils;
 public interface Constants {
     /*****************用户名常量*****************/
     String ADMIN_USER_NAME = "admin"; // 管理员
+    String GUEST_USER_NAME = "guest"; // 游客账户
 
     /*****************REDIS数据前缀*****************/
     String USER_TOKEN = "user_token#"; // 用户token
     String USER_LOGIN_TIME = "user_login_time#"; // 用户登录时间
 
     /***************用户类型*****************/
+    String USER_TYPE_GUEST = "0"; // 游客
     String USER_TYPE_ADMIN = "1"; // 管理员
     String USER_TYPE_TEACHER = "2"; // 老师
     String USER_TYPE_STUDENT = "3"; // 学生

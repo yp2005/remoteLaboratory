@@ -32,7 +32,7 @@ import javax.validation.constraints.NotNull;
 @RestController
 @RequestMapping("/courseStudyRecord")
 @Api(description = "课程学习记录")
-@LoginRequired
+@LoginRequired(studentRequired = "1")
 public class CourseStudyRecordController {
 
     private static Logger log = LoggerFactory.getLogger(CourseStudyRecordController.class);

@@ -33,7 +33,7 @@ import javax.validation.constraints.NotNull;
 @RestController
 @RequestMapping("/deviceOrder")
 @Api(description = "设备预约")
-@LoginRequired
+@LoginRequired(studentRequired = "1")
 public class DeviceOrderController {
 
     private static Logger log = LoggerFactory.getLogger(DeviceOrderController.class);

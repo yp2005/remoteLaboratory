@@ -92,7 +92,7 @@ public class User implements Serializable {
     private String userImage;
 
     @Column(length = 255)
-    @ApiModelProperty(value = "用户类型 1-admin 2-老师 3-学生")
+    @ApiModelProperty(value = "用户类型 0-guest 1-admin 2-老师 3-学生")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotNull
     private String userType;
