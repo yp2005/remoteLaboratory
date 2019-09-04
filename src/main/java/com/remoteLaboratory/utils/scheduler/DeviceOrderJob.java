@@ -138,7 +138,7 @@ public class DeviceOrderJob implements Job {
                     calendar.set(Calendar.HOUR_OF_DAY, deviceOpenTimeStartValue);
                     int j = deviceOpenTimeStartValue;
                     while (true) {
-                        log.info("j：" + j);
+                        log.info("j1：" + j);
                         DeviceOrder deviceOrder = new DeviceOrder();
                         deviceOrder.setStartHour(j);
                         j += device.getDuration();
@@ -154,6 +154,7 @@ public class DeviceOrderJob implements Job {
                         calendar.set(Calendar.HOUR_OF_DAY, j);
                         deviceOrder.setEndTime(calendar.getTime());
                         deviceOrder = this.deviceOrderRepository.save(deviceOrder);
+                        log.info("j2：" + j);
                     }
                 }
             }
