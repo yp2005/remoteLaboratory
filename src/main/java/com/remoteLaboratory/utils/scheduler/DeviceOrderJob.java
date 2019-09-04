@@ -126,6 +126,7 @@ public class DeviceOrderJob implements Job {
             Integer month = calendar.get(Calendar.MONTH) + 1;
             Integer day = calendar.get(Calendar.DAY_OF_MONTH);
             log.info("day:" + year + "-" + month + "-" + day);
+            log.info("i1:" + i);
             if(deviceOpenWeekendValue.equals(0) && DateTimeUtil.isWeekend(calendar.getTime())) {
                 calendar.add(Calendar.DATE, 1);
                 continue;
@@ -142,6 +143,8 @@ public class DeviceOrderJob implements Job {
                         DeviceOrder deviceOrder = new DeviceOrder();
                         deviceOrder.setStartHour(j);
                         j += device.getDuration();
+                        log.info("device.getDuration()：" + device.getDuration());
+                        log.info("j2：" + j);
                         if(j > deviceOpenTimeEndValue) break;
                         deviceOrder.setEndHour(j);
                         deviceOrder.setYear(year);
@@ -153,11 +156,14 @@ public class DeviceOrderJob implements Job {
                         deviceOrder.setStatus(0);
                         calendar.set(Calendar.HOUR_OF_DAY, j);
                         deviceOrder.setEndTime(calendar.getTime());
+                        log.info("j3：" + j);
                         deviceOrder = this.deviceOrderRepository.save(deviceOrder);
-                        log.info("j2：" + j);
+                        log.info("j4：" + j);
                     }
+                    log.info("device2：" + device.getName());
                 }
             }
+            log.info("i2:" + i);
             calendar.add(Calendar.DATE, 1);
         }
     }
