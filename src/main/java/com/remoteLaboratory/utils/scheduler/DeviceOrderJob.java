@@ -5,7 +5,6 @@ import com.remoteLaboratory.entities.DeviceOrder;
 import com.remoteLaboratory.entities.SysSetting;
 import com.remoteLaboratory.repositories.DeviceOrderRepository;
 import com.remoteLaboratory.repositories.DeviceRepository;
-import com.remoteLaboratory.repositories.LogRecordRepository;
 import com.remoteLaboratory.repositories.SysSettingRepository;
 import com.remoteLaboratory.utils.Constants;
 import com.remoteLaboratory.utils.SpringUtil;
@@ -26,7 +25,7 @@ import java.util.List;
  */
 @Transactional
 public class DeviceOrderJob implements Job {
-    private static Logger log = LoggerFactory.getLogger(LogCleanUtil.class);
+    private static Logger log = LoggerFactory.getLogger(DeviceOrderJob.class);
 
     private SysSettingRepository sysSettingRepository;
 

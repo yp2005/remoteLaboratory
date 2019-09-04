@@ -18,7 +18,7 @@ import java.util.Calendar;
  * 日志清理
  */
 public class LogCleanJob implements Job {
-    private static Logger log = LoggerFactory.getLogger(LogCleanUtil.class);
+    private static Logger log = LoggerFactory.getLogger(LogCleanJob.class);
 
     private LogRecordService logRecordService;
 
