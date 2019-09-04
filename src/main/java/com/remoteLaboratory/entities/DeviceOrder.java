@@ -43,13 +43,11 @@ public class DeviceOrder implements Serializable {
     @Column(length = 10)
     @ApiModelProperty(value = "课程Id")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotNull
     private Integer courseId;
 
     @Column(length = 255)
     @ApiModelProperty(value = "课程名称")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotNull
     private String courseName;
 
     @Column(length = 255)

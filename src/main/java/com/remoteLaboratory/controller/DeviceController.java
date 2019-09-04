@@ -75,6 +75,10 @@ public class DeviceController {
         device = deviceService.update(device);
         CommonResponse commonResponse = CommonResponse.getInstance(device);
         LogUtil.add(this.logRecordRepository, "修改", "设备", loginUser, device.getId(), device.getName());
+        if(device.getType().equals(1)) { // 在线实验设备生产预约信息
+            DeviceOrderJob deviceOrderJob = new DeviceOrderJob();
+            deviceOrderJob.execute(device.getId());
+        }
         return commonResponse;
     }
 
