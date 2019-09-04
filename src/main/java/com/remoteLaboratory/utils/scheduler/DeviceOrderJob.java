@@ -73,27 +73,25 @@ public class DeviceOrderJob implements Job {
             DeviceOrder d = this.deviceOrderRepository.findFirstByYearAndMonthAndDay(year, month, day);
             log.info("day:" + year + "-" + month + "-" + day + " : " + (d == null));
             if(d == null) {
-                if(CollectionUtils.isNotEmpty(deviceList)) {
-                    for(Device device : deviceList) {
-                        calendar.set(Calendar.HOUR_OF_DAY, deviceOpenTimeStartValue);
-                        int j = deviceOpenTimeStartValue;
-                        while (true) {
-                            DeviceOrder deviceOrder = new DeviceOrder();
-                            deviceOrder.setStartHour(j);
-                            j += device.getDuration();
-                            if(j > deviceOpenTimeEndValue) break;
-                            deviceOrder.setEndHour(j);
-                            deviceOrder.setYear(year);
-                            deviceOrder.setMonth(month);
-                            deviceOrder.setDay(day);
-                            deviceOrder.setDeviceId(device.getId());
-                            deviceOrder.setDeviceName(device.getName());
-                            deviceOrder.setStartTime(calendar.getTime());
-                            deviceOrder.setStatus(0);
-                            calendar.set(Calendar.HOUR_OF_DAY, j);
-                            deviceOrder.setEndTime(calendar.getTime());
-                            deviceOrder = this.deviceOrderRepository.save(deviceOrder);
-                        }
+                for(Device device : deviceList) {
+                    calendar.set(Calendar.HOUR_OF_DAY, deviceOpenTimeStartValue);
+                    int j = deviceOpenTimeStartValue;
+                    while (true) {
+                        DeviceOrder deviceOrder = new DeviceOrder();
+                        deviceOrder.setStartHour(j);
+                        j += device.getDuration();
+                        if(j > deviceOpenTimeEndValue) break;
+                        deviceOrder.setEndHour(j);
+                        deviceOrder.setYear(year);
+                        deviceOrder.setMonth(month);
+                        deviceOrder.setDay(day);
+                        deviceOrder.setDeviceId(device.getId());
+                        deviceOrder.setDeviceName(device.getName());
+                        deviceOrder.setStartTime(calendar.getTime());
+                        deviceOrder.setStatus(0);
+                        calendar.set(Calendar.HOUR_OF_DAY, j);
+                        deviceOrder.setEndTime(calendar.getTime());
+                        deviceOrder = this.deviceOrderRepository.save(deviceOrder);
                     }
                 }
             }
@@ -124,37 +122,38 @@ public class DeviceOrderJob implements Job {
         log.info("deviceOrderTime:" + deviceOrderTimeValue);
         log.info("deviceOpenWeekend:" + deviceOpenWeekendValue);
         for(int i = 0; i < deviceOrderTimeValue; i++) {
+            Integer year = calendar.get(Calendar.YEAR);
+            Integer month = calendar.get(Calendar.MONTH) + 1;
+            Integer day = calendar.get(Calendar.DAY_OF_MONTH);
+            log.info("day:" + year + "-" + month + "-" + day);
             if(deviceOpenWeekendValue.equals(0) && DateTimeUtil.isWeekend(calendar.getTime())) {
                 calendar.add(Calendar.DATE, 1);
                 continue;
             }
-            Integer year = calendar.get(Calendar.YEAR);
-            Integer month = calendar.get(Calendar.MONTH) + 1;
-            Integer day = calendar.get(Calendar.DAY_OF_MONTH);
             DeviceOrder d = this.deviceOrderRepository.findFirstByYearAndMonthAndDay(year, month, day);
             log.info("day:" + year + "-" + month + "-" + day + " : " + (d == null));
             if(d == null) {
-                if(CollectionUtils.isNotEmpty(deviceList)) {
-                    for(Device device : deviceList) {
-                        calendar.set(Calendar.HOUR_OF_DAY, deviceOpenTimeStartValue);
-                        int j = deviceOpenTimeStartValue;
-                        while (true) {
-                            DeviceOrder deviceOrder = new DeviceOrder();
-                            deviceOrder.setStartHour(j);
-                            j += device.getDuration();
-                            if(j > deviceOpenTimeEndValue) break;
-                            deviceOrder.setEndHour(j);
-                            deviceOrder.setYear(year);
-                            deviceOrder.setMonth(month);
-                            deviceOrder.setDay(day);
-                            deviceOrder.setDeviceId(device.getId());
-                            deviceOrder.setDeviceName(device.getName());
-                            deviceOrder.setStartTime(calendar.getTime());
-                            deviceOrder.setStatus(0);
-                            calendar.set(Calendar.HOUR_OF_DAY, j);
-                            deviceOrder.setEndTime(calendar.getTime());
-                            deviceOrder = this.deviceOrderRepository.save(deviceOrder);
-                        }
+                for(Device device : deviceList) {
+                    log.info("device：" + device.getName());
+                    calendar.set(Calendar.HOUR_OF_DAY, deviceOpenTimeStartValue);
+                    int j = deviceOpenTimeStartValue;
+                    while (true) {
+                        log.info("j：" + j);
+                        DeviceOrder deviceOrder = new DeviceOrder();
+                        deviceOrder.setStartHour(j);
+                        j += device.getDuration();
+                        if(j > deviceOpenTimeEndValue) break;
+                        deviceOrder.setEndHour(j);
+                        deviceOrder.setYear(year);
+                        deviceOrder.setMonth(month);
+                        deviceOrder.setDay(day);
+                        deviceOrder.setDeviceId(device.getId());
+                        deviceOrder.setDeviceName(device.getName());
+                        deviceOrder.setStartTime(calendar.getTime());
+                        deviceOrder.setStatus(0);
+                        calendar.set(Calendar.HOUR_OF_DAY, j);
+                        deviceOrder.setEndTime(calendar.getTime());
+                        deviceOrder = this.deviceOrderRepository.save(deviceOrder);
                     }
                 }
             }
