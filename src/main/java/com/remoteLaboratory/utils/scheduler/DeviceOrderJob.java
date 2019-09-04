@@ -17,12 +17,14 @@ import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.transaction.Transactional;
 import java.util.Calendar;
 import java.util.List;
 
 /**
  * 生成设备预约
  */
+@Transactional
 public class DeviceOrderJob implements Job {
     private static Logger log = LoggerFactory.getLogger(LogCleanUtil.class);
 
@@ -91,7 +93,7 @@ public class DeviceOrderJob implements Job {
                         deviceOrder.setStatus(0);
                         calendar.set(Calendar.HOUR_OF_DAY, j);
                         deviceOrder.setEndTime(calendar.getTime());
-                        deviceOrder = this.deviceOrderRepository.save(deviceOrder);
+                        this.deviceOrderRepository.save(deviceOrder);
                     }
                 }
             }
@@ -157,7 +159,7 @@ public class DeviceOrderJob implements Job {
                         calendar.set(Calendar.HOUR_OF_DAY, j);
                         deviceOrder.setEndTime(calendar.getTime());
                         log.info("j3：" + j);
-                        deviceOrder = this.deviceOrderRepository.save(deviceOrder);
+                        this.deviceOrderRepository.save(deviceOrder);
                         log.info("j4：" + j);
                     }
                     log.info("device2：" + device.getName());
@@ -214,7 +216,7 @@ public class DeviceOrderJob implements Job {
                     deviceOrder.setStatus(0);
                     calendar.set(Calendar.HOUR_OF_DAY, j);
                     deviceOrder.setEndTime(calendar.getTime());
-                    deviceOrder = this.deviceOrderRepository.save(deviceOrder);
+                    this.deviceOrderRepository.save(deviceOrder);
                 }
             }
             calendar.add(Calendar.DATE, 1);
