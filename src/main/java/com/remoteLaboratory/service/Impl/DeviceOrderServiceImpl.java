@@ -4,14 +4,15 @@ import com.remoteLaboratory.entities.*;
 import com.remoteLaboratory.repositories.CourseDeviceRepository;
 import com.remoteLaboratory.repositories.DeviceOrderRepository;
 import com.remoteLaboratory.repositories.LogRecordRepository;
-import com.remoteLaboratory.service.DeviceOrderService;
 import com.remoteLaboratory.service.CourseService;
+import com.remoteLaboratory.service.DeviceOrderService;
 import com.remoteLaboratory.utils.Constants;
 import com.remoteLaboratory.utils.MySpecification;
 import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.utils.message.Messages;
 import com.remoteLaboratory.vo.ListInput;
 import com.remoteLaboratory.vo.ListOutput;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,12 +21,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 设备预约服务接口实现
@@ -46,15 +49,19 @@ public class DeviceOrderServiceImpl implements DeviceOrderService {
 
     private CourseDeviceRepository courseDeviceRepository;
 
+    private JdbcTemplate jdbcTemplate;
+
     @Autowired
     public DeviceOrderServiceImpl(DeviceOrderRepository deviceOrderRepository,
                                   LogRecordRepository logRecordRepository,
                                   CourseDeviceRepository courseDeviceRepository,
+                                  JdbcTemplate jdbcTemplate,
                                   CourseService courseService) {
         this.deviceOrderRepository = deviceOrderRepository;
         this.logRecordRepository = logRecordRepository;
         this.courseService = courseService;
         this.courseDeviceRepository = courseDeviceRepository;
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
@@ -144,8 +151,19 @@ public class DeviceOrderServiceImpl implements DeviceOrderService {
         if (deviceOrder != null) {
             throw new BusinessException(Messages.CODE_40010, "您已有预约设备，请完成实验后再进行预约！");
         }
-        deviceOrder = this.get(deviceOrderId);
         Course course = this.courseService.get(courseId);
+        deviceOrder = this.get(deviceOrderId);
+        String sql = "select sum(t.end_hour - t.start_hour) as total from rl_device_order t  where t.course_id = " + courseId + " and t.user_id = " + user.getId() + " and t.`status` = 1";
+        List<Map<String, Object>> list = this.jdbcTemplate.queryForList(sql);
+        if (CollectionUtils.isNotEmpty(list)) {
+            Map<String, Object> map = list.get(0);
+            int total = (Integer) map.get("total");
+            int limitTime = course.getTimeLimit() == null ? 8 : course.getTimeLimit();
+            int orderTime = deviceOrder.getEndHour() - deviceOrder.getStartHour();
+            if(total + orderTime > limitTime) {
+                throw new BusinessException(Messages.CODE_40010, "实验时间超出限制，总时间，" + limitTime + "，实验时间：" + total + "，预约时间：" + orderTime);
+            }
+        }
         deviceOrder.setUserId(user.getId());
         deviceOrder.setUserName(StringUtils.isEmpty(user.getPersonName()) ? user.getUserName() : user.getPersonName());
         deviceOrder.setCourseId(courseId);

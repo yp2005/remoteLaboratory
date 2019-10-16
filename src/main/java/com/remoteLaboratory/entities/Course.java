@@ -93,6 +93,11 @@ public class Course implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer subjectNumber;
 
+    @Column(length = 10)
+    @ApiModelProperty(value = "实验总时长")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer timeLimit;
+
     @Column(updatable = false)
     @ApiModelProperty(value = "创建时间", hidden = true)
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -224,6 +229,14 @@ public class Course implements Serializable {
 
     public void setVideoDesc(String videoDesc) {
         this.videoDesc = videoDesc;
+    }
+
+    public Integer getTimeLimit() {
+        return timeLimit;
+    }
+
+    public void setTimeLimit(Integer timeLimit) {
+        this.timeLimit = timeLimit;
     }
 
     public interface Validation{};
