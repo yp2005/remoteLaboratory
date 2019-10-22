@@ -58,6 +58,9 @@ public class DeviceController {
     @ApiOperation(value = "添加设备", notes = "添加设备信息接口")
     @LoginRequired(adminRequired = "1")
     public CommonResponse add(@Validated({Device.Validation.class}) @RequestBody Device device, @ApiIgnore User loginUser) throws BusinessException {
+        if(device.getDuration() == null && device.getDuration() < 1) {
+            throw new BusinessException(Messages.CODE_40010, "请设置正确的实验时长");
+        }
         device = deviceService.add(device);
         CommonResponse commonResponse = CommonResponse.getInstance(device);
         LogUtil.add(this.logRecordRepository, "添加", "设备", loginUser, device.getId(), device.getName());
