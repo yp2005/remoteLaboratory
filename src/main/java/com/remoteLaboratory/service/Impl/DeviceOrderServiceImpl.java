@@ -25,6 +25,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -157,7 +158,7 @@ public class DeviceOrderServiceImpl implements DeviceOrderService {
         List<Map<String, Object>> list = this.jdbcTemplate.queryForList(sql);
         if (CollectionUtils.isNotEmpty(list)) {
             Map<String, Object> map = list.get(0);
-            int total = map.get("total") == null ? 0 : (int) map.get("total");
+            int total = map.get("total") == null ? 0 : ((BigDecimal) map.get("total")).intValue();
             int limitTime = course.getTimeLimit() == null ? 8 : course.getTimeLimit();
             int orderTime = deviceOrder.getEndHour() - deviceOrder.getStartHour();
             if(total + orderTime > limitTime) {
