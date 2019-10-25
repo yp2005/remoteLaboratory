@@ -157,7 +157,7 @@ public class DeviceOrderServiceImpl implements DeviceOrderService {
         List<Map<String, Object>> list = this.jdbcTemplate.queryForList(sql);
         if (CollectionUtils.isNotEmpty(list)) {
             Map<String, Object> map = list.get(0);
-            int total = (Integer) map.get("total");
+            int total = map.get("total") == null ? 0 : (int) map.get("total");
             int limitTime = course.getTimeLimit() == null ? 8 : course.getTimeLimit();
             int orderTime = deviceOrder.getEndHour() - deviceOrder.getStartHour();
             if(total + orderTime > limitTime) {
