@@ -1,10 +1,7 @@
 package com.remoteLaboratory.service.Impl;
 
 import com.remoteLaboratory.entities.*;
-import com.remoteLaboratory.repositories.CameraRepository;
-import com.remoteLaboratory.repositories.DeviceRepository;
-import com.remoteLaboratory.repositories.LogRecordRepository;
-import com.remoteLaboratory.repositories.SignalChannelRepository;
+import com.remoteLaboratory.repositories.*;
 import com.remoteLaboratory.service.DeviceService;
 import com.remoteLaboratory.utils.MySpecification;
 import com.remoteLaboratory.utils.exception.BusinessException;
@@ -12,6 +9,7 @@ import com.remoteLaboratory.utils.message.Messages;
 import com.remoteLaboratory.vo.BindCameraInput;
 import com.remoteLaboratory.vo.ListInput;
 import com.remoteLaboratory.vo.ListOutput;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,15 +43,19 @@ public class DeviceServiceImpl implements DeviceService {
 
     private SignalChannelRepository signalChannelRepository;
 
+    private CourseDeviceRepository courseDeviceRepository;
+
     @Autowired
     public DeviceServiceImpl(DeviceRepository deviceRepository,
                              CameraRepository cameraRepository,
+                             CourseDeviceRepository courseDeviceRepository,
                              SignalChannelRepository signalChannelRepository,
                              LogRecordRepository logRecordRepository) {
         this.deviceRepository = deviceRepository;
         this.logRecordRepository = logRecordRepository;
         this.cameraRepository = cameraRepository;
         this.signalChannelRepository = signalChannelRepository;
+        this.courseDeviceRepository = courseDeviceRepository;
     }
 
     @Override
@@ -98,6 +100,10 @@ public class DeviceServiceImpl implements DeviceService {
         for (int id : ids) {
             Device device = deviceRepository.findOne(id);
             if (device != null) {
+                List<CourseDevice> courseDeviceList = this.courseDeviceRepository.findByDeviceId(id);
+                if(CollectionUtils.isNotEmpty(courseDeviceList)) {
+                    throw new BusinessException(Messages.CODE_40010, "设备已有课程使用，不能删除");
+                }
                 deviceRepository.delete(id);
                 LogRecord logRecord = new LogRecord();
                 logRecord.setType("删除");

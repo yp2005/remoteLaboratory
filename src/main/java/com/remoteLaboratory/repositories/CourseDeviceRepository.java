@@ -7,9 +7,13 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface CourseDeviceRepository extends JpaRepository<CourseDevice, Integer>,JpaSpecificationExecutor<CourseDevice> {
     CourseDevice findByCourseIdAndDeviceId(@Param("courseId") Integer courseId, @Param("deviceId") Integer deviceId);
 
     void deleteByCourseId(@Param("courseId") Integer courseId);
+
+    List<CourseDevice> findByDeviceId(@Param("deviceId") Integer deviceId);
 }

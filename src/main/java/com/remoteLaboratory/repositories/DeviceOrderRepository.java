@@ -19,4 +19,6 @@ public interface DeviceOrderRepository extends JpaRepository<DeviceOrder, Intege
 
     @Query("select d from DeviceOrder d where d.userId = :userId and d.endTime > :now")
     DeviceOrder findByUserIdAndTime(@Param("userId") Integer userId, @Param("now") Date now);
+
+    void deleteByDeviceIdAndCourseId(@Param("deviceId") Integer deviceId, @Param("courseId") Integer courseId);
 }

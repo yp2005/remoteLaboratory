@@ -2,6 +2,7 @@ package com.remoteLaboratory.service.Impl;
 
 import com.remoteLaboratory.entities.*;
 import com.remoteLaboratory.repositories.CourseDeviceRepository;
+import com.remoteLaboratory.repositories.DeviceOrderRepository;
 import com.remoteLaboratory.repositories.LogRecordRepository;
 import com.remoteLaboratory.service.CourseDeviceService;
 import com.remoteLaboratory.service.CourseService;
@@ -47,15 +48,19 @@ public class CourseDeviceServiceImpl implements CourseDeviceService {
 
     private DeviceService deviceService;
 
+    private DeviceOrderRepository deviceOrderRepository;
+
     @Autowired
     public CourseDeviceServiceImpl(CourseDeviceRepository courseDeviceRepository,
                                    CourseService courseService,
                                    DeviceService deviceService,
+                                   DeviceOrderRepository deviceOrderRepository,
                                    LogRecordRepository logRecordRepository) {
         this.courseDeviceRepository = courseDeviceRepository;
         this.logRecordRepository = logRecordRepository;
         this.courseService = courseService;
         this.deviceService = deviceService;
+        this.deviceOrderRepository = deviceOrderRepository;
     }
 
     @Override
@@ -107,10 +112,11 @@ public class CourseDeviceServiceImpl implements CourseDeviceService {
                 if(!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
                     throw new BusinessException(Messages.CODE_50200);
                 }
-                if(course.getStatus().equals(1)) {
-                    throw new BusinessException(Messages.CODE_40010, "课程正在进行不能删除！");
-                }
+//                if(course.getStatus().equals(1)) {
+//                    throw new BusinessException(Messages.CODE_40010, "课程正在进行不能删除！");
+//                }
                 courseDeviceRepository.delete(id);
+                this.deviceOrderRepository.deleteByDeviceIdAndCourseId(courseDevice.getDeviceId(), courseDevice.getCourseId());
                 LogRecord logRecord = new LogRecord();
                 logRecord.setType("删除");
                 logRecord.setObject("课程设备");
