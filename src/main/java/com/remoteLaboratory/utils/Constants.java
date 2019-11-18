@@ -30,4 +30,5 @@ public interface Constants {
     String DEVICE_OPEN_TIME_END = "deviceOpenTimeEnd"; // 设备开放时间-结束时间
     String DEVICE_OPEN_WEEKEND = "deviceOpenWeekend"; // 设备周末是否开放
     String HOME_PAGE_IMAGES = "homePageImages"; // 首页轮播图
+    String HOME_PAGE_BOTTOM_IMAGES = "homePageBottomImages"; // 首页底部轮播图
 }

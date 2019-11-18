@@ -112,6 +112,16 @@ public class SysSettingController {
             this.sysSettingRepository.save(homePageImages);
         }
 
+        SysSetting homePageBottomImages = this.sysSettingRepository.findByKeyName(Constants.HOME_PAGE_BOTTOM_IMAGES);
+        if (homePageBottomImages == null) {
+            homePageBottomImages = new SysSetting();
+            homePageBottomImages.setZhName("首页底部轮播图");
+            homePageBottomImages.setKeyName(Constants.HOME_PAGE_BOTTOM_IMAGES);
+            homePageBottomImages.setValue("[]");
+            homePageBottomImages.setDescription("图片url的json数组字符串");
+            this.sysSettingRepository.save(homePageBottomImages);
+        }
+
     }
 
     @PostMapping(path = "/list")
@@ -188,6 +198,15 @@ public class SysSettingController {
     @ApiOperation(value = "查询首页轮播图片", notes = "查询首页轮播图片接口")
     public CommonResponse getHomePageImages(@ApiIgnore User loginUser) throws BusinessException {
         SysSetting sysSetting = sysSettingService.getByKeyName(Constants.HOME_PAGE_IMAGES);
+        CommonResponse commonResponse = CommonResponse.getInstance(sysSetting);
+        LogUtil.add(this.logRecordRepository, "查询", "系统设置", loginUser, sysSetting.getId(), sysSetting.getZhName());
+        return commonResponse;
+    }
+
+    @GetMapping(path = "/getHomePageBottomImages")
+    @ApiOperation(value = "查询首页底部轮播图片", notes = "查询首页底部轮播图片接口")
+    public CommonResponse getHomePageBottomImages(@ApiIgnore User loginUser) throws BusinessException {
+        SysSetting sysSetting = sysSettingService.getByKeyName(Constants.HOME_PAGE_BOTTOM_IMAGES);
         CommonResponse commonResponse = CommonResponse.getInstance(sysSetting);
         LogUtil.add(this.logRecordRepository, "查询", "系统设置", loginUser, sysSetting.getId(), sysSetting.getZhName());
         return commonResponse;
