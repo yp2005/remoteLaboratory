@@ -147,7 +147,13 @@ public class UserController {
     @ApiOperation(value = "修改用户(管理员接口)", notes = "修改用户信息接口(管理员接口)")
     @LoginRequired(adminRequired = "1")
     public CommonResponse update(@Validated({User.Validation.class}) @RequestBody User user, @ApiIgnore User loginUser) throws BusinessException {
-        user.setPassword(encoder.encode(user.getPassword()));
+        if(StringUtils.isEmpty(user.getPassword())) { // 不修改密码
+            User oldUser = this.userRepository.findOne(user.getId());
+            user.setPassword(oldUser.getPassword());
+        }
+        else { // 修改密码
+            user.setPassword(encoder.encode(user.getPassword()));
+        }
         user = userService.update(user);
         CommonResponse commonResponse = CommonResponse.getInstance(user);
         LogUtil.add(this.logRecordRepository, "修改", "用户", loginUser, user.getId(), user.getUserName());
