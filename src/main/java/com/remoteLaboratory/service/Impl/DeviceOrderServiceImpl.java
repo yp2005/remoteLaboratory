@@ -154,6 +154,9 @@ public class DeviceOrderServiceImpl implements DeviceOrderService {
         }
         Course course = this.courseService.get(courseId);
         deviceOrder = this.get(deviceOrderId);
+        if(deviceOrder.getStatus().equals(1)) {
+            throw new BusinessException(Messages.CODE_40010, "该设备此时段已被其他人预约");
+        }
         String sql = "select sum(t.end_hour - t.start_hour) as total from rl_device_order t  where t.course_id = " + courseId + " and t.user_id = " + user.getId() + " and t.`status` = 1";
         List<Map<String, Object>> list = this.jdbcTemplate.queryForList(sql);
         if (CollectionUtils.isNotEmpty(list)) {
