@@ -36,6 +36,11 @@ public class Exercise implements Serializable {
     private String content;
 
     @Column(length = 10)
+    @ApiModelProperty(value = "显示类型 1-文字 2-图片")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer displayType;
+
+    @Column(length = 10)
     @ApiModelProperty(value = "类型 1-客观题 2-主观题")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonIgnore
@@ -244,6 +249,14 @@ public class Exercise implements Serializable {
 
     public void setSectionTitle(String sectionTitle) {
         this.sectionTitle = sectionTitle;
+    }
+
+    public Integer getDisplayType() {
+        return displayType;
+    }
+
+    public void setDisplayType(Integer displayType) {
+        this.displayType = displayType;
     }
 
     public interface Validation{};

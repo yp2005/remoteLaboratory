@@ -26,5 +26,6 @@ public class TestExerciseInstanceOutput extends TestExerciseInstance{
         this.setTestInstanceId(testExerciseInstance.getTestInstanceId());
         this.setTestPartInstanceId(testExerciseInstance.getTestPartInstanceId());
         this.setType(testExerciseInstance.getExercisesType());
+        this.setDisplayType(testExerciseInstance.getDisplayType());
     }
 }
