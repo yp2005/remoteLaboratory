@@ -35,6 +35,8 @@ public class DeviceOutputVo extends Device {
         this.setDescription(device.getDescription());
         this.setPicture(device.getPicture());
         this.setDuration(device.getDuration());
+        this.setWebsocketIp(device.getWebsocketIp());
+        this.setWebsocketPort(device.getWebsocketPort());
     }
 
     public Camera getCamera() {

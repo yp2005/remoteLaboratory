@@ -57,6 +57,16 @@ public class Device {
     private String relationKey;
 
     @Column(length = 255)
+    @ApiModelProperty(value = "websocket ip")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String websocketIp;
+
+    @Column(length = 255)
+    @ApiModelProperty(value = "websocket 端口")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String websocketPort;
+
+    @Column(length = 255)
     @ApiModelProperty(value = "在线实验设备需要嵌入的实验页面url")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String pageUrl;
@@ -209,6 +219,22 @@ public class Device {
 
     public void setSignalChannelList(List<SignalChannel> signalChannelList) {
         this.signalChannelList = signalChannelList;
+    }
+
+    public String getWebsocketIp() {
+        return websocketIp;
+    }
+
+    public void setWebsocketIp(String websocketIp) {
+        this.websocketIp = websocketIp;
+    }
+
+    public String getWebsocketPort() {
+        return websocketPort;
+    }
+
+    public void setWebsocketPort(String websocketPort) {
+        this.websocketPort = websocketPort;
     }
 
     public interface Validation{}
