@@ -3,6 +3,7 @@ package com.remoteLaboratory.entities;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -12,14 +13,15 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 测验大题实例
+ * 实验报告大题实例
  *
  * @Author: yupeng
  */
 
 @Entity
 @Table(name = "rl_test_part_instance")
-@ApiModel(value = "测验大题实例表")
+@ApiModel(value = "实验报告大题实例表")
+@Data
 public class TestPartInstance implements Serializable {
     @Id
     @Column(length = 10, nullable = false)
@@ -63,10 +65,16 @@ public class TestPartInstance implements Serializable {
     private Double scored;
 
     @Column(length = 10)
-    @ApiModelProperty(value = "测验实例ID")
+    @ApiModelProperty(value = "实验报告实例ID")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotNull
     private Integer testInstanceId;
+
+    @Column(length = 10)
+    @ApiModelProperty(value = "分项实例ID")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
+    private Integer testSubsectionInstanceId;
 
     @Column(updatable = false)
     @ApiModelProperty(value = "创建时间", hidden = true)
@@ -81,85 +89,5 @@ public class TestPartInstance implements Serializable {
     @UpdateTimestamp
     private Date updateTime;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Integer getSerialNumber() {
-        return serialNumber;
-    }
-
-    public void setSerialNumber(Integer serialNumber) {
-        this.serialNumber = serialNumber;
-    }
-
-    public Double getScore() {
-        return score;
-    }
-
-    public void setScore(Double score) {
-        this.score = score;
-    }
-
-    public Double getScored() {
-        return scored;
-    }
-
-    public void setScored(Double scored) {
-        this.scored = scored;
-    }
-
-    public Integer getTestInstanceId() {
-        return testInstanceId;
-    }
-
-    public void setTestInstanceId(Integer testInstanceId) {
-        this.testInstanceId = testInstanceId;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public interface Validation{};
+    public interface Validation{}
 }

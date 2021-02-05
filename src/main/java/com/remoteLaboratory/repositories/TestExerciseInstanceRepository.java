@@ -12,4 +12,6 @@ import java.util.List;
 @Repository
 public interface TestExerciseInstanceRepository extends JpaRepository<TestExerciseInstance, Integer>,JpaSpecificationExecutor<TestExerciseInstance> {
     List<TestExerciseInstance> findByTestPartInstanceId(@Param("testPartInstanceId") Integer testPartInstanceId);
+
+    List<TestExerciseInstance> findByTestInstanceId(@Param("testInstanceId") Integer testInstanceId);
 }

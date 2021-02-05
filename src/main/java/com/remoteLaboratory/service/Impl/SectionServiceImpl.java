@@ -96,13 +96,11 @@ public class SectionServiceImpl implements SectionService {
                 sectionStudyRecord.setSectionId(section.getId());
                 sectionStudyRecord.setSectionName(section.getName());
                 sectionStudyRecord.setSectionTitle(section.getTitle());
-                sectionStudyRecord.setStudied(0.0);
                 sectionStudyRecord.setStudyStatus(0);
-                sectionStudyRecord.setTestStatus(0);
                 sectionStudyRecord.setUserId(chapterStudyRecord.getUserId());
                 sectionStudyRecord.setUserName(chapterStudyRecord.getUserName());
                 sectionStudyRecord = this.sectionStudyRecordRepository.save(sectionStudyRecord);
-                this.courseStudyRecordService.update(courseStudyRecord.getId());
+                this.courseStudyRecordService.updatePercent(courseStudyRecord);
             }
         }
         return section;
@@ -226,18 +224,16 @@ public class SectionServiceImpl implements SectionService {
         if(sectionStudyRecord != null) {
             if(!sectionStudyRecord.getStudyStatus().equals(1)) {
                 sectionStudyRecord.setStudyStatus(1); // 状态设置为已学习
-                sectionStudyRecord.setStudied(sectionStudyRecord.getStudied() + 0.5);
                 sectionStudyRecord = this.sectionStudyRecordRepository.save(sectionStudyRecord);
-                this.courseStudyRecordService.update(sectionStudyRecord.getCourseStudyRecordId());
+                this.courseStudyRecordService.updatePercent(this.courseStudyRecordRepository.findOne(sectionStudyRecord.getCourseStudyRecordId()));
             }
         }
         else {
             this.courseStudyRecordService.startStudy(section.getCourseId(), user);
             sectionStudyRecord = this.sectionStudyRecordRepository.findBySectionIdAndUserId(id, user.getId());
             sectionStudyRecord.setStudyStatus(1); // 状态设置为已学习
-            sectionStudyRecord.setStudied(sectionStudyRecord.getStudied() + 0.5);
             sectionStudyRecord = this.sectionStudyRecordRepository.save(sectionStudyRecord);
-            this.courseStudyRecordService.update(sectionStudyRecord.getCourseStudyRecordId());
+            this.courseStudyRecordService.updatePercent(this.courseStudyRecordRepository.findOne(sectionStudyRecord.getCourseStudyRecordId()));
         }
         return sectionStudyRecord;
     }

@@ -1,7 +1,7 @@
 package com.remoteLaboratory.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.remoteLaboratory.entities.Camera;
+import com.remoteLaboratory.entities.TestExerciseTemplate;
 import com.remoteLaboratory.entities.TestTemplate;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -9,15 +9,19 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.List;
 
 /**
- * 测验模板公用对象
+ * 实验报告模板公用对象
  *
  * @Author: yupeng
  */
-@ApiModel(value = "测验模板公用对象")
+@ApiModel(value = "实验报告模板公用对象")
 public class TestTemplatePublicVo extends TestTemplate {
-    @ApiModelProperty(value = "测验大题模板列表")
+    @ApiModelProperty(value = "实验报告分项模板列表")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private List<TestPartTemplatePublicVo> testPartTemplatePublicVoList;
+    private List<TestSubsectionTemplatePublicVo> testSubsectionTemplatePublicVoList;
+
+    @ApiModelProperty(value = "实验报告小题模板列表")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<TestExerciseTemplate> testExerciseTemplateList;
 
     public TestTemplatePublicVo() {
 
@@ -28,16 +32,11 @@ public class TestTemplatePublicVo extends TestTemplate {
         this.setCreateTime(testTemplate.getCreateTime());
         this.setName(testTemplate.getName());
         this.setUpdateTime(testTemplate.getUpdateTime());
-        this.setChapterId(testTemplate.getChapterId());
-        this.setChapterName(testTemplate.getChapterName());
-        this.setChapterTitle(testTemplate.getChapterTitle());
         this.setCourseId(testTemplate.getCourseId());
         this.setCourseName(testTemplate.getCourseName());
         this.setDescription(testTemplate.getDescription());
         this.setScore(testTemplate.getScore());
-        this.setSectionId(testTemplate.getSectionId());
-        this.setSectionName(testTemplate.getSectionName());
-        this.setSectionTitle(testTemplate.getSectionTitle());
+        this.setTestType(testTemplate.getTestType());
     }
 
     public TestTemplate voToEntity() {
@@ -48,24 +47,27 @@ public class TestTemplatePublicVo extends TestTemplate {
         testTemplate.setCreateTime(this.getCreateTime());
         testTemplate.setName(this.getName());
         testTemplate.setUpdateTime(this.getUpdateTime());
-        testTemplate.setChapterId(this.getChapterId());
-        testTemplate.setChapterName(this.getChapterName());
-        testTemplate.setChapterTitle(this.getChapterTitle());
         testTemplate.setCourseId(this.getCourseId());
         testTemplate.setCourseName(this.getCourseName());
         testTemplate.setDescription(this.getDescription());
         testTemplate.setScore(this.getScore());
-        testTemplate.setSectionId(this.getSectionId());
-        testTemplate.setSectionName(this.getSectionName());
-        testTemplate.setSectionTitle(this.getSectionTitle());
+        testTemplate.setTestType(this.getTestType());
         return testTemplate;
     }
 
-    public List<TestPartTemplatePublicVo> getTestPartTemplatePublicVoList() {
-        return testPartTemplatePublicVoList;
+    public List<TestSubsectionTemplatePublicVo> getTestSubsectionTemplatePublicVoList() {
+        return testSubsectionTemplatePublicVoList;
     }
 
-    public void setTestPartTemplatePublicVoList(List<TestPartTemplatePublicVo> testPartTemplatePublicVoList) {
-        this.testPartTemplatePublicVoList = testPartTemplatePublicVoList;
+    public void setTestSubsectionTemplatePublicVoList(List<TestSubsectionTemplatePublicVo> testSubsectionTemplatePublicVoList) {
+        this.testSubsectionTemplatePublicVoList = testSubsectionTemplatePublicVoList;
+    }
+
+    public List<TestExerciseTemplate> getTestExerciseTemplateList() {
+        return testExerciseTemplateList;
+    }
+
+    public void setTestExerciseTemplateList(List<TestExerciseTemplate> testExerciseTemplateList) {
+        this.testExerciseTemplateList = testExerciseTemplateList;
     }
 }

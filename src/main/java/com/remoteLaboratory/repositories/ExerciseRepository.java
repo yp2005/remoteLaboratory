@@ -10,8 +10,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ExerciseRepository extends JpaRepository<Exercise, Integer>,JpaSpecificationExecutor<Exercise> {
     void deleteByCourseId(@Param("courseId") Integer courseId);
-
-    void deleteByChapterId(@Param("chapterId") Integer chapterId);
-
-    void deleteBySectionId(@Param("sectionId") Integer sectionId);
 }

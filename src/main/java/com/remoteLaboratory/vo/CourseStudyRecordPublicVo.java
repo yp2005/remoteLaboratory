@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.remoteLaboratory.entities.ChapterStudyRecord;
 import com.remoteLaboratory.entities.CourseStudyRecord;
 import com.remoteLaboratory.entities.SectionStudyRecord;
+import com.remoteLaboratory.entities.TestRecord;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -19,6 +20,10 @@ public class CourseStudyRecordPublicVo extends CourseStudyRecord {
     @ApiModelProperty(value = "章学习记录列表")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<ChapterStudyRecordPublicVo> chapterStudyRecordPublicVoList;
+
+    @ApiModelProperty(value = "实验报告记录列表")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<TestRecord> testRecordList;
 
     public CourseStudyRecordPublicVo() {
 
@@ -42,7 +47,12 @@ public class CourseStudyRecordPublicVo extends CourseStudyRecord {
         this.setCourseMainImg(courseStudyRecord.getCourseMainImg());
         this.setCourseIntroduction(courseStudyRecord.getCourseIntroduction());
         this.setStatus(courseStudyRecord.getStatus());
+        this.setIsQuestionnaireFinish(courseStudyRecord.getIsQuestionnaireFinish());
+        this.setQuestionnaireTemplateId(courseStudyRecord.getQuestionnaireTemplateId());
         this.setCourseVideoDesc(courseStudyRecord.getCourseVideoDesc());
+        this.setTestTemplateNumber(courseStudyRecord.getTestTemplateNumber());
+        this.setTestTemplateFinishedNumber(courseStudyRecord.getTestTemplateFinishedNumber());
+        this.setTestTemplateSubmitedNumber(courseStudyRecord.getTestTemplateSubmitedNumber());
     }
 
     public CourseStudyRecord voToEntity() {
@@ -67,6 +77,11 @@ public class CourseStudyRecordPublicVo extends CourseStudyRecord {
         courseStudyRecord.setCourseIntroduction(this.getCourseIntroduction());
         courseStudyRecord.setCourseVideoDesc(this.getCourseVideoDesc());
         courseStudyRecord.setStatus(this.getStatus());
+        courseStudyRecord.setIsQuestionnaireFinish(this.getIsQuestionnaireFinish());
+        courseStudyRecord.setQuestionnaireTemplateId(this.getQuestionnaireTemplateId());
+        courseStudyRecord.setTestTemplateNumber(this.getTestTemplateNumber());
+        courseStudyRecord.setTestTemplateFinishedNumber(this.getTestTemplateFinishedNumber());
+        courseStudyRecord.setTestTemplateSubmitedNumber(this.getTestTemplateSubmitedNumber());
         return courseStudyRecord;
     }
 
@@ -76,5 +91,13 @@ public class CourseStudyRecordPublicVo extends CourseStudyRecord {
 
     public void setChapterStudyRecordPublicVoList(List<ChapterStudyRecordPublicVo> chapterStudyRecordPublicVoList) {
         this.chapterStudyRecordPublicVoList = chapterStudyRecordPublicVoList;
+    }
+
+    public List<TestRecord> getTestRecordList() {
+        return testRecordList;
+    }
+
+    public void setTestRecordList(List<TestRecord> testRecordList) {
+        this.testRecordList = testRecordList;
     }
 }

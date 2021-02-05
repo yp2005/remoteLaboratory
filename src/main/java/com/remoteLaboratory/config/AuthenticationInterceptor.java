@@ -80,7 +80,9 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                         throw new BusinessException(Messages.CODE_50204);
                     }
                     // 需老师以上权限访问的接口拦截学生用户访问
-                    if(teacherRequired.equals("1") && user.getUserType().equals(Constants.USER_TYPE_STUDENT)) {
+                    if(teacherRequired.equals("1")
+                            && !user.getUserType().equals(Constants.USER_TYPE_TEACHER)
+                            && !user.getUserType().equals(Constants.USER_TYPE_ADMIN)) {
                         throw new BusinessException(Messages.CODE_50203);
                     }
                     // 需admin权限访问的接口拦截其他用户

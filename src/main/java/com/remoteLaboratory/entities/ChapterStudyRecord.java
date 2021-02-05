@@ -3,6 +3,7 @@ package com.remoteLaboratory.entities;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -20,6 +21,7 @@ import java.util.Date;
 @Entity
 @Table(name = "rl_chapter_study_record")
 @ApiModel(value = "章学习记录表")
+@Data
 public class ChapterStudyRecord implements Serializable {
     @Id
     @Column(length = 10, nullable = false)
@@ -80,85 +82,5 @@ public class ChapterStudyRecord implements Serializable {
     @UpdateTimestamp
     private Date updateTime;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public Double getStudied() {
-        return studied;
-    }
-
-    public void setStudied(Double studied) {
-        this.studied = studied;
-    }
-
-    public Integer getChapterId() {
-        return chapterId;
-    }
-
-    public void setChapterId(Integer chapterId) {
-        this.chapterId = chapterId;
-    }
-
-    public String getChapterName() {
-        return chapterName;
-    }
-
-    public void setChapterName(String chapterName) {
-        this.chapterName = chapterName;
-    }
-
-    public String getChapterTitle() {
-        return chapterTitle;
-    }
-
-    public void setChapterTitle(String chapterTitle) {
-        this.chapterTitle = chapterTitle;
-    }
-
-    public Integer getCourseStudyRecordId() {
-        return courseStudyRecordId;
-    }
-
-    public void setCourseStudyRecordId(Integer courseStudyRecordId) {
-        this.courseStudyRecordId = courseStudyRecordId;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public interface Validation{};
+    public interface Validation{}
 }

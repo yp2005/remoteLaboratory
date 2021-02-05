@@ -65,6 +65,10 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course update(Course course) throws BusinessException {
+        Course courseOld = this.get(course.getId());
+        course.setStudentNumber(courseOld.getStudentNumber());
+        course.setSubjectNumber(courseOld.getSubjectNumber());
+        course.setCommentNumber(courseOld.getCommentNumber());
         course = courseRepository.save(course);
         this.courseStudyRecordRepository.updateByCourseId(course.getId(), course.getName(), course.getMainImg(), course.getIntroduction());
         return course;

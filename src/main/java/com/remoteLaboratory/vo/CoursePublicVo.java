@@ -38,6 +38,8 @@ public class CoursePublicVo extends Course {
         this.setTeacherId(course.getTeacherId());
         this.setTeacherName(course.getTeacherName());
         this.setVideoDesc(course.getVideoDesc());
+        this.setCommentNumber(course.getCommentNumber());
+        this.setExperimentStarted(course.getExperimentStarted());
     }
 
     public Course voToEntity() {
@@ -59,6 +61,8 @@ public class CoursePublicVo extends Course {
         course.setTeacherId(this.getTeacherId());
         course.setTeacherName(this.getTeacherName());
         course.setVideoDesc(this.getVideoDesc());
+        course.setCommentNumber(this.getCommentNumber());
+        course.setExperimentStarted(this.getExperimentStarted());
         return course;
     }
 

@@ -3,6 +3,7 @@ package com.remoteLaboratory.entities;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -20,6 +21,7 @@ import java.util.List;
 @Entity
 @Table(name = "rl_device")
 @ApiModel(value = "设备表")
+@Data
 public class Device {
     @Id
     @Column(length = 10, nullable = false)
@@ -108,134 +110,6 @@ public class Device {
     @Transient
     @ApiModelProperty(value = "信号通道集合")
     private List<SignalChannel> signalChannelList;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
-    }
-
-    public String getPageUrl() {
-        return pageUrl;
-    }
-
-    public void setPageUrl(String pageUrl) {
-        this.pageUrl = pageUrl;
-    }
-
-    public String getResourceClass() {
-        return resourceClass;
-    }
-
-    public void setResourceClass(String resourceClass) {
-        this.resourceClass = resourceClass;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public String getRelationKey() {
-        return relationKey;
-    }
-
-    public void setRelationKey(String relationKey) {
-        this.relationKey = relationKey;
-    }
-
-    public Integer getCameraId() {
-        return cameraId;
-    }
-
-    public void setCameraId(Integer cameraId) {
-        this.cameraId = cameraId;
-    }
-
-    public String getCameraName() {
-        return cameraName;
-    }
-
-    public void setCameraName(String cameraName) {
-        this.cameraName = cameraName;
-    }
-
-    public String getPicture() {
-        return picture;
-    }
-
-    public void setPicture(String picture) {
-        this.picture = picture;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Integer getDuration() {
-        return duration;
-    }
-
-    public void setDuration(Integer duration) {
-        this.duration = duration;
-    }
-
-    public List<SignalChannel> getSignalChannelList() {
-        return signalChannelList;
-    }
-
-    public void setSignalChannelList(List<SignalChannel> signalChannelList) {
-        this.signalChannelList = signalChannelList;
-    }
-
-    public String getWebsocketIp() {
-        return websocketIp;
-    }
-
-    public void setWebsocketIp(String websocketIp) {
-        this.websocketIp = websocketIp;
-    }
-
-    public String getWebsocketPort() {
-        return websocketPort;
-    }
-
-    public void setWebsocketPort(String websocketPort) {
-        this.websocketPort = websocketPort;
-    }
 
     public interface Validation{}
 }

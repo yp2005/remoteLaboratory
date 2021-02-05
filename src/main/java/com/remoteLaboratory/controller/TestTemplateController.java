@@ -27,13 +27,13 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
- * 测验模板接口
+ * 实验报告模板接口
  *
  * @Author: yupeng
  */
 @RestController
 @RequestMapping("/testTemplate")
-@Api(description = "测验模板")
+@Api(description = "实验报告模板")
 @LoginRequired(teacherRequired = "1")
 public class TestTemplateController {
 
@@ -49,66 +49,65 @@ public class TestTemplateController {
     private LogRecordRepository logRecordRepository;
 
     @PostMapping(path = "/list")
-    @ApiOperation(value = "测验模板列表", notes = "查询测验模板信息列表")
+    @ApiOperation(value = "实验报告模板列表", notes = "查询实验报告模板信息列表")
     @LoginRequired(adminRequired = "1")
     public CommonResponse list(@RequestBody ListInput listInput,  @ApiIgnore User loginUser) throws BusinessException {
         CommonResponse commonResponse = CommonResponse.getInstance();
         commonResponse.setResult(testTemplateService.list(listInput));
-        LogUtil.add(this.logRecordRepository, "列表查询", "测验模板", loginUser, null, null);
+        LogUtil.add(this.logRecordRepository, "列表查询", "实验报告模板", loginUser, null, null);
+        return commonResponse;
+    }
+
+    @GetMapping(path = "/getQuestionnaireByCourseId/{courseId}")
+    @ApiOperation(value = "查询课程问卷调查", notes = "查询课程问卷调查接口")
+    @LoginRequired(adminRequired = "1")
+    public CommonResponse getQuestionnaireByCourseId(@PathVariable Integer courseId,  @ApiIgnore User loginUser) throws BusinessException {
+        CommonResponse commonResponse = CommonResponse.getInstance();
+        TestTemplate testTemplate = testTemplateService.getQuestionnaireByCourseId(courseId);
+        commonResponse.setResult(testTemplate);
+        LogUtil.add(this.logRecordRepository, "查询课程问卷调查", "实验报告模板", loginUser, testTemplate.getId(), testTemplate.getName());
         return commonResponse;
     }
 
     @PostMapping
-    @ApiOperation(value = "添加测验模板", notes = "添加测验模板信息接口")
+    @ApiOperation(value = "添加实验报告模板", notes = "添加实验报告模板信息接口")
     public CommonResponse add(@Validated({TestTemplatePublicVo.Validation.class}) @RequestBody TestTemplatePublicVo testTemplatePublicVo, @ApiIgnore User loginUser) throws BusinessException {
         Course course = this.courseService.get(testTemplatePublicVo.getCourseId());
         if(!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
             throw new BusinessException(Messages.CODE_50200);
         }
-        testTemplatePublicVo = testTemplateService.add(testTemplatePublicVo);
-        CommonResponse commonResponse = CommonResponse.getInstance(testTemplatePublicVo);
-        LogUtil.add(this.logRecordRepository, "添加", "测验模板", loginUser, testTemplatePublicVo.getId(), testTemplatePublicVo.getName());
+        CommonResponse commonResponse = CommonResponse.getInstance(testTemplateService.add(testTemplatePublicVo));
+        LogUtil.add(this.logRecordRepository, "添加", "实验报告模板", loginUser, testTemplatePublicVo.getId(), testTemplatePublicVo.getName());
         return commonResponse;
     }
 
     @PutMapping
-    @ApiOperation(value = "修改测验模板", notes = "修改测验模板信息接口")
+    @ApiOperation(value = "修改实验报告模板", notes = "修改实验报告模板信息接口")
     public CommonResponse update(@Validated({TestTemplatePublicVo.Validation.class}) @RequestBody TestTemplatePublicVo testTemplatePublicVo, @ApiIgnore User loginUser) throws BusinessException {
         Course course = this.courseService.get(testTemplatePublicVo.getCourseId());
         if(!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
             throw new BusinessException(Messages.CODE_50200);
         }
-        testTemplatePublicVo = testTemplateService.update(testTemplatePublicVo);
-        CommonResponse commonResponse = CommonResponse.getInstance(testTemplatePublicVo);
-        LogUtil.add(this.logRecordRepository, "修改", "测验模板", loginUser, testTemplatePublicVo.getId(), testTemplatePublicVo.getName());
+        CommonResponse commonResponse = CommonResponse.getInstance(testTemplateService.update(testTemplatePublicVo));
+        LogUtil.add(this.logRecordRepository, "修改", "实验报告模板", loginUser, testTemplatePublicVo.getId(), testTemplatePublicVo.getName());
         return commonResponse;
     }
 
     @DeleteMapping
-    @ApiOperation(value = "删除测验模板", notes = "删除测验模板信息接口")
-    public CommonResponse delete(@NotNull(message = "测验模板编号不能为空") @RequestBody List<Integer> ids, @ApiIgnore User loginUser) throws BusinessException {
+    @ApiOperation(value = "删除实验报告模板", notes = "删除实验报告模板信息接口")
+    public CommonResponse delete(@NotNull(message = "实验报告模板编号不能为空") @RequestBody List<Integer> ids, @ApiIgnore User loginUser) throws BusinessException {
         testTemplateService.delete(ids, loginUser);
         CommonResponse commonResponse = CommonResponse.getInstance();
         return commonResponse;
     }
 
-    @GetMapping(path = "/getBySectionId/{sectionId}")
-    @ApiOperation(value = "查询测验模板", notes = "根据课程小节ID查询测验模板接口")
+    @GetMapping(path = "/getDetail/{id}")
+    @ApiOperation(value = "查询实验报告模板详情", notes = "根据ID查询实验报告模板详情接口")
     @LoginRequired
-    public CommonResponse get(@NotNull(message = "课程小节编号不能为空") @PathVariable Integer sectionId, @ApiIgnore User loginUser) throws BusinessException {
-        TestTemplate testTemplate = testTemplateService.getBySectionId(sectionId);
-        CommonResponse commonResponse = CommonResponse.getInstance(testTemplate);
-        LogUtil.add(this.logRecordRepository, "查询", "测验模板", loginUser, testTemplate.getId(), testTemplate.getName());
-        return commonResponse;
-    }
-
-    @GetMapping(path = "/getDetailBySectionId/{sectionId}")
-    @ApiOperation(value = "查询测验模板详情", notes = "根据课程小节ID查询测验模板详情接口")
-    @LoginRequired
-    public CommonResponse getDetailBySectionId(@NotNull(message = "课程小节编号不能为空") @PathVariable Integer sectionId, @ApiIgnore User loginUser) throws BusinessException {
-        TestTemplatePublicVo testTemplatePublicVo = testTemplateService.getDetailBySectionId(sectionId);
+    public CommonResponse getDetail(@NotNull(message = "课程小节编号不能为空") @PathVariable Integer id, @ApiIgnore User loginUser) throws BusinessException {
+        TestTemplatePublicVo testTemplatePublicVo = testTemplateService.getDetail(id);
         CommonResponse commonResponse = CommonResponse.getInstance(testTemplatePublicVo);
-        LogUtil.add(this.logRecordRepository, "查询详情", "测验模板", loginUser, testTemplatePublicVo.getId(), testTemplatePublicVo.getName());
+        LogUtil.add(this.logRecordRepository, "查询详情", "实验报告模板", loginUser, testTemplatePublicVo.getId(), testTemplatePublicVo.getName());
         return commonResponse;
     }
 }

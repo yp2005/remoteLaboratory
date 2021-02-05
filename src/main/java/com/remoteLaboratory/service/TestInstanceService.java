@@ -11,21 +11,21 @@ import com.remoteLaboratory.vo.TestInstancePublicVo;
 import java.util.List;
 
 /**
- * 测验实例服务接口定义
+ * 实验报告实例服务接口定义
  *
  * @Author: yupeng
  */
 
 public interface TestInstanceService {
     /**
-     * 添加测验实例信息
+     * 添加实验报告实例信息
      * @param testInstancePublicVo
      * @return
      */
     public TestInstancePublicVo add(TestInstancePublicVo testInstancePublicVo) throws BusinessException;
 
     /**
-     * 开始测验
+     * 开始答题
      * @param testTemplateId
      * @param user
      * @return
@@ -33,30 +33,14 @@ public interface TestInstanceService {
     public TestInstancePublicVo startTest(Integer testTemplateId, User user) throws BusinessException;
 
     /**
-     * 根据条件查询测验实例信息列表
+     * 根据条件查询实验报告实例信息列表
      * @param listInput
      * @return ListOutput
      */
     public ListOutput list(ListInput listInput) throws BusinessException;
 
     /**
-     * 根据条件查询某个小节的测验实例信息列表
-     * @param listInput
-     * @param sectionId
-     * @return ListOutput
-     */
-    public ListOutput listBySectionId(ListInput listInput, Integer sectionId) throws BusinessException;
-
-    /**
-     * 根据条件查询某个章的测验实例信息列表
-     * @param listInput
-     * @param chapterId
-     * @return ListOutput
-     */
-    public ListOutput listByChapterId(ListInput listInput, Integer chapterId) throws BusinessException;
-
-    /**
-     * 根据条件查询某个课程的测验实例信息列表
+     * 根据条件查询某个课程的实验报告实例信息列表
      * @param listInput
      * @param courseId
      * @return ListOutput
@@ -64,36 +48,43 @@ public interface TestInstanceService {
     public ListOutput listByCourseId(ListInput listInput, Integer courseId) throws BusinessException;
 
     /**
-     * 根据id获取测验实例信息
+     * 根据id获取实验报告实例信息
      * @param id
      * @return TestInstance
      */
     public TestInstance get(Integer id) throws BusinessException;
 
     /**
-     * 根据userId获取测验实例
+     * 根据userId获取实验报告实例
      * @param userId
      * @return TestInstance
      */
     public List<TestInstance> getByUserId(Integer userId) throws BusinessException;
 
     /**
-     * 根据id获取测验实例信息
+     * 根据courseId获取学习课程的班级
+     * @param courseId
+     * @return List<String>
+     */
+    public List<String> getClassByCourseId(Integer courseId) throws BusinessException;
+
+    /**
+     * 根据userId、courseId获取实验报告实例
+     * @param userId
+     * @param courseId
+     * @return TestInstance
+     */
+    public List<TestInstance> getByUserIdAndCourseId(Integer userId, Integer courseId) throws BusinessException;
+
+    /**
+     * 根据id获取实验报告实例信息
      * @param id
      * @return TestInstance
      */
     public TestInstancePublicVo getDetail(Integer id) throws BusinessException;
 
     /**
-     * 根据课程小节查询测验实例详情
-     * @param sectionId
-     * @param user
-     * @return
-     */
-    public TestInstancePublicVo getMyBySectionId(Integer sectionId, User user) throws BusinessException;
-
-    /**
-     * 提交测验
+     * 提交实验报告
      * @param id
      * @return TestInstancePublicVo
      */

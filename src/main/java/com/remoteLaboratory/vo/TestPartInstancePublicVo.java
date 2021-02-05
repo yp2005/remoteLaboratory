@@ -12,13 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 测验大题实例公用对象
+ * 实验报告大题实例公用对象
  *
  * @Author: yupeng
  */
-@ApiModel(value = "测验大题实例公用对象")
+@ApiModel(value = "实验报告大题实例公用对象")
 public class TestPartInstancePublicVo extends TestPartInstance {
-    @ApiModelProperty(value = "测验小题实例列表")
+    @ApiModelProperty(value = "实验报告小题实例列表")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List testExerciseInstanceList;
 
@@ -41,7 +41,7 @@ public class TestPartInstancePublicVo extends TestPartInstance {
                 testExerciseInstance.setExerciseContent(testExerciseTemplate.getExerciseContent());
                 testExerciseInstance.setExerciseId(testExerciseTemplate.getExerciseId());
                 testExerciseInstance.setExercisesType(testExerciseTemplate.getExercisesType());
-                testExerciseInstance.setOptions(testExerciseTemplate.getOptions());
+                testExerciseInstance.setOptions(testExerciseTemplate.getRandomOrderOptions());
                 testExerciseInstance.setScore(testExerciseTemplate.getScore());
                 testExerciseInstance.setSerialNumber(testExerciseTemplate.getSerialNumber());
                 testExerciseInstance.setType(testExerciseTemplate.getType());
@@ -63,6 +63,7 @@ public class TestPartInstancePublicVo extends TestPartInstance {
         this.setType(testPartInstance.getType());
         this.setTestInstanceId(testPartInstance.getTestInstanceId());
         this.setScored(testPartInstance.getScored());
+        this.setTestSubsectionInstanceId(testPartInstance.getTestSubsectionInstanceId());
     }
 
     public TestPartInstance voToEntity() {
@@ -79,6 +80,7 @@ public class TestPartInstancePublicVo extends TestPartInstance {
         testPartInstance.setType(this.getType());
         testPartInstance.setTestInstanceId(this.getTestInstanceId());
         testPartInstance.setScored(this.getScored());
+        testPartInstance.setTestSubsectionInstanceId(this.getTestSubsectionInstanceId());
         return testPartInstance;
     }
 

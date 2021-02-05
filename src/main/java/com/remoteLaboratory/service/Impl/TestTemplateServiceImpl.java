@@ -1,21 +1,16 @@
 package com.remoteLaboratory.service.Impl;
 
 import com.remoteLaboratory.entities.*;
-import com.remoteLaboratory.repositories.LogRecordRepository;
-import com.remoteLaboratory.repositories.TestExerciseTemplateRepository;
-import com.remoteLaboratory.repositories.TestPartTemplateRepository;
-import com.remoteLaboratory.repositories.TestTemplateRepository;
+import com.remoteLaboratory.repositories.*;
 import com.remoteLaboratory.service.CourseService;
+import com.remoteLaboratory.service.CourseStudyRecordService;
 import com.remoteLaboratory.service.TestTemplateService;
 import com.remoteLaboratory.utils.Constants;
 import com.remoteLaboratory.utils.ExerciseUtil;
 import com.remoteLaboratory.utils.MySpecification;
 import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.utils.message.Messages;
-import com.remoteLaboratory.vo.ListInput;
-import com.remoteLaboratory.vo.ListOutput;
-import com.remoteLaboratory.vo.TestPartTemplatePublicVo;
-import com.remoteLaboratory.vo.TestTemplatePublicVo;
+import com.remoteLaboratory.vo.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -30,9 +25,10 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * 测验模板服务接口实现
+ * 实验报告模板服务接口实现
  *
  * @Author: yupeng
  */
@@ -42,93 +38,101 @@ import java.util.List;
 public class TestTemplateServiceImpl implements TestTemplateService {
     private static Logger log = LoggerFactory.getLogger(TestTemplateServiceImpl.class);
 
+    @Autowired
     private TestTemplateRepository testTemplateRepository;
 
+    @Autowired
+    private TestSubsectionTemplateRepository testSubsectionTemplateRepository;
+
+    @Autowired
     private TestPartTemplateRepository testPartTemplateRepository;
 
+    @Autowired
     private TestExerciseTemplateRepository testExerciseTemplateRepository;
 
+    @Autowired
     private LogRecordRepository logRecordRepository;
 
+    @Autowired
     private CourseService courseService;
 
     @Autowired
-    public TestTemplateServiceImpl(TestTemplateRepository testTemplateRepository,
-                                   CourseService courseService,
-                                   TestPartTemplateRepository testPartTemplateRepository,
-                                   TestExerciseTemplateRepository testExerciseTemplateRepository,
-                                   LogRecordRepository logRecordRepository) {
-        this.testTemplateRepository = testTemplateRepository;
-        this.logRecordRepository = logRecordRepository;
-        this.courseService = courseService;
-        this.testPartTemplateRepository = testPartTemplateRepository;
-        this.testExerciseTemplateRepository = testExerciseTemplateRepository;
-    }
+    private CourseStudyRecordRepository courseStudyRecordRepository;
+
+    @Autowired
+    private CourseStudyRecordService courseStudyRecordService;
+
+    @Autowired
+    private TestRecordRepository testRecordRepository;
 
     @Override
-    public TestTemplatePublicVo add(TestTemplatePublicVo testTemplatePublicVo) throws BusinessException {
-        TestTemplate tt = this.testTemplateRepository.findBySectionId(testTemplatePublicVo.getSectionId());
-        if(tt != null) {
-            throw new BusinessException(Messages.CODE_40010, "课程小节已有测验模板");
-        }
+    public TestTemplate add(TestTemplatePublicVo testTemplatePublicVo) throws BusinessException {
         TestTemplate testTemplate = testTemplatePublicVo.voToEntity();
-        testTemplate = testTemplateRepository.save(testTemplate);
-        List<TestPartTemplatePublicVo> testPartTemplatePublicVoList = testTemplatePublicVo.getTestPartTemplatePublicVoList();
-        if(CollectionUtils.isNotEmpty(testPartTemplatePublicVoList)) {
-            for(TestPartTemplatePublicVo testPartTemplatePublicVo : testPartTemplatePublicVoList) {
-                TestPartTemplate testPartTemplate = testPartTemplatePublicVo.voToEntity();
-                testPartTemplate.setTestTemplateId(testTemplate.getId());
-                testPartTemplate = this.testPartTemplateRepository.save(testPartTemplate);
-                testPartTemplatePublicVo.setId(testPartTemplate.getId());
-                testPartTemplatePublicVo.setUpdateTime(testPartTemplate.getUpdateTime());
-                testPartTemplatePublicVo.setCreateTime(testPartTemplate.getCreateTime());
-                List<TestExerciseTemplate> testExerciseTemplateList = testPartTemplatePublicVo.getTestExerciseTemplateList();
-                if(CollectionUtils.isNotEmpty(testExerciseTemplateList)) {
-                    for(TestExerciseTemplate testExerciseTemplate : testExerciseTemplateList) {
-                        testExerciseTemplate.setTestTemplateId(testTemplate.getId());
-                        testExerciseTemplate.setTestPartTemplateId(testPartTemplate.getId());
-                        testExerciseTemplate.setType(ExerciseUtil.getType(testExerciseTemplate.getExercisesType()));
-                        testExerciseTemplate = this.testExerciseTemplateRepository.save(testExerciseTemplate);
+        testTemplate = this.testTemplateRepository.save(testTemplate);
+        if (testTemplate.getTestType().equals(1)) { // 实验报告
+            List<TestSubsectionTemplatePublicVo> testSubsectionTemplateList = testTemplatePublicVo.getTestSubsectionTemplatePublicVoList();
+            if (CollectionUtils.isNotEmpty(testSubsectionTemplateList)) {
+                for (TestSubsectionTemplatePublicVo testSubsectionTemplatePublicVo : testSubsectionTemplateList) {
+                    TestSubsectionTemplate testSubsectionTemplate = testSubsectionTemplatePublicVo.voToEntity();
+                    testSubsectionTemplate.setTestTemplateId(testTemplate.getId());
+                    testSubsectionTemplate = this.testSubsectionTemplateRepository.save(testSubsectionTemplate);
+                    List<TestPartTemplatePublicVo> testPartTemplatePublicVoList = testSubsectionTemplatePublicVo.getTestPartTemplatePublicVoList();
+                    if (CollectionUtils.isNotEmpty(testPartTemplatePublicVoList)) {
+                        for (TestPartTemplatePublicVo testPartTemplatePublicVo : testPartTemplatePublicVoList) {
+                            TestPartTemplate testPartTemplate = testPartTemplatePublicVo.voToEntity();
+                            testPartTemplate.setTestTemplateId(testTemplate.getId());
+                            testPartTemplate.setTestSubsectionTemplateId(testSubsectionTemplate.getId());
+                            testPartTemplate = this.testPartTemplateRepository.save(testPartTemplate);
+                            List<TestExerciseTemplate> testExerciseTemplateList = testPartTemplatePublicVo.getTestExerciseTemplateList();
+                            if (CollectionUtils.isNotEmpty(testExerciseTemplateList)) {
+                                for (TestExerciseTemplate testExerciseTemplate : testExerciseTemplateList) {
+                                    testExerciseTemplate.setTestTemplateId(testTemplate.getId());
+                                    testExerciseTemplate.setTestSubsectionTemplateId(testSubsectionTemplate.getId());
+                                    testExerciseTemplate.setTestPartTemplateId(testPartTemplate.getId());
+                                    testExerciseTemplate.setType(ExerciseUtil.getType(testExerciseTemplate.getExercisesType()));
+                                }
+                                this.testExerciseTemplateRepository.save(testExerciseTemplateList);
+                            }
+                        }
                     }
                 }
             }
-        }
-        testTemplatePublicVo.setId(testTemplate.getId());
-        testTemplatePublicVo.setUpdateTime(testTemplate.getUpdateTime());
-        testTemplatePublicVo.setCreateTime(testTemplate.getCreateTime());
-        return testTemplatePublicVo;
-    }
-
-    @Override
-    public TestTemplatePublicVo update(TestTemplatePublicVo testTemplatePublicVo) throws BusinessException {
-        TestTemplate testTemplate = testTemplatePublicVo.voToEntity();
-        testTemplate = testTemplateRepository.save(testTemplate);
-        this.testPartTemplateRepository.deleteByTestTemplateId(testTemplate.getId());
-        this.testExerciseTemplateRepository.deleteByTestTemplateId(testTemplate.getId());
-        List<TestPartTemplatePublicVo> testPartTemplatePublicVoList = testTemplatePublicVo.getTestPartTemplatePublicVoList();
-        if(CollectionUtils.isNotEmpty(testPartTemplatePublicVoList)) {
-            for(TestPartTemplatePublicVo testPartTemplatePublicVo : testPartTemplatePublicVoList) {
-                TestPartTemplate testPartTemplate = testPartTemplatePublicVo.voToEntity();
-                testPartTemplate.setTestTemplateId(testTemplate.getId());
-                testPartTemplate = this.testPartTemplateRepository.save(testPartTemplate);
-                testPartTemplatePublicVo.setId(testPartTemplate.getId());
-                testPartTemplatePublicVo.setUpdateTime(testPartTemplate.getUpdateTime());
-                testPartTemplatePublicVo.setCreateTime(testPartTemplate.getCreateTime());
-                List<TestExerciseTemplate> testExerciseTemplateList = testPartTemplatePublicVo.getTestExerciseTemplateList();
-                if(CollectionUtils.isNotEmpty(testExerciseTemplateList)) {
-                    for(TestExerciseTemplate testExerciseTemplate : testExerciseTemplateList) {
-                        testExerciseTemplate.setTestTemplateId(testTemplate.getId());
-                        testExerciseTemplate.setTestPartTemplateId(testPartTemplate.getId());
-                        testExerciseTemplate.setType(ExerciseUtil.getType(testExerciseTemplate.getExercisesType()));
-                        testExerciseTemplate = this.testExerciseTemplateRepository.save(testExerciseTemplate);
+            if(testTemplatePublicVo.getId() != null) {
+                List<CourseStudyRecord> courseStudyRecordList = this.courseStudyRecordRepository.findByCourseIdAndStatus(testTemplate.getCourseId(), 0);
+                if(CollectionUtils.isNotEmpty(courseStudyRecordList)) {
+                    for (CourseStudyRecord courseStudyRecord : courseStudyRecordList) {
+                        TestRecord testRecord = new TestRecord();
+                        testRecord.setUserId(courseStudyRecord.getUserId());
+                        testRecord.setUserName(courseStudyRecord.getUserName());
+                        testRecord.setCourseStudyRecordId(courseStudyRecord.getId());
+                        testRecord.setTestTemplateId(testTemplate.getId());
+                        testRecord.setTestTemplateName(testTemplate.getName());
+                        testRecord.setStatus(0);
+                        testRecord = this.testRecordRepository.save(testRecord);
+                        courseStudyRecord.setTestTemplateNumber(courseStudyRecord.getTestTemplateNumber() + 1);
+                        this.courseStudyRecordService.updatePercent(courseStudyRecord);
                     }
                 }
             }
+        } else { // 问卷调查
+            List<TestExerciseTemplate> testExerciseTemplateList = testTemplatePublicVo.getTestExerciseTemplateList();
+            if (CollectionUtils.isNotEmpty(testExerciseTemplateList)) {
+                for (TestExerciseTemplate testExerciseTemplate : testExerciseTemplateList) {
+                    testExerciseTemplate.setTestTemplateId(testTemplate.getId());
+                    testExerciseTemplate.setType(1);
+                }
+                this.testExerciseTemplateRepository.save(testExerciseTemplateList);
+            }
         }
-        testTemplatePublicVo.setId(testTemplate.getId());
-        testTemplatePublicVo.setUpdateTime(testTemplate.getUpdateTime());
-        testTemplatePublicVo.setCreateTime(testTemplate.getCreateTime());
-        return testTemplatePublicVo;
+        return testTemplate;
+    }
+
+    @Override
+    public TestTemplate update(TestTemplatePublicVo testTemplatePublicVo) throws BusinessException {
+        this.testSubsectionTemplateRepository.deleteByTestTemplateId(testTemplatePublicVo.getId());
+        this.testPartTemplateRepository.deleteByTestTemplateId(testTemplatePublicVo.getId());
+        this.testExerciseTemplateRepository.deleteByTestTemplateId(testTemplatePublicVo.getId());
+        return this.add(testTemplatePublicVo);
     }
 
     @Override
@@ -136,27 +140,31 @@ public class TestTemplateServiceImpl implements TestTemplateService {
         List<LogRecord> logRecords = new ArrayList<>();
         for (int id : ids) {
             TestTemplate testTemplate = this.testTemplateRepository.findOne(id);
-            if(testTemplate != null) {
+            if (testTemplate != null) {
                 Course course = this.courseService.get(testTemplate.getCourseId());
-                if(!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
+                if (!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
                     throw new BusinessException(Messages.CODE_50200);
                 }
-                testTemplateRepository.delete(id);
-                this.testPartTemplateRepository.deleteByTestTemplateId(testTemplate.getId());
-                this.testExerciseTemplateRepository.deleteByTestTemplateId(testTemplate.getId());
+                if(course.getStatus().equals(1)) {
+                    throw new BusinessException(Messages.CODE_40010, "课程进行中不能执行删除操作");
+                }
+                this.testTemplateRepository.delete(id);
+                this.testSubsectionTemplateRepository.deleteByTestTemplateId(id);
+                this.testPartTemplateRepository.deleteByTestTemplateId(id);
+                this.testExerciseTemplateRepository.deleteByTestTemplateId(id);
                 LogRecord logRecord = new LogRecord();
                 logRecord.setType("删除");
-                logRecord.setObject("测验模板");
+                logRecord.setObject("实验报告实验报告模板");
                 logRecord.setUserId(loginUser.getId());
                 logRecord.setUserName(StringUtils.isEmpty(loginUser.getPersonName()) ? loginUser.getUserName() : loginUser.getPersonName());
                 logRecord.setObjectId(testTemplate.getId());
                 logRecord.setObjectName(testTemplate.getName());
                 logRecords.add(logRecord);
+            } else {
+                throw new BusinessException(Messages.CODE_20001);
             }
         }
-        for(LogRecord logRecord : logRecords) {
-            logRecordRepository.save(logRecord);
-        }
+        this.logRecordRepository.save(logRecords);
     }
 
     @Override
@@ -195,24 +203,15 @@ public class TestTemplateServiceImpl implements TestTemplateService {
     }
 
     @Override
-    public TestTemplatePublicVo getDetailBySectionId(Integer sectionId) throws BusinessException {
-        TestTemplate testTemplate = testTemplateRepository.findBySectionId(sectionId);
-        if (testTemplate == null) {
-            throw new BusinessException(Messages.CODE_20001);
+    public TestTemplatePublicVo getQuestionnaireByCourseId(Integer courseId) throws BusinessException {
+        TestTemplate testTemplate = this.testTemplateRepository.findQuestionnaireByCourseId(courseId);
+        if (testTemplate != null) {
+            TestTemplatePublicVo testTemplatePublicVo = new TestTemplatePublicVo(testTemplate);
+            testTemplatePublicVo.setTestExerciseTemplateList(this.testExerciseTemplateRepository.findByTestTemplateId(testTemplate.getId()));
+            return testTemplatePublicVo;
+        } else {
+            return null;
         }
-        TestTemplatePublicVo testTemplatePublicVo = new TestTemplatePublicVo(testTemplate);
-        List<TestPartTemplate> testPartTemplateList = this.testPartTemplateRepository.findByTestTemplateId(testTemplate.getId());
-        if(CollectionUtils.isNotEmpty(testPartTemplateList)) {
-            List<TestPartTemplatePublicVo> testPartTemplatePublicVoList = new ArrayList<>();
-            for(TestPartTemplate testPartTemplate : testPartTemplateList) {
-                TestPartTemplatePublicVo testPartTemplatePublicVo = new TestPartTemplatePublicVo(testPartTemplate);
-                List<TestExerciseTemplate> testExerciseTemplateList = this.testExerciseTemplateRepository.findByTestPartTemplateId(testPartTemplate.getId());
-                testPartTemplatePublicVo.setTestExerciseTemplateList(testExerciseTemplateList);
-                testPartTemplatePublicVoList.add(testPartTemplatePublicVo);
-            }
-            testTemplatePublicVo.setTestPartTemplatePublicVoList(testPartTemplatePublicVoList);
-        }
-        return testTemplatePublicVo;
     }
 
     @Override
@@ -221,28 +220,36 @@ public class TestTemplateServiceImpl implements TestTemplateService {
         if (testTemplate == null) {
             throw new BusinessException(Messages.CODE_20001);
         }
+        List<TestExerciseTemplate> testExerciseTemplateList = this.testExerciseTemplateRepository.findByTestTemplateId(testTemplate.getId());
         TestTemplatePublicVo testTemplatePublicVo = new TestTemplatePublicVo(testTemplate);
-        List<TestPartTemplate> testPartTemplateList = this.testPartTemplateRepository.findByTestTemplateId(testTemplate.getId());
-        if(CollectionUtils.isNotEmpty(testPartTemplateList)) {
-            List<TestPartTemplatePublicVo> testPartTemplatePublicVoList = new ArrayList<>();
-            for(TestPartTemplate testPartTemplate : testPartTemplateList) {
-                TestPartTemplatePublicVo testPartTemplatePublicVo = new TestPartTemplatePublicVo(testPartTemplate);
-                List<TestExerciseTemplate> testExerciseTemplateList = this.testExerciseTemplateRepository.findByTestPartTemplateId(testPartTemplate.getId());
-                testPartTemplatePublicVo.setTestExerciseTemplateList(testExerciseTemplateList);
-                testPartTemplatePublicVoList.add(testPartTemplatePublicVo);
+        if (testTemplate.getTestType().equals(1)) { // 实验报告
+            List<TestSubsectionTemplate> testSubsectionTemplateList = this.testSubsectionTemplateRepository.findByTestTemplateId(testTemplate.getId());
+            List<TestPartTemplate> testPartTemplateList = this.testPartTemplateRepository.findByTestTemplateId(testTemplate.getId());
+            if (CollectionUtils.isNotEmpty(testSubsectionTemplateList)) {
+                List<TestSubsectionTemplatePublicVo> testSubsectionTemplatePublicVoList = new ArrayList<>();
+                for (TestSubsectionTemplate testSubsectionTemplate : testSubsectionTemplateList) {
+                    TestSubsectionTemplatePublicVo testSubsectionTemplatePublicVo = new TestSubsectionTemplatePublicVo(testSubsectionTemplate);
+                    List<TestPartTemplate> tptl = testPartTemplateList.stream()
+                            .filter(testPartTemplate -> testPartTemplate.getTestSubsectionTemplateId().equals(testSubsectionTemplate.getId()))
+                            .collect(Collectors.toList());
+                    if (CollectionUtils.isNotEmpty(tptl)) {
+                        List<TestPartTemplatePublicVo> testPartTemplatePublicVoList = new ArrayList<>();
+                        for (TestPartTemplate testPartTemplate : tptl) {
+                            TestPartTemplatePublicVo testPartTemplatePublicVo = new TestPartTemplatePublicVo(testPartTemplate);
+                            testPartTemplatePublicVo.setTestExerciseTemplateList(testExerciseTemplateList.stream()
+                                    .filter(testExerciseTemplate -> testExerciseTemplate.getTestPartTemplateId().equals(testPartTemplate.getId()))
+                                    .collect(Collectors.toList()));
+                            testPartTemplatePublicVoList.add(testPartTemplatePublicVo);
+                        }
+                        testSubsectionTemplatePublicVo.setTestPartTemplatePublicVoList(testPartTemplatePublicVoList);
+                    }
+                    testSubsectionTemplatePublicVoList.add(testSubsectionTemplatePublicVo);
+                }
+                testTemplatePublicVo.setTestSubsectionTemplatePublicVoList(testSubsectionTemplatePublicVoList);
             }
-            testTemplatePublicVo.setTestPartTemplatePublicVoList(testPartTemplatePublicVoList);
+        } else { // 问卷调查
+            testTemplatePublicVo.setTestExerciseTemplateList(testExerciseTemplateList);
         }
         return testTemplatePublicVo;
     }
-
-    @Override
-    public TestTemplate getBySectionId(Integer sectionId) throws BusinessException {
-        TestTemplate testTemplate = testTemplateRepository.findBySectionId(sectionId);
-        if (testTemplate == null) {
-            throw new BusinessException(Messages.CODE_20001);
-        }
-        return testTemplate;
-    }
-
 }

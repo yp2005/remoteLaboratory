@@ -3,6 +3,7 @@ package com.remoteLaboratory.entities;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -20,6 +21,7 @@ import java.util.Date;
 @Entity
 @Table(name = "rl_course_study_record")
 @ApiModel(value = "课程学习记录表")
+@Data
 public class CourseStudyRecord implements Serializable {
     @Id
     @Column(length = 10, nullable = false)
@@ -112,6 +114,31 @@ public class CourseStudyRecord implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer status;
 
+    @Column
+    @ApiModelProperty(value = "是否完成问卷调查")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Boolean isQuestionnaireFinish;
+
+    @Column(length = 10)
+    @ApiModelProperty(value = "问卷调查模板ID")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer questionnaireTemplateId;
+
+    @Column(length = 10)
+    @ApiModelProperty(value = "实验报告数量")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer testTemplateNumber;
+
+    @Column(length = 10)
+    @ApiModelProperty(value = "实验报告阅卷完成数量")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer testTemplateFinishedNumber;
+
+    @Column(length = 10)
+    @ApiModelProperty(value = "实验报告已交卷数量")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer testTemplateSubmitedNumber;
+
     @Column(updatable = false)
     @ApiModelProperty(value = "创建时间", hidden = true)
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -125,157 +152,5 @@ public class CourseStudyRecord implements Serializable {
     @UpdateTimestamp
     private Date updateTime;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getCourseId() {
-        return courseId;
-    }
-
-    public void setCourseId(Integer courseId) {
-        this.courseId = courseId;
-    }
-
-    public String getCourseName() {
-        return courseName;
-    }
-
-    public void setCourseName(String courseName) {
-        this.courseName = courseName;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public Double getStudied() {
-        return studied;
-    }
-
-    public void setStudied(Double studied) {
-        this.studied = studied;
-    }
-
-    public Integer getChapterId() {
-        return chapterId;
-    }
-
-    public void setChapterId(Integer chapterId) {
-        this.chapterId = chapterId;
-    }
-
-    public String getChapterName() {
-        return chapterName;
-    }
-
-    public void setChapterName(String chapterName) {
-        this.chapterName = chapterName;
-    }
-
-    public String getChapterTitle() {
-        return chapterTitle;
-    }
-
-    public void setChapterTitle(String chapterTitle) {
-        this.chapterTitle = chapterTitle;
-    }
-
-    public Integer getSectionId() {
-        return sectionId;
-    }
-
-    public void setSectionId(Integer sectionId) {
-        this.sectionId = sectionId;
-    }
-
-    public String getSectionName() {
-        return sectionName;
-    }
-
-    public void setSectionName(String sectionName) {
-        this.sectionName = sectionName;
-    }
-
-    public String getSectionTitle() {
-        return sectionTitle;
-    }
-
-    public void setSectionTitle(String sectionTitle) {
-        this.sectionTitle = sectionTitle;
-    }
-
-    public String getCourseMainImg() {
-        return courseMainImg;
-    }
-
-    public void setCourseMainImg(String courseMainImg) {
-        this.courseMainImg = courseMainImg;
-    }
-
-    public String getCourseIntroduction() {
-        return courseIntroduction;
-    }
-
-    public void setCourseIntroduction(String courseIntroduction) {
-        this.courseIntroduction = courseIntroduction;
-    }
-
-    public Double getScore() {
-        return score;
-    }
-
-    public void setScore(Double score) {
-        this.score = score;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public String getCourseVideoDesc() {
-        return courseVideoDesc;
-    }
-
-    public void setCourseVideoDesc(String courseVideoDesc) {
-        this.courseVideoDesc = courseVideoDesc;
-    }
-
-    public interface Validation{};
+    public interface Validation{}
 }

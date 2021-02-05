@@ -27,8 +27,8 @@ spring:
     database-platform: org.hibernate.dialect.MySQL5Dialect
     hibernate:
       ddl-auto: update
-
     show-sql: true
+
 logging:
   level:
     root: info

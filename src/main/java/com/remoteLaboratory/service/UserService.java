@@ -5,6 +5,7 @@ import com.remoteLaboratory.entities.User;
 import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.vo.ListInput;
 import com.remoteLaboratory.vo.ListOutput;
+import org.apache.poi.ss.usermodel.Workbook;
 
 import java.util.List;
 
@@ -20,40 +21,46 @@ public interface UserService {
      * @param user
      * @return
      */
-    public User add(User user) throws BusinessException;
+    User add(User user) throws BusinessException;
 
     /**
      * 修改用户信息
      * @param user
      * @return
      */
-    public User update(User user) throws BusinessException;
+    User update(User user) throws BusinessException;
 
     /**
      * 根据条件查询用户信息列表
      * @param listInput
      * @return ListOutput
      */
-    public ListOutput list(ListInput listInput) throws BusinessException;
+    ListOutput list(ListInput listInput) throws BusinessException;
 
     /**
      * 根据用户类型条件查询用户信息列表
      * @param listInput
      * @return ListOutput
      */
-    public ListOutput listByUserType(ListInput listInput, String userType) throws BusinessException;
+    ListOutput listByUserType(ListInput listInput, String userType) throws BusinessException;
 
     /**
      * 根据id获取用户信息
      * @param id
      * @return User
      */
-    public User get(Integer id) throws BusinessException;
+    User get(Integer id) throws BusinessException;
 
     /**
      * 修改用户信息
      * @param ids
      * @param loginUser
      */
-    public void delete(List<Integer> ids, User loginUser) throws BusinessException;
+    void delete(List<Integer> ids, User loginUser) throws BusinessException;
+
+    /**
+     * 导入公司学生账号
+     * @param workbook
+     */
+    void importStudent(Workbook workbook) throws BusinessException;
 }

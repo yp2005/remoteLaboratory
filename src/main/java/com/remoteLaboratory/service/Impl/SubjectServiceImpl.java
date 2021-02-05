@@ -89,6 +89,8 @@ public class SubjectServiceImpl implements SubjectService {
                     throw new BusinessException(Messages.CODE_50200);
                 }
                 subjectRepository.delete(id);
+                course.setSubjectNumber(course.getSubjectNumber() - 1);
+                this.courseRepository.save(course);
                 this.replyRepository.deleteBySubjectId(id);
                 LogRecord logRecord = new LogRecord();
                 logRecord.setType("删除");

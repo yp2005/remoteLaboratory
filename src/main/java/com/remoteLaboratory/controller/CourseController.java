@@ -36,7 +36,7 @@ import java.util.List;
 @Api(description = "课程")
 public class CourseController {
 
-    private static Logger log = LoggerFactory.getLogger(CourseController.class);
+    private static Logger  log = LoggerFactory.getLogger(CourseController.class);
 
     @Autowired
     private CourseService courseService;
@@ -56,6 +56,24 @@ public class CourseController {
         return commonResponse;
     }
 
+    @PostMapping(path = "/startExperiment/{courseId}")
+    @ApiOperation(value = "课程开始实验", notes = "课程开始实验接口")
+    @LoginRequired(teacherRequired = "1")
+    public CommonResponse startExperiment(@PathVariable Integer courseId,  @ApiIgnore User loginUser) throws BusinessException {
+        Course course = this.courseService.get(courseId);
+        if(!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
+            throw new BusinessException(Messages.CODE_50200);
+        }
+        if(!course.getStatus().equals(1)) {
+            throw new BusinessException(Messages.CODE_40010, "课程尚未开始，不能开始实验！");
+        }
+        course.setExperimentStarted(true);
+        course = courseService.update(course);
+        CommonResponse commonResponse = CommonResponse.getInstance(course);
+        LogUtil.add(this.logRecordRepository, "开始实验", "课程", loginUser, course.getId(), course.getName());
+        return commonResponse;
+    }
+
     @PostMapping
     @ApiOperation(value = "添加课程", notes = "添加课程信息接口")
     @LoginRequired(teacherRequired = "1")
@@ -65,6 +83,7 @@ public class CourseController {
             course.setTeacherName(StringUtils.isEmpty(loginUser.getPersonName()) ? loginUser.getUserName() : loginUser.getPersonName());
         }
         course.setStatus(0);
+        course.setExperimentStarted(false);
         course.setStudentNumber(0);
         course.setSubjectNumber(0);
         course = courseService.add(course);
@@ -109,6 +128,9 @@ public class CourseController {
             }
         }
         course.setStatus(status);
+        if(status.equals(2)) { // 结束课程的同时结束实验
+            course.setExperimentStarted(false);
+        }
         course = courseService.update(course);
         CommonResponse commonResponse = CommonResponse.getInstance(course);
         LogUtil.add(this.logRecordRepository, "修改状态", "课程", loginUser, course.getId(), course.getName());

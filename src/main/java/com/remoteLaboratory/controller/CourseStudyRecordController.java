@@ -111,4 +111,16 @@ public class CourseStudyRecordController {
         LogUtil.add(this.logRecordRepository, "查询详情", "课程学习记录", loginUser, courseStudyRecordPublicVo.getId(), courseStudyRecordPublicVo.getUserName() + ": " + courseStudyRecordPublicVo.getCourseName());
         return commonResponse;
     }
+
+    @GetMapping(path = "/getScoreStatisticsByCourseId/{courseId}")
+    @ApiOperation(value = "根据课程ID统计成绩分布", notes = "根据课程ID统计成绩分布接口")
+    public CommonResponse getScoreStatisticsByCourseId(@NotNull(message = "课程id不能为空") @PathVariable Integer courseId, @ApiIgnore User loginUser) throws BusinessException {
+//        Course course = this.courseService.get(courseId);
+//        if(!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN)
+//                && !course.getTeacherId().equals(loginUser.getId())) {
+//            throw new BusinessException(Messages.CODE_50200);
+//        }
+        CommonResponse commonResponse = CommonResponse.getInstance(this.courseStudyRecordService.getScoreStatisticsByCourseId(courseId));
+        return commonResponse;
+    }
 }

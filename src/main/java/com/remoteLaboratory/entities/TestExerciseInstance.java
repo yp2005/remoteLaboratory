@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -14,14 +15,15 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 测验小题实例
+ * 实验报告小题实例
  *
  * @Author: yupeng
  */
 
 @Entity
 @Table(name = "rl_test_exercise_instance")
-@ApiModel(value = "测验小题实例表")
+@ApiModel(value = "实验报告小题实例表")
+@Data
 public class TestExerciseInstance implements Serializable {
     @Id
     @Column(length = 10, nullable = false)
@@ -60,7 +62,7 @@ public class TestExerciseInstance implements Serializable {
     private Integer exercisesType;
 
     @Lob
-    @ApiModelProperty(value = "选项 选择题填此字段JSON:[{'A': '1'},{'B': '2'}]")
+    @ApiModelProperty(value = "选项JSON:[{'displayOrder':'A','content':'2','order':'B'},{'displayOrder':'B','content':'1','order':'A'},{'displayOrder':'C','content':'4','order':'D'},{'displayOrder':'D','content':'3','order':'C'}]")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String options;
 
@@ -75,13 +77,19 @@ public class TestExerciseInstance implements Serializable {
     private String answer;
 
     @Column(length = 10)
-    @ApiModelProperty(value = "测验实例ID")
+    @ApiModelProperty(value = "实验报告实例ID")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotNull
     private Integer testInstanceId;
 
     @Column(length = 10)
-    @ApiModelProperty(value = "测验大题实例ID")
+    @ApiModelProperty(value = "分项实例ID")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
+    private Integer testSubsectionInstanceId;
+
+    @Column(length = 10)
+    @ApiModelProperty(value = "实验报告大题实例ID")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotNull
     private Integer testPartInstanceId;
@@ -121,141 +129,5 @@ public class TestExerciseInstance implements Serializable {
     @UpdateTimestamp
     private Date updateTime;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getExerciseId() {
-        return exerciseId;
-    }
-
-    public void setExerciseId(Integer exerciseId) {
-        this.exerciseId = exerciseId;
-    }
-
-    public Integer getSerialNumber() {
-        return serialNumber;
-    }
-
-    public void setSerialNumber(Integer serialNumber) {
-        this.serialNumber = serialNumber;
-    }
-
-    public Double getScore() {
-        return score;
-    }
-
-    public void setScore(Double score) {
-        this.score = score;
-    }
-
-    public String getExerciseContent() {
-        return exerciseContent;
-    }
-
-    public void setExerciseContent(String exerciseContent) {
-        this.exerciseContent = exerciseContent;
-    }
-
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
-    }
-
-    public Integer getExercisesType() {
-        return exercisesType;
-    }
-
-    public void setExercisesType(Integer exercisesType) {
-        this.exercisesType = exercisesType;
-    }
-
-    public String getOptions() {
-        return options;
-    }
-
-    public void setOptions(String options) {
-        this.options = options;
-    }
-
-    public Integer getTestPartInstanceId() {
-        return testPartInstanceId;
-    }
-
-    public void setTestPartInstanceId(Integer testPartInstanceId) {
-        this.testPartInstanceId = testPartInstanceId;
-    }
-
-    public Double getScored() {
-        return scored;
-    }
-
-    public void setScored(Double scored) {
-        this.scored = scored;
-    }
-
-    public Integer getTestInstanceId() {
-        return testInstanceId;
-    }
-
-    public void setTestInstanceId(Integer testInstanceId) {
-        this.testInstanceId = testInstanceId;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public String getAnswer() {
-        return answer;
-    }
-
-    public void setAnswer(String answer) {
-        this.answer = answer;
-    }
-
-    public String getCorrectAnswer() {
-        return correctAnswer;
-    }
-
-    public void setCorrectAnswer(String correctAnswer) {
-        this.correctAnswer = correctAnswer;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public Integer getDisplayType() {
-        return displayType;
-    }
-
-    public void setDisplayType(Integer displayType) {
-        this.displayType = displayType;
-    }
-
-    public interface Validation{};
+    public interface Validation{}
 }

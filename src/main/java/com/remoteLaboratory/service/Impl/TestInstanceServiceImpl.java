@@ -25,9 +25,10 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * 测验实例服务接口实现
+ * 实验报告实例服务接口实现
  *
  * @Author: yupeng
  */
@@ -37,61 +38,83 @@ import java.util.List;
 public class TestInstanceServiceImpl implements TestInstanceService {
     private static Logger log = LoggerFactory.getLogger(TestInstanceServiceImpl.class);
 
+    @Autowired
     private TestInstanceRepository testInstanceRepository;
 
+    @Autowired
+    private TestSubsectionInstanceRepository testSubsectionInstanceRepository;
+
+    @Autowired
     private TestPartInstanceRepository testPartInstanceRepository;
 
+    @Autowired
     private TestExerciseInstanceRepository testExerciseInstanceRepository;
 
+    @Autowired
     private TestTemplateService testTemplateService;
 
+    @Autowired
     private SectionStudyRecordRepository sectionStudyRecordRepository;
 
+    @Autowired
     private CourseStudyRecordService courseStudyRecordService;
 
+    @Autowired
     private CourseStudyRecordRepository courseStudyRecordRepository;
 
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
-    public TestInstanceServiceImpl(TestInstanceRepository testInstanceRepository,
-                                   TestPartInstanceRepository testPartInstanceRepository,
-                                   TestExerciseInstanceRepository testExerciseInstanceRepository,
-                                   SectionStudyRecordRepository sectionStudyRecordRepository,
-                                   UserRepository userRepository,
-                                   CourseStudyRecordService courseStudyRecordService,
-                                   CourseStudyRecordRepository courseStudyRecordRepository,
-                                   TestTemplateService testTemplateService) {
-        this.testInstanceRepository = testInstanceRepository;
-        this.testPartInstanceRepository = testPartInstanceRepository;
-        this.testExerciseInstanceRepository = testExerciseInstanceRepository;
-        this.testTemplateService = testTemplateService;
-        this.sectionStudyRecordRepository = sectionStudyRecordRepository;
-        this.courseStudyRecordService = courseStudyRecordService;
-        this.courseStudyRecordRepository = courseStudyRecordRepository;
-        this.userRepository = userRepository;
-    }
+    private TestRecordRepository testRecordRepository;
 
     @Override
     public TestInstancePublicVo add(TestInstancePublicVo testInstancePublicVo) throws BusinessException {
         TestInstance testInstance = testInstancePublicVo.voToEntity();
         testInstance = testInstanceRepository.save(testInstance);
-        List<TestPartInstancePublicVo> testPartInstancePublicVoList = testInstancePublicVo.getTestPartInstancePublicVoList();
-        if (CollectionUtils.isNotEmpty(testPartInstancePublicVoList)) {
-            for (TestPartInstancePublicVo testPartInstancePublicVo : testPartInstancePublicVoList) {
-                TestPartInstance testPartInstance = testPartInstancePublicVo.voToEntity();
-                testPartInstance.setTestInstanceId(testInstance.getId());
-                testPartInstance = this.testPartInstanceRepository.save(testPartInstance);
-                testPartInstancePublicVo.setId(testPartInstance.getId());
-                testPartInstancePublicVo.setUpdateTime(testPartInstance.getUpdateTime());
-                testPartInstancePublicVo.setCreateTime(testPartInstance.getCreateTime());
-                List<TestExerciseInstance> testExerciseInstanceList = testPartInstancePublicVo.getTestExerciseInstanceList();
-                if (CollectionUtils.isNotEmpty(testExerciseInstanceList)) {
-                    for (TestExerciseInstance testExerciseInstance : testExerciseInstanceList) {
-                        testExerciseInstance.setTestInstanceId(testInstance.getId());
-                        testExerciseInstance.setTestPartInstanceId(testPartInstance.getId());
-                        testExerciseInstance = this.testExerciseInstanceRepository.save(testExerciseInstance);
+        if (testInstance.getTestType().equals(1)) { // 实验报告
+            List<TestSubsectionInstancePublicVo> testSubsectionInstancePublicVoList = testInstancePublicVo.getTestSubsectionInstancePublicVoList();
+            if (CollectionUtils.isNotEmpty(testSubsectionInstancePublicVoList)) {
+                for (TestSubsectionInstancePublicVo testSubsectionInstancePublicVo : testSubsectionInstancePublicVoList) {
+                    TestSubsectionInstance testSubsectionInstance = testSubsectionInstancePublicVo.voToEntity();
+                    testSubsectionInstance.setTestInstanceId(testInstance.getId());
+                    testSubsectionInstance = this.testSubsectionInstanceRepository.save(testSubsectionInstance);
+                    testSubsectionInstancePublicVo.setId(testSubsectionInstance.getId());
+                    testSubsectionInstancePublicVo.setUpdateTime(testSubsectionInstance.getUpdateTime());
+                    testSubsectionInstancePublicVo.setCreateTime(testSubsectionInstance.getCreateTime());
+                    List<TestPartInstancePublicVo> testPartInstancePublicVoList = testSubsectionInstancePublicVo.getTestPartInstancePublicVoList();
+                    if (CollectionUtils.isNotEmpty(testPartInstancePublicVoList)) {
+                        for (TestPartInstancePublicVo testPartInstancePublicVo : testPartInstancePublicVoList) {
+                            TestPartInstance testPartInstance = testPartInstancePublicVo.voToEntity();
+                            testPartInstance.setTestInstanceId(testInstance.getId());
+                            testPartInstance.setTestSubsectionInstanceId(testSubsectionInstance.getId());
+                            testPartInstance = this.testPartInstanceRepository.save(testPartInstance);
+                            testPartInstancePublicVo.setId(testPartInstance.getId());
+                            testPartInstancePublicVo.setUpdateTime(testPartInstance.getUpdateTime());
+                            testPartInstancePublicVo.setCreateTime(testPartInstance.getCreateTime());
+                            List<TestExerciseInstance> testExerciseInstanceList = testPartInstancePublicVo.getTestExerciseInstanceList();
+                            if (CollectionUtils.isNotEmpty(testExerciseInstanceList)) {
+                                for (TestExerciseInstance testExerciseInstance : testExerciseInstanceList) {
+                                    testExerciseInstance.setTestInstanceId(testInstance.getId());
+                                    testExerciseInstance.setTestSubsectionInstanceId(testSubsectionInstance.getId());
+                                    testExerciseInstance.setTestPartInstanceId(testPartInstance.getId());
+                                    testExerciseInstance = this.testExerciseInstanceRepository.save(testExerciseInstance);
+                                }
+                            }
+                        }
                     }
+                }
+            }
+            TestRecord testRecord = this.testRecordRepository.findByTestTemplateIdAndUserId(testInstance.getTestTemplateId(), testInstance.getUserId());
+            testRecord.setTestInstanceId(testInstance.getId());
+            testRecord.setStatus(0);
+            this.testRecordRepository.save(testRecord);
+        } else { // 问卷调查
+            List<TestExerciseInstance> testExerciseInstanceList = testInstancePublicVo.getTestExerciseInstanceList();
+            if (CollectionUtils.isNotEmpty(testExerciseInstanceList)) {
+                for (TestExerciseInstance testExerciseInstance : testExerciseInstanceList) {
+                    testExerciseInstance.setTestInstanceId(testInstance.getId());
+                    testExerciseInstance = this.testExerciseInstanceRepository.save(testExerciseInstance);
                 }
             }
         }
@@ -104,17 +127,34 @@ public class TestInstanceServiceImpl implements TestInstanceService {
     private TestInstancePublicVo update(TestInstancePublicVo testInstancePublicVo) throws BusinessException {
         TestInstance testInstance = testInstancePublicVo.voToEntity();
         testInstance = testInstanceRepository.save(testInstance);
-        List<TestPartInstancePublicVo> testPartInstancePublicVoList = testInstancePublicVo.getTestPartInstancePublicVoList();
-        if (CollectionUtils.isNotEmpty(testPartInstancePublicVoList)) {
-            for (TestPartInstancePublicVo testPartInstancePublicVo : testPartInstancePublicVoList) {
-                TestPartInstance testPartInstance = testPartInstancePublicVo.voToEntity();
-                testPartInstance = this.testPartInstanceRepository.save(testPartInstance);
-                testPartInstancePublicVo.setUpdateTime(testPartInstance.getUpdateTime());
-                List<TestExerciseInstance> testExerciseInstanceList = testPartInstancePublicVo.getTestExerciseInstanceList();
-                if (CollectionUtils.isNotEmpty(testExerciseInstanceList)) {
-                    for (TestExerciseInstance testExerciseInstance : testExerciseInstanceList) {
-                        testExerciseInstance = this.testExerciseInstanceRepository.save(testExerciseInstance);
+        if (testInstance.getTestType().equals(1)) { // 实验报告
+            List<TestSubsectionInstancePublicVo> testSubsectionInstancePublicVoList = testInstancePublicVo.getTestSubsectionInstancePublicVoList();
+            if (CollectionUtils.isNotEmpty(testSubsectionInstancePublicVoList)) {
+                for (TestSubsectionInstancePublicVo testSubsectionInstancePublicVo : testSubsectionInstancePublicVoList) {
+                    TestSubsectionInstance testSubsectionInstance = testSubsectionInstancePublicVo.voToEntity();
+                    testSubsectionInstance = this.testSubsectionInstanceRepository.save(testSubsectionInstance);
+                    testSubsectionInstancePublicVo.setUpdateTime(testSubsectionInstance.getUpdateTime());
+                    List<TestPartInstancePublicVo> testPartInstancePublicVoList = testSubsectionInstancePublicVo.getTestPartInstancePublicVoList();
+                    if (CollectionUtils.isNotEmpty(testPartInstancePublicVoList)) {
+                        for (TestPartInstancePublicVo testPartInstancePublicVo : testPartInstancePublicVoList) {
+                            TestPartInstance testPartInstance = testPartInstancePublicVo.voToEntity();
+                            testPartInstance = this.testPartInstanceRepository.save(testPartInstance);
+                            testPartInstancePublicVo.setUpdateTime(testPartInstance.getUpdateTime());
+                            List<TestExerciseInstance> testExerciseInstanceList = testPartInstancePublicVo.getTestExerciseInstanceList();
+                            if (CollectionUtils.isNotEmpty(testExerciseInstanceList)) {
+                                for (TestExerciseInstance testExerciseInstance : testExerciseInstanceList) {
+                                    testExerciseInstance = this.testExerciseInstanceRepository.save(testExerciseInstance);
+                                }
+                            }
+                        }
                     }
+                }
+            }
+        } else { // 问卷调查
+            List<TestExerciseInstance> testExerciseInstanceList = testInstancePublicVo.getTestExerciseInstanceList();
+            if (CollectionUtils.isNotEmpty(testExerciseInstanceList)) {
+                for (TestExerciseInstance testExerciseInstance : testExerciseInstanceList) {
+                    testExerciseInstance = this.testExerciseInstanceRepository.save(testExerciseInstance);
                 }
             }
         }
@@ -127,16 +167,34 @@ public class TestInstanceServiceImpl implements TestInstanceService {
         TestInstance testInstance = this.testInstanceRepository.findByUserIdAndTestTemplateId(user.getId(), testTemplateId);
         if (testInstance != null) {
             TestInstancePublicVo testInstancePublicVo = new TestInstancePublicVo(testInstance);
-            List<TestPartInstance> testPartInstanceList = this.testPartInstanceRepository.findByTestInstanceId(testInstance.getId());
-            if (CollectionUtils.isNotEmpty(testPartInstanceList)) {
-                List<TestPartInstancePublicVo> testPartInstancePublicVoList = new ArrayList<>();
-                for (TestPartInstance testPartInstance : testPartInstanceList) {
-                    TestPartInstancePublicVo testPartInstancePublicVo = new TestPartInstancePublicVo(testPartInstance);
-                    List<TestExerciseInstance> testExerciseInstanceList = this.testExerciseInstanceRepository.findByTestPartInstanceId(testPartInstance.getId());
-                    testPartInstancePublicVo.setTestExerciseInstanceList(testExerciseInstanceList);
-                    testPartInstancePublicVoList.add(testPartInstancePublicVo);
+            List<TestExerciseInstance> testExerciseInstanceList = this.testExerciseInstanceRepository.findByTestInstanceId(testInstance.getId());
+            if (testInstance.getTestType().equals(1)) { // 实验报告
+                List<TestSubsectionInstance> testSubsectionInstanceList = this.testSubsectionInstanceRepository.findByTestInstanceId(testInstance.getId());
+                List<TestPartInstance> testPartInstanceList = this.testPartInstanceRepository.findByTestInstanceId(testInstance.getId());
+                if (CollectionUtils.isNotEmpty(testSubsectionInstanceList)) {
+                    List<TestSubsectionInstancePublicVo> testSubsectionInstancePublicVoList = new ArrayList<>();
+                    for (TestSubsectionInstance testSubsectionInstance : testSubsectionInstanceList) {
+                        TestSubsectionInstancePublicVo testSubsectionInstancePublicVo = new TestSubsectionInstancePublicVo(testSubsectionInstance);
+                        List<TestPartInstance> tpil = testPartInstanceList.stream()
+                                .filter(testPartInstance -> testPartInstance.getTestSubsectionInstanceId().equals(testSubsectionInstance.getId()))
+                                .collect(Collectors.toList());
+                        if (CollectionUtils.isNotEmpty(tpil)) {
+                            List<TestPartInstancePublicVo> testPartInstancePublicVoList = new ArrayList<>();
+                            for (TestPartInstance testPartInstance : tpil) {
+                                TestPartInstancePublicVo testPartInstancePublicVo = new TestPartInstancePublicVo(testPartInstance);
+                                testPartInstancePublicVo.setTestExerciseInstanceList(testExerciseInstanceList.stream()
+                                        .filter(testExerciseInstance -> testExerciseInstance.getTestPartInstanceId().equals(testPartInstance.getId()))
+                                        .collect(Collectors.toList()));
+                                testPartInstancePublicVoList.add(testPartInstancePublicVo);
+                            }
+                            testSubsectionInstancePublicVo.setTestPartInstancePublicVoList(testPartInstancePublicVoList);
+                        }
+                        testSubsectionInstancePublicVoList.add(testSubsectionInstancePublicVo);
+                    }
+                    testInstancePublicVo.setTestSubsectionInstancePublicVoList(testSubsectionInstancePublicVoList);
                 }
-                testInstancePublicVo.setTestPartInstancePublicVoList(testPartInstancePublicVoList);
+            } else {
+                testInstancePublicVo.setTestExerciseInstanceList(testExerciseInstanceList);
             }
             return testInstancePublicVo;
         } else {
@@ -144,29 +202,16 @@ public class TestInstanceServiceImpl implements TestInstanceService {
             TestInstancePublicVo testInstancePublicVo = new TestInstancePublicVo(testTemplatePublicVo);
             testInstancePublicVo.setUserId(user.getId());
             testInstancePublicVo.setUserName(StringUtils.isEmpty(user.getPersonName()) ? user.getUserName() : user.getPersonName());
-            testInstancePublicVo = this.add(testInstancePublicVo);
-            SectionStudyRecord sectionStudyRecord = this.sectionStudyRecordRepository.findBySectionIdAndUserId(testInstancePublicVo.getSectionId(), user.getId());
-            if(sectionStudyRecord != null) {
-                if(sectionStudyRecord.getTestStatus().equals(0)) {
-                    sectionStudyRecord.setTestStatus(2); // 设置作业状态为正在进行
-                    sectionStudyRecord = this.sectionStudyRecordRepository.save(sectionStudyRecord);
-                }
-            }
-            else {
-                this.courseStudyRecordService.startStudy(testInstancePublicVo.getCourseId(), user);
-                sectionStudyRecord = this.sectionStudyRecordRepository.findBySectionIdAndUserId(testInstancePublicVo.getSectionId(), user.getId());
-                sectionStudyRecord.setTestStatus(2); // 设置作业状态为正在进行
-                sectionStudyRecord = this.sectionStudyRecordRepository.save(sectionStudyRecord);
-            }
-            CourseStudyRecord courseStudyRecord = this.courseStudyRecordRepository.findOne(sectionStudyRecord.getCourseStudyRecordId());
-            courseStudyRecord.setChapterId(sectionStudyRecord.getChapterId());
-            courseStudyRecord.setChapterName(sectionStudyRecord.getChapterName());
-            courseStudyRecord.setChapterTitle(sectionStudyRecord.getChapterTitle());
-            courseStudyRecord.setSectionId(sectionStudyRecord.getSectionId());
-            courseStudyRecord.setSectionName(sectionStudyRecord.getSectionName());
-            courseStudyRecord.setSectionTitle(sectionStudyRecord.getSectionTitle());
-            this.courseStudyRecordRepository.save(courseStudyRecord);
-            return testInstancePublicVo;
+            StringBuilder class1 = new StringBuilder();
+            class1.append(user.getCollege())
+                    .append("->")
+                    .append(user.getMajor())
+                    .append("->")
+                    .append(user.getGrade())
+                    .append("->")
+                    .append(user.getClass1());
+            testInstancePublicVo.setClass1(class1.toString());
+            return this.add(testInstancePublicVo);
         }
     }
 
@@ -194,38 +239,6 @@ public class TestInstanceServiceImpl implements TestInstanceService {
             listOutput.setList(list);
         }
         return listOutput;
-    }
-
-    @Override
-    public ListOutput listBySectionId(ListInput listInput, Integer sectionId) throws BusinessException {
-        SearchPara searchPara = new SearchPara();
-        searchPara.setName("sectionId");
-        searchPara.setOp("eq");
-        searchPara.setValue(sectionId);
-        if (listInput.getSearchParas() == null) {
-            listInput.setSearchParas(new SearchParas());
-        }
-        if (listInput.getSearchParas().getConditions() == null) {
-            listInput.getSearchParas().setConditions(new ArrayList<>());
-        }
-        listInput.getSearchParas().getConditions().add(searchPara);
-        return this.list(listInput);
-    }
-
-    @Override
-    public ListOutput listByChapterId(ListInput listInput, Integer chapterId) throws BusinessException {
-        SearchPara searchPara = new SearchPara();
-        searchPara.setName("chapterId");
-        searchPara.setOp("eq");
-        searchPara.setValue(chapterId);
-        if (listInput.getSearchParas() == null) {
-            listInput.setSearchParas(new SearchParas());
-        }
-        if (listInput.getSearchParas().getConditions() == null) {
-            listInput.getSearchParas().setConditions(new ArrayList<>());
-        }
-        listInput.getSearchParas().getConditions().add(searchPara);
-        return this.list(listInput);
     }
 
     @Override
@@ -259,43 +272,50 @@ public class TestInstanceServiceImpl implements TestInstanceService {
     }
 
     @Override
+    public List<String> getClassByCourseId(Integer courseId) throws BusinessException {
+        return this.testInstanceRepository.findClassByCourseId(courseId);
+    }
+
+    @Override
+    public List<TestInstance> getByUserIdAndCourseId(Integer userId, Integer courseId) throws BusinessException {
+        return this.testInstanceRepository.findByUserIdAndCourseId(userId, courseId);
+    }
+
+    @Override
     public TestInstancePublicVo getDetail(Integer id) throws BusinessException {
         TestInstance testInstance = testInstanceRepository.findOne(id);
         if (testInstance == null) {
             throw new BusinessException(Messages.CODE_20001);
         }
         TestInstancePublicVo testInstancePublicVo = new TestInstancePublicVo(testInstance);
-        List<TestPartInstance> testPartInstanceList = this.testPartInstanceRepository.findByTestInstanceId(id);
-        if (CollectionUtils.isNotEmpty(testPartInstanceList)) {
-            List<TestPartInstancePublicVo> testPartInstancePublicVoList = new ArrayList<>();
-            for (TestPartInstance testPartInstance : testPartInstanceList) {
-                TestPartInstancePublicVo testPartInstancePublicVo = new TestPartInstancePublicVo(testPartInstance);
-                List<TestExerciseInstance> testExerciseInstanceList = this.testExerciseInstanceRepository.findByTestPartInstanceId(testPartInstance.getId());
-                testPartInstancePublicVo.setTestExerciseInstanceList(testExerciseInstanceList);
-                testPartInstancePublicVoList.add(testPartInstancePublicVo);
+        List<TestExerciseInstance> testExerciseInstanceList = this.testExerciseInstanceRepository.findByTestInstanceId(id);
+        if (testInstance.getTestType().equals(1)) { // 实验报告
+            List<TestSubsectionInstance> testSubsectionInstanceList = this.testSubsectionInstanceRepository.findByTestInstanceId(id);
+            List<TestPartInstance> testPartInstanceList = this.testPartInstanceRepository.findByTestInstanceId(id);
+            if (CollectionUtils.isNotEmpty(testSubsectionInstanceList)) {
+                List<TestSubsectionInstancePublicVo> testSubsectionInstancePublicVoList = new ArrayList<>();
+                for (TestSubsectionInstance testSubsectionInstance : testSubsectionInstanceList) {
+                    TestSubsectionInstancePublicVo testSubsectionInstancePublicVo = new TestSubsectionInstancePublicVo(testSubsectionInstance);
+                    List<TestPartInstance> tpil = testPartInstanceList.stream()
+                            .filter(testPartInstance -> testPartInstance.getTestSubsectionInstanceId().equals(testSubsectionInstance.getId()))
+                            .collect(Collectors.toList());
+                    if (CollectionUtils.isNotEmpty(tpil)) {
+                        List<TestPartInstancePublicVo> testPartInstancePublicVoList = new ArrayList<>();
+                        for (TestPartInstance testPartInstance : tpil) {
+                            TestPartInstancePublicVo testPartInstancePublicVo = new TestPartInstancePublicVo(testPartInstance);
+                            testPartInstancePublicVo.setTestExerciseInstanceList(testExerciseInstanceList.stream()
+                                    .filter(testExerciseInstance -> testExerciseInstance.getTestPartInstanceId().equals(testPartInstance.getId()))
+                                    .collect(Collectors.toList()));
+                            testPartInstancePublicVoList.add(testPartInstancePublicVo);
+                        }
+                        testSubsectionInstancePublicVo.setTestPartInstancePublicVoList(testPartInstancePublicVoList);
+                    }
+                    testSubsectionInstancePublicVoList.add(testSubsectionInstancePublicVo);
+                }
+                testInstancePublicVo.setTestSubsectionInstancePublicVoList(testSubsectionInstancePublicVoList);
             }
-            testInstancePublicVo.setTestPartInstancePublicVoList(testPartInstancePublicVoList);
-        }
-        return testInstancePublicVo;
-    }
-
-    @Override
-    public TestInstancePublicVo getMyBySectionId(Integer sectionId, User user) throws BusinessException {
-        TestInstance testInstance = testInstanceRepository.findByUserIdAndSectionId(user.getId(), sectionId);
-        if (testInstance == null) {
-            throw new BusinessException(Messages.CODE_20001);
-        }
-        TestInstancePublicVo testInstancePublicVo = new TestInstancePublicVo(testInstance);
-        List<TestPartInstance> testPartInstanceList = this.testPartInstanceRepository.findByTestInstanceId(testInstance.getId());
-        if (CollectionUtils.isNotEmpty(testPartInstanceList)) {
-            List<TestPartInstancePublicVo> testPartInstancePublicVoList = new ArrayList<>();
-            for (TestPartInstance testPartInstance : testPartInstanceList) {
-                TestPartInstancePublicVo testPartInstancePublicVo = new TestPartInstancePublicVo(testPartInstance);
-                List<TestExerciseInstance> testExerciseInstanceList = this.testExerciseInstanceRepository.findByTestPartInstanceId(testPartInstance.getId());
-                testPartInstancePublicVo.setTestExerciseInstanceList(testExerciseInstanceList);
-                testPartInstancePublicVoList.add(testPartInstancePublicVo);
-            }
-            testInstancePublicVo.setTestPartInstancePublicVoList(testPartInstancePublicVoList);
+        } else {
+            testInstancePublicVo.setTestExerciseInstanceList(testExerciseInstanceList);
         }
         return testInstancePublicVo;
     }
@@ -303,63 +323,70 @@ public class TestInstanceServiceImpl implements TestInstanceService {
     @Override
     public TestInstancePublicVo submit(Integer id, Integer status, User user) throws BusinessException {
         TestInstancePublicVo testInstancePublicVo = this.getDetail(id);
-        testInstancePublicVo = this.calculateScore(testInstancePublicVo);
         testInstancePublicVo.setStatus(status);
-        testInstancePublicVo = this.update(testInstancePublicVo);
-        if(user == null) {
+        if (user == null) {
             user = this.userRepository.findOne(testInstancePublicVo.getUserId());
         }
-        SectionStudyRecord sectionStudyRecord = this.sectionStudyRecordRepository.findBySectionIdAndUserId(testInstancePublicVo.getSectionId(), user.getId());
-        if(status.equals(1)) {
-            if(sectionStudyRecord != null) {
-                if(!sectionStudyRecord.getTestStatus().equals(1)) {
-                    sectionStudyRecord.setTestStatus(1); // 状态设置为已完成
-                    sectionStudyRecord.setStudied(sectionStudyRecord.getStudied() + 0.5);
-                    sectionStudyRecord = this.sectionStudyRecordRepository.save(sectionStudyRecord);
-                    this.courseStudyRecordService.update(sectionStudyRecord.getCourseStudyRecordId());
-                }
+        CourseStudyRecord courseStudyRecord = this.courseStudyRecordRepository.findByCourseIdAndUserId(testInstancePublicVo.getCourseId(), user.getId());
+        if (testInstancePublicVo.getTestType().equals(1)) { // 实验报告
+            testInstancePublicVo = this.calculateScore(testInstancePublicVo);
+            testInstancePublicVo = this.update(testInstancePublicVo);
+            TestRecord testRecord = this.testRecordRepository.findByTestTemplateIdAndUserId(testInstancePublicVo.getTestTemplateId(), testInstancePublicVo.getUserId());
+            testRecord.setStatus(status);
+            this.testRecordRepository.save(testRecord);
+            if (status.equals(1)) {
+                courseStudyRecord.setTestTemplateSubmitedNumber(courseStudyRecord.getTestTemplateSubmitedNumber() + 1);
+            } else if (status.equals(2)) {
+                courseStudyRecord.setTestTemplateFinishedNumber(courseStudyRecord.getTestTemplateFinishedNumber() + 1);
             }
-            else {
-                this.courseStudyRecordService.startStudy(testInstancePublicVo.getCourseId(), user);
-                sectionStudyRecord = this.sectionStudyRecordRepository.findBySectionIdAndUserId(id, user.getId());
-                sectionStudyRecord.setTestStatus(1); // 状态设置为已完成
-                sectionStudyRecord.setStudied(sectionStudyRecord.getStudied() + 0.5);
-                sectionStudyRecord = this.sectionStudyRecordRepository.save(sectionStudyRecord);
-                this.courseStudyRecordService.update(sectionStudyRecord.getCourseStudyRecordId());
-            }
-        }
-        else {
-            this.courseStudyRecordService.update(sectionStudyRecord.getCourseStudyRecordId());
+            this.courseStudyRecordService.updatePercent(courseStudyRecord);
+        } else { // 问卷调查
+            this.testInstanceRepository.save(testInstancePublicVo.voToEntity());
+            courseStudyRecord.setIsQuestionnaireFinish(true);
+            this.courseStudyRecordRepository.save(courseStudyRecord);
         }
         return testInstancePublicVo;
     }
 
     // 计算分数
     private TestInstancePublicVo calculateScore(TestInstancePublicVo testInstancePublicVo) {
-        List<TestPartInstancePublicVo> testPartInstancePublicVoList = testInstancePublicVo.getTestPartInstancePublicVoList();
         Double totalScore = 0.0;
-        if (CollectionUtils.isNotEmpty(testPartInstancePublicVoList)) {
-            for (TestPartInstancePublicVo testPartInstancePublicVo : testPartInstancePublicVoList) {
-                List<TestExerciseInstance> testExerciseInstanceList = testPartInstancePublicVo.getTestExerciseInstanceList();
-                Double partScore = 0.0;
-                if (CollectionUtils.isNotEmpty(testExerciseInstanceList)) {
-                    for (TestExerciseInstance testExerciseInstance : testExerciseInstanceList) {
-                        if (testExerciseInstance.getScored() != null) {
-                            partScore += testExerciseInstance.getScored();
-                        } else if (testExerciseInstance.getType().equals(1)) {
-                            if (testExerciseInstance.getAnswer() != null && testExerciseInstance.getAnswer().equals(testExerciseInstance.getCorrectAnswer())) {
-                                testExerciseInstance.setScored(testExerciseInstance.getScore());
-                                partScore += testExerciseInstance.getScored();
-                                testExerciseInstance.setStatus(1);
-                            } else {
-                                testExerciseInstance.setScored(0.0);
-                                testExerciseInstance.setStatus(0);
+        List<TestSubsectionInstancePublicVo> testSubsectionInstancePublicVoList = testInstancePublicVo.getTestSubsectionInstancePublicVoList();
+        if (CollectionUtils.isNotEmpty(testSubsectionInstancePublicVoList)) {
+            for (TestSubsectionInstancePublicVo testSubsectionInstancePublicVo : testSubsectionInstancePublicVoList) {
+                // TODO 课前预习打分
+                if (testSubsectionInstancePublicVo.getType().equals(5)) { // 实验报告根据答题计算分数
+                    List<TestPartInstancePublicVo> testPartInstancePublicVoList = testSubsectionInstancePublicVo.getTestPartInstancePublicVoList();
+                    if (CollectionUtils.isNotEmpty(testPartInstancePublicVoList)) {
+                        Double subsectionScore = 0.0;
+                        for (TestPartInstancePublicVo testPartInstancePublicVo : testPartInstancePublicVoList) {
+                            List<TestExerciseInstance> testExerciseInstanceList = testPartInstancePublicVo.getTestExerciseInstanceList();
+                            Double partScore = 0.0;
+                            if (CollectionUtils.isNotEmpty(testExerciseInstanceList)) {
+                                for (TestExerciseInstance testExerciseInstance : testExerciseInstanceList) {
+                                    if (testExerciseInstance.getScored() != null) {
+                                        partScore += testExerciseInstance.getScored();
+                                    } else if (testExerciseInstance.getType().equals(1)) {
+                                        if (StringUtils.isNotEmpty(testExerciseInstance.getAnswer()) && testExerciseInstance.getAnswer().equals(testExerciseInstance.getCorrectAnswer())) {
+                                            testExerciseInstance.setScored(testExerciseInstance.getScore());
+                                            partScore += testExerciseInstance.getScored();
+                                            testExerciseInstance.setStatus(1);
+                                        } else {
+                                            testExerciseInstance.setScored(0.0);
+                                            testExerciseInstance.setStatus(0);
+                                        }
+                                    }
+                                }
                             }
+                            testPartInstancePublicVo.setScored(partScore);
+                            subsectionScore += testPartInstancePublicVo.getScored();
                         }
+                        testSubsectionInstancePublicVo.setScored(subsectionScore);
                     }
                 }
-                testPartInstancePublicVo.setScored(partScore);
-                totalScore += testPartInstancePublicVo.getScored();
+                if (testSubsectionInstancePublicVo.getScored() != null) {
+                    totalScore += testSubsectionInstancePublicVo.getScored();
+                }
             }
         }
         testInstancePublicVo.setScored(totalScore);

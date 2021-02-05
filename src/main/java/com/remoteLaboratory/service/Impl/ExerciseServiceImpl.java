@@ -57,6 +57,11 @@ public class ExerciseServiceImpl implements ExerciseService {
 
     @Override
     public Exercise add(Exercise exercise) throws BusinessException {
+        if(exercise.getTestType().equals(2)
+                && !exercise.getExercisesType().equals(1)
+                && !exercise.getExercisesType().equals(2)) {
+            throw new BusinessException(Messages.CODE_40010, "问卷调查题目只能是选择题！");
+        }
         exercise = exerciseRepository.save(exercise);
         return exercise;
     }

@@ -4,12 +4,12 @@ import com.remoteLaboratory.entities.TestExerciseInstance;
 import io.swagger.annotations.ApiModel;
 
 /**
- * 测验小题实例未交卷时的输出
+ * 实验报告小题实例未交卷时的输出
  *
  * @Author: yupeng
  */
-@ApiModel(value = "测验小题实例未交卷时的输出")
-public class TestExerciseInstanceOutput extends TestExerciseInstance{
+@ApiModel(value = "实验报告小题实例未交卷时的输出")
+public class TestExerciseInstanceOutput extends TestExerciseInstance {
 
     public TestExerciseInstanceOutput(TestExerciseInstance testExerciseInstance) {
         this.setId(testExerciseInstance.getId());
@@ -25,6 +25,7 @@ public class TestExerciseInstanceOutput extends TestExerciseInstance{
         this.setStatus(testExerciseInstance.getStatus());
         this.setTestInstanceId(testExerciseInstance.getTestInstanceId());
         this.setTestPartInstanceId(testExerciseInstance.getTestPartInstanceId());
+        this.setTestSubsectionInstanceId(testExerciseInstance.getTestSubsectionInstanceId());
         this.setType(testExerciseInstance.getExercisesType());
         this.setDisplayType(testExerciseInstance.getDisplayType());
     }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -21,6 +22,7 @@ import java.util.Date;
 @Entity
 @Table(name = "rl_exercise")
 @ApiModel(value = "习题表")
+@Data
 public class Exercise implements Serializable {
     @Id
     @Column(length = 10, nullable = false)
@@ -45,6 +47,12 @@ public class Exercise implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonIgnore
     private Integer type;
+
+    @Column(length = 10)
+    @ApiModelProperty(value = "试卷类型 1-实验报告 2-问卷调查")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonIgnore
+    private Integer testType;
 
     @Column(length = 10)
     @ApiModelProperty(value = "题目类型 1-单选题 2-多选题 3-填空题 4-判断题 5-问答题 6-计算题")
@@ -74,42 +82,6 @@ public class Exercise implements Serializable {
     @NotNull
     private String courseName;
 
-    @Column(length = 10)
-    @ApiModelProperty(value = "所属章ID")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotNull
-    private Integer chapterId;
-
-    @Column(length = 255)
-    @ApiModelProperty(value = "所属章名称")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotNull
-    private String chapterName;
-
-    @Column(length = 255)
-    @ApiModelProperty(value = "所属章标题")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotNull
-    private String chapterTitle;
-
-    @Column(length = 10)
-    @ApiModelProperty(value = "所属节ID")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotNull
-    private Integer sectionId;
-
-    @Column(length = 255)
-    @ApiModelProperty(value = "所属节名称")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotNull
-    private String sectionName;
-
-    @Column(length = 255)
-    @ApiModelProperty(value = "所属节标题")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotNull
-    private String sectionTitle;
-
     @Column(updatable = false)
     @ApiModelProperty(value = "创建时间", hidden = true)
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -123,141 +95,5 @@ public class Exercise implements Serializable {
     @UpdateTimestamp
     private Date updateTime;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
-    }
-
-    public Integer getExercisesType() {
-        return exercisesType;
-    }
-
-    public void setExercisesType(Integer exercisesType) {
-        this.exercisesType = exercisesType;
-    }
-
-    public String getOptions() {
-        return options;
-    }
-
-    public void setOptions(String options) {
-        this.options = options;
-    }
-
-    public String getAnswer() {
-        return answer;
-    }
-
-    public void setAnswer(String answer) {
-        this.answer = answer;
-    }
-
-    public Integer getChapterId() {
-        return chapterId;
-    }
-
-    public void setChapterId(Integer chapterId) {
-        this.chapterId = chapterId;
-    }
-
-    public String getChapterName() {
-        return chapterName;
-    }
-
-    public void setChapterName(String chapterName) {
-        this.chapterName = chapterName;
-    }
-
-    public String getChapterTitle() {
-        return chapterTitle;
-    }
-
-    public void setChapterTitle(String chapterTitle) {
-        this.chapterTitle = chapterTitle;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public Integer getCourseId() {
-        return courseId;
-    }
-
-    public void setCourseId(Integer courseId) {
-        this.courseId = courseId;
-    }
-
-    public String getCourseName() {
-        return courseName;
-    }
-
-    public void setCourseName(String courseName) {
-        this.courseName = courseName;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public Integer getSectionId() {
-        return sectionId;
-    }
-
-    public void setSectionId(Integer sectionId) {
-        this.sectionId = sectionId;
-    }
-
-    public String getSectionName() {
-        return sectionName;
-    }
-
-    public void setSectionName(String sectionName) {
-        this.sectionName = sectionName;
-    }
-
-    public String getSectionTitle() {
-        return sectionTitle;
-    }
-
-    public void setSectionTitle(String sectionTitle) {
-        this.sectionTitle = sectionTitle;
-    }
-
-    public Integer getDisplayType() {
-        return displayType;
-    }
-
-    public void setDisplayType(Integer displayType) {
-        this.displayType = displayType;
-    }
-
-    public interface Validation{};
+    public interface Validation{}
 }

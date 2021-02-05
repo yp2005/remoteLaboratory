@@ -153,6 +153,9 @@ public class DeviceOrderServiceImpl implements DeviceOrderService {
             throw new BusinessException(Messages.CODE_40010, "您已有预约设备，请完成实验后再进行预约！");
         }
         Course course = this.courseService.get(courseId);
+        if(!course.getExperimentStarted()) {
+            throw new BusinessException(Messages.CODE_40010, "课程尚未开始实验，不能预约实验！");
+        }
         deviceOrder = this.get(deviceOrderId);
         if(deviceOrder.getStatus().equals(1)) {
             throw new BusinessException(Messages.CODE_40010, "该设备此时段已被其他人预约");

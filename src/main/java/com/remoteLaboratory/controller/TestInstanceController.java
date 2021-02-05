@@ -1,7 +1,10 @@
 package com.remoteLaboratory.controller;
 
 import com.remoteLaboratory.config.LoginRequired;
-import com.remoteLaboratory.entities.*;
+import com.remoteLaboratory.entities.Course;
+import com.remoteLaboratory.entities.TestExerciseInstance;
+import com.remoteLaboratory.entities.TestInstance;
+import com.remoteLaboratory.entities.User;
 import com.remoteLaboratory.repositories.LogRecordRepository;
 import com.remoteLaboratory.service.*;
 import com.remoteLaboratory.utils.CommonResponse;
@@ -22,17 +25,16 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
- * 测验实例接口
+ * 实验报告接口
  *
  * @Author: yupeng
  */
 @RestController
 @RequestMapping("/testInstance")
-@Api(description = "测验实例")
+@Api(description = "实验报告")
 @LoginRequired(studentRequired = "1")
 public class TestInstanceController {
 
@@ -60,47 +62,17 @@ public class TestInstanceController {
     private LogRecordRepository logRecordRepository;
 
     @PostMapping(path = "/list")
-    @ApiOperation(value = "测验实例列表", notes = "查询测验实例信息列表")
+    @ApiOperation(value = "实验报告列表", notes = "查询实验报告信息列表")
     @LoginRequired(adminRequired = "1")
     public CommonResponse list(@RequestBody ListInput listInput, @ApiIgnore User loginUser) throws BusinessException {
         CommonResponse commonResponse = CommonResponse.getInstance();
         commonResponse.setResult(testInstanceService.list(listInput));
-        LogUtil.add(this.logRecordRepository, "列表查询", "测验实例", loginUser, null, null);
-        return commonResponse;
-    }
-
-    @PostMapping(path = "/listBySectionId/{sectionId}")
-    @ApiOperation(value = "测验实例列表", notes = "根据小节Id查询测验实例信息列表")
-    @LoginRequired(teacherRequired = "1")
-    public CommonResponse listBySectionId(@RequestBody ListInput listInput, @NotNull(message = "小节Id不能为空") @PathVariable Integer sectionId, @ApiIgnore User loginUser) throws BusinessException {
-        Section section = this.sectionService.get(sectionId);
-        Course course = this.courseService.get(section.getCourseId());
-        if (!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
-            throw new BusinessException(Messages.CODE_50200);
-        }
-        CommonResponse commonResponse = CommonResponse.getInstance();
-        commonResponse.setResult(testInstanceService.listBySectionId(listInput, sectionId));
-        LogUtil.add(this.logRecordRepository, "列表查询", "测验实例", loginUser, section.getId(), section.getName());
-        return commonResponse;
-    }
-
-    @PostMapping(path = "/listByChapterId/{chapterId}")
-    @ApiOperation(value = "测验实例列表", notes = "根据章Id查询测验实例信息列表")
-    @LoginRequired(teacherRequired = "1")
-    public CommonResponse listByChapterId(@RequestBody ListInput listInput, @NotNull(message = "章Id不能为空") @PathVariable Integer chapterId, @ApiIgnore User loginUser) throws BusinessException {
-        Chapter chapter = this.chapterService.get(chapterId);
-        Course course = this.courseService.get(chapter.getCourseId());
-        if (!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
-            throw new BusinessException(Messages.CODE_50200);
-        }
-        CommonResponse commonResponse = CommonResponse.getInstance();
-        commonResponse.setResult(testInstanceService.listByChapterId(listInput, chapterId));
-        LogUtil.add(this.logRecordRepository, "列表查询", "测验实例", loginUser, chapter.getId(), chapter.getName());
+        LogUtil.add(this.logRecordRepository, "列表查询", "实验报告", loginUser, null, null);
         return commonResponse;
     }
 
     @PostMapping(path = "/listByCourseId/{courseId}")
-    @ApiOperation(value = "测验实例列表", notes = "根据课程Id查询测验实例信息列表")
+    @ApiOperation(value = "实验报告列表", notes = "根据课程Id查询实验报告信息列表")
     @LoginRequired(teacherRequired = "1")
     public CommonResponse listByCourseId(@RequestBody ListInput listInput, @NotNull(message = "课程Id不能为空") @PathVariable Integer courseId, @ApiIgnore User loginUser) throws BusinessException {
         Course course = this.courseService.get(courseId);
@@ -109,91 +81,72 @@ public class TestInstanceController {
         }
         CommonResponse commonResponse = CommonResponse.getInstance();
         commonResponse.setResult(testInstanceService.listByCourseId(listInput, courseId));
-        LogUtil.add(this.logRecordRepository, "列表查询", "测验实例", loginUser, course.getId(), course.getName());
+        LogUtil.add(this.logRecordRepository, "列表查询", "实验报告", loginUser, course.getId(), course.getName());
         return commonResponse;
     }
 
     @PostMapping(path = "/startTest/{testTemplateId}")
-    @ApiOperation(value = "开始测验(生成测验实例)", notes = "开始测验接口(生成测验实例)")
-    public CommonResponse startTest(@NotNull(message = "测验模板编号不能为空") @PathVariable Integer testTemplateId, @ApiIgnore User loginUser) throws BusinessException {
+    @ApiOperation(value = "开始答题(生成实验报告)", notes = "开始答题接口(生成实验报告)")
+    public CommonResponse startTest(@NotNull(message = "实验报告模板编号不能为空") @PathVariable Integer testTemplateId, @ApiIgnore User loginUser) throws BusinessException {
         TestInstancePublicVo testInstancePublicVo = testInstanceService.startTest(testTemplateId, loginUser);
-        if(testInstancePublicVo.getStatus().equals(0)) {
-            for(TestPartInstancePublicVo testPartInstancePublicVo : testInstancePublicVo.getTestPartInstancePublicVoList()) {
-                List<TestExerciseInstanceOutput> testExerciseInstanceOutputList = new ArrayList<>();
-                if(CollectionUtils.isNotEmpty(testPartInstancePublicVo.getTestExerciseInstanceList())) {
-                    for(TestExerciseInstance testExerciseInstance : (List<TestExerciseInstance>)testPartInstancePublicVo.getTestExerciseInstanceList()) {
-                        testExerciseInstanceOutputList.add(new TestExerciseInstanceOutput(testExerciseInstance));
+        if(testInstancePublicVo.getStatus().equals(0) && testInstancePublicVo.getTestType().equals(1)) { // 实验报告中的实验报告
+            for (TestSubsectionInstancePublicVo testSubsectionInstancePublicVo : testInstancePublicVo.getTestSubsectionInstancePublicVoList()) {
+                if(CollectionUtils.isNotEmpty(testSubsectionInstancePublicVo.getTestPartInstancePublicVoList())) {
+                    for(TestPartInstancePublicVo testPartInstancePublicVo : testSubsectionInstancePublicVo.getTestPartInstancePublicVoList()) {
+                        if(CollectionUtils.isNotEmpty(testPartInstancePublicVo.getTestExerciseInstanceList())) {
+                            List<TestExerciseInstanceOutput> testExerciseInstanceOutputList = new ArrayList<>();
+                            for(TestExerciseInstance testExerciseInstance : (List<TestExerciseInstance>)testPartInstancePublicVo.getTestExerciseInstanceList()) {
+                                testExerciseInstanceOutputList.add(new TestExerciseInstanceOutput(testExerciseInstance));
+                            }
+                            testPartInstancePublicVo.setTestExerciseInstanceList(testExerciseInstanceOutputList);
+                        }
                     }
-                    testPartInstancePublicVo.setTestExerciseInstanceList(testExerciseInstanceOutputList);
                 }
             }
         }
         CommonResponse commonResponse = CommonResponse.getInstance(testInstancePublicVo);
-        LogUtil.add(this.logRecordRepository, "开始测验", "测验实例", loginUser, testInstancePublicVo.getId(), testInstancePublicVo.getName());
-        return commonResponse;
-    }
-
-    @PostMapping(path = "/startTestBySectionId/{sectionId}")
-    @ApiOperation(value = "开始测验(生成测验实例)", notes = "开始测验接口(生成测验实例)")
-    public CommonResponse startTestBySectionId(@NotNull(message = "课程小节ID不能为空") @PathVariable Integer sectionId, @ApiIgnore User loginUser) throws BusinessException {
-        TestTemplate testTemplate = testTemplateService.getBySectionId(sectionId);
-        TestInstancePublicVo testInstancePublicVo = testInstanceService.startTest(testTemplate.getId(), loginUser);
-        if(testInstancePublicVo.getStatus().equals(0)) {
-            for(TestPartInstancePublicVo testPartInstancePublicVo : testInstancePublicVo.getTestPartInstancePublicVoList()) {
-                List<TestExerciseInstanceOutput> testExerciseInstanceOutputList = new ArrayList<>();
-                if(CollectionUtils.isNotEmpty(testPartInstancePublicVo.getTestExerciseInstanceList())) {
-                    for(TestExerciseInstance testExerciseInstance : (List<TestExerciseInstance>)testPartInstancePublicVo.getTestExerciseInstanceList()) {
-                        testExerciseInstanceOutputList.add(new TestExerciseInstanceOutput(testExerciseInstance));
-                    }
-                    testPartInstancePublicVo.setTestExerciseInstanceList(testExerciseInstanceOutputList);
-                }
-            }
-        }
-        CommonResponse commonResponse = CommonResponse.getInstance(testInstancePublicVo);
-        LogUtil.add(this.logRecordRepository, "开始测验", "测验实例", loginUser, testInstancePublicVo.getId(), testInstancePublicVo.getName());
-        return commonResponse;
-    }
-
-    @GetMapping(path = "/getMyBySectionId/{sectionId}")
-    @ApiOperation(value = "根据课程小节ID查询我的测验实例详情", notes = "根据课程小节ID查询我的测验实例详情接口")
-    public CommonResponse getMyBySectionId(@NotNull(message = "课程小节ID不能为空") @PathVariable Integer sectionId, @ApiIgnore User loginUser) throws BusinessException {
-        TestInstancePublicVo testInstancePublicVo = testInstanceService.getMyBySectionId(sectionId, loginUser);
-        if(testInstancePublicVo.getStatus().equals(0)) {
-            for(TestPartInstancePublicVo testPartInstancePublicVo : testInstancePublicVo.getTestPartInstancePublicVoList()) {
-                List<TestExerciseInstanceOutput> testExerciseInstanceOutputList = new ArrayList<>();
-                if(CollectionUtils.isNotEmpty(testPartInstancePublicVo.getTestExerciseInstanceList())) {
-                    for(TestExerciseInstance testExerciseInstance : (List<TestExerciseInstance>)testPartInstancePublicVo.getTestExerciseInstanceList()) {
-                        testExerciseInstanceOutputList.add(new TestExerciseInstanceOutput(testExerciseInstance));
-                    }
-                    testPartInstancePublicVo.setTestExerciseInstanceList(testExerciseInstanceOutputList);
-                }
-            }
-        }
-        CommonResponse commonResponse = CommonResponse.getInstance(testInstancePublicVo);
-        LogUtil.add(this.logRecordRepository, "查询详情", "测验实例", loginUser, testInstancePublicVo.getId(), testInstancePublicVo.getName());
+        LogUtil.add(this.logRecordRepository, "开始答题", "实验报告", loginUser, testInstancePublicVo.getId(), testInstancePublicVo.getName());
         return commonResponse;
     }
 
     @GetMapping(path = "/getMy")
-    @ApiOperation(value = "查询我的测验实例", notes = "查询我的测验实例接口")
+    @ApiOperation(value = "查询我的实验报告", notes = "查询我的实验报告接口")
     public CommonResponse getMy(@ApiIgnore User loginUser) throws BusinessException {
         CommonResponse commonResponse = CommonResponse.getInstance();
         commonResponse.setResult(testInstanceService.getByUserId(loginUser.getId()));
-        LogUtil.add(this.logRecordRepository, "查询我的测验实例", "测验实例", loginUser, null, null);
+        LogUtil.add(this.logRecordRepository, "查询我的实验报告", "实验报告", loginUser, null, null);
+        return commonResponse;
+    }
+
+    @GetMapping(path = "/getMyByCourseId/{courseId}")
+    @ApiOperation(value = "根据课程ID查询我的实验报告", notes = "根据课程ID查询我的实验报告接口")
+    public CommonResponse getMyByCourseId(@PathVariable Integer courseId, @ApiIgnore User loginUser) throws BusinessException {
+        CommonResponse commonResponse = CommonResponse.getInstance();
+        commonResponse.setResult(testInstanceService.getByUserIdAndCourseId(loginUser.getId(), courseId));
+        LogUtil.add(this.logRecordRepository, "根据课程ID查询我的实验报告", "实验报告", loginUser, null, null);
+        return commonResponse;
+    }
+
+    @GetMapping(path = "/getClassByCourseId/{courseId}")
+    @ApiOperation(value = "根据courseId获取学习课程的班级", notes = "根据courseId获取学习课程的班级接口")
+    public CommonResponse getClassByCourseId(@PathVariable Integer courseId, @ApiIgnore User loginUser) throws BusinessException {
+        CommonResponse commonResponse = CommonResponse.getInstance();
+        commonResponse.setResult(testInstanceService.getClassByCourseId(courseId));
+        LogUtil.add(this.logRecordRepository, "根据courseId获取学习课程的班级", "实验报告", loginUser, null, null);
         return commonResponse;
     }
 
     @GetMapping(path = "/getDetail/{id}")
-    @ApiOperation(value = "查询测验实例详情", notes = "根据ID查询测验实例详情接口")
+    @ApiOperation(value = "查询实验报告详情", notes = "根据ID查询实验报告详情接口")
     @LoginRequired(teacherRequired = "1")
-    public CommonResponse getDetail(@NotNull(message = "测验实例编号不能为空") @PathVariable Integer id, @ApiIgnore User loginUser) throws BusinessException {
+    public CommonResponse getDetail(@NotNull(message = "实验报告编号不能为空") @PathVariable Integer id, @ApiIgnore User loginUser) throws BusinessException {
         TestInstancePublicVo testInstancePublicVo = testInstanceService.getDetail(id);
         Course course = this.courseService.get(testInstancePublicVo.getCourseId());
         if (!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
             throw new BusinessException(Messages.CODE_50200);
         }
         CommonResponse commonResponse = CommonResponse.getInstance(testInstancePublicVo);
-        LogUtil.add(this.logRecordRepository, "查询详情", "测验实例", loginUser, testInstancePublicVo.getId(), testInstancePublicVo.getName());
+        LogUtil.add(this.logRecordRepository, "查询详情", "实验报告", loginUser, testInstancePublicVo.getId(), testInstancePublicVo.getName());
         return commonResponse;
     }
 
@@ -211,7 +164,7 @@ public class TestInstanceController {
         testExerciseInstance.setAnswer(answerInput.getAnswer());
         CommonResponse commonResponse = CommonResponse.getInstance();
         commonResponse.setResult(new TestExerciseInstanceOutput(testExerciseInstanceService.answer(testExerciseInstance)));
-        LogUtil.add(this.logRecordRepository, "答题", "测验小题实例", loginUser, testExerciseInstance.getId(), ExerciseUtil.getTypeName(testExerciseInstance.getExercisesType()));
+        LogUtil.add(this.logRecordRepository, "答题", "实验报告小题实例", loginUser, testExerciseInstance.getId(), ExerciseUtil.getTypeName(testExerciseInstance.getExercisesType()));
         return commonResponse;
     }
 
@@ -228,16 +181,19 @@ public class TestInstanceController {
         if(testInstance.getStatus().equals(0)) {
             throw new BusinessException(Messages.CODE_40010, "学生尚未交卷");
         }
+        if(testInstance.getTestType().equals(2)) {
+            throw new BusinessException(Messages.CODE_40010, "问卷调查无需阅卷");
+        }
         testExerciseInstance.setScored(gradeInput.getScored());
         CommonResponse commonResponse = CommonResponse.getInstance();
         commonResponse.setResult(testExerciseInstanceService.update(testExerciseInstance));
-        LogUtil.add(this.logRecordRepository, "打分", "测验小题实例", loginUser, testExerciseInstance.getId(), ExerciseUtil.getTypeName(testExerciseInstance.getExercisesType()));
+        LogUtil.add(this.logRecordRepository, "打分", "实验报告小题实例", loginUser, testExerciseInstance.getId(), ExerciseUtil.getTypeName(testExerciseInstance.getExercisesType()));
         return commonResponse;
     }
 
     @PostMapping(path = "/submit/{id}")
     @ApiOperation(value = "交卷", notes = "交卷接口")
-    public CommonResponse submit(@NotNull(message = "测验实例编号不能为空") @PathVariable Integer id, @ApiIgnore User loginUser) throws BusinessException {
+    public CommonResponse submit(@NotNull(message = "实验报告编号不能为空") @PathVariable Integer id, @ApiIgnore User loginUser) throws BusinessException {
         TestInstance testInstance = this.testInstanceService.get(id);
         if (!testInstance.getUserId().equals(loginUser.getId())) {
             throw new BusinessException(Messages.CODE_50200);
@@ -247,14 +203,14 @@ public class TestInstanceController {
         }
         CommonResponse commonResponse = CommonResponse.getInstance();
         commonResponse.setResult(testInstanceService.submit(id, 1, loginUser));
-        LogUtil.add(this.logRecordRepository, "交卷", "测验实例", loginUser, testInstance.getId(), testInstance.getName());
+        LogUtil.add(this.logRecordRepository, "交卷", "实验报告", loginUser, testInstance.getId(), testInstance.getName());
         return commonResponse;
     }
 
     @PostMapping(path = "/finish/{id}")
     @ApiOperation(value = "阅卷完成", notes = "阅卷完成接口")
     @LoginRequired(teacherRequired = "1")
-    public CommonResponse finish(@NotNull(message = "测验实例编号不能为空") @PathVariable Integer id, @ApiIgnore User loginUser) throws BusinessException {
+    public CommonResponse finish(@NotNull(message = "实验报告编号不能为空") @PathVariable Integer id, @ApiIgnore User loginUser) throws BusinessException {
         TestInstance testInstance = this.testInstanceService.get(id);
         Course course = this.courseService.get(testInstance.getCourseId());
         if (!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
@@ -263,9 +219,12 @@ public class TestInstanceController {
         if(testInstance.getStatus().equals(0)) {
             throw new BusinessException(Messages.CODE_40010, "学生尚未交卷");
         }
+        if(testInstance.getTestType().equals(2)) {
+            throw new BusinessException(Messages.CODE_40010, "问卷调查无需阅卷");
+        }
         CommonResponse commonResponse = CommonResponse.getInstance();
         commonResponse.setResult(testInstanceService.submit(id, 2, null));
-        LogUtil.add(this.logRecordRepository, "阅卷完成", "测验实例", loginUser, testInstance.getId(), testInstance.getName());
+        LogUtil.add(this.logRecordRepository, "阅卷完成", "实验报告", loginUser, testInstance.getId(), testInstance.getName());
         return commonResponse;
     }
 }

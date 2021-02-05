@@ -82,7 +82,7 @@ public class ChapterServiceImpl implements ChapterService {
                 chapterStudyRecord.setUserId(courseStudyRecord.getUserId());
                 chapterStudyRecord.setUserName(courseStudyRecord.getUserName());
                 chapterStudyRecord = this.chapterStudyRecordRepository.save(chapterStudyRecord);
-                this.courseStudyRecordService.update(courseStudyRecord.getId());
+                this.courseStudyRecordService.updatePercent(courseStudyRecord);
             }
         }
         return chapter;

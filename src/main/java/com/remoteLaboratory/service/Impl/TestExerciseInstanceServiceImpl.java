@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 测验小题实例服务接口实现
+ * 实验报告小题实例服务接口实现
  *
  * @Author: yupeng
  */

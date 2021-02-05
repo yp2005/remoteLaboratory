@@ -1,26 +1,33 @@
 package com.remoteLaboratory.entities;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
 /**
- * 测验小题模板
+ * 实验报告小题模板
  *
  * @Author: yupeng
  */
 
 @Entity
 @Table(name = "rl_test_exercise_template")
-@ApiModel(value = "测验小题模板表")
+@ApiModel(value = "实验报告小题模板表")
+@Data
 public class TestExerciseTemplate implements Serializable {
     @Id
     @Column(length = 10, nullable = false)
@@ -69,13 +76,19 @@ public class TestExerciseTemplate implements Serializable {
     private String answer;
 
     @Column(length = 10)
-    @ApiModelProperty(value = "测验模板ID")
+    @ApiModelProperty(value = "实验报告模板ID")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotNull
     private Integer testTemplateId;
+
+    @Column(length = 10)
+    @ApiModelProperty(value = "分项模板ID")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
+    private Integer testSubsectionTemplateId;
     
     @Column(length = 10)
-    @ApiModelProperty(value = "测验大题模板ID")
+    @ApiModelProperty(value = "实验报告大题模板ID")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotNull
     private Integer testPartTemplateId;
@@ -105,117 +118,40 @@ public class TestExerciseTemplate implements Serializable {
     @UpdateTimestamp
     private Date updateTime;
 
-    public Integer getId() {
-        return id;
+    public String getRandomOrderOptions() {
+        // [{"A": "1"},{"B": "2"},{"C": "3"},{"D": "4"}]
+        if(!this.getExercisesType().equals(1) && !this.getExercisesType().equals(2)) { // 非选择题返回null
+            return null;
+        }
+        JSONArray options = JSONArray.parseArray(this.options);
+        List<Character> orders = new ArrayList<>();
+        for (int i = 0; i < options.size(); i++) {
+            Character order = (char)('A' + i);
+            orders.add(order);
+        }
+        JSONArray newOptions = new JSONArray();
+        for (int i = 0; i < options.size(); i++) {
+            JSONObject option = options.getJSONObject(i);
+            JSONObject newOption = new JSONObject();
+            for (String key : option.keySet()) {
+                newOption.put("order", key);
+                newOption.put("content", option.getString(key));
+            }
+            int orderNo = (int) (Math.random() * orders.size());
+            newOption.put("displayOrder", orders.get(orderNo).toString());
+            orders.remove(orderNo);
+            newOptions.add(newOption);
+        }
+        newOptions.sort(Comparator.comparing(option -> ((JSONObject) option).getString("displayOrder")));
+        return newOptions.toJSONString();
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getExerciseId() {
-        return exerciseId;
-    }
-
-    public void setExerciseId(Integer exerciseId) {
-        this.exerciseId = exerciseId;
-    }
-
-    public Integer getTestPartTemplateId() {
-        return testPartTemplateId;
-    }
-
-    public void setTestPartTemplateId(Integer testPartTemplateId) {
-        this.testPartTemplateId = testPartTemplateId;
-    }
-
-    public Integer getSerialNumber() {
-        return serialNumber;
-    }
-
-    public void setSerialNumber(Integer serialNumber) {
-        this.serialNumber = serialNumber;
-    }
-
-    public Double getScore() {
-        return score;
-    }
-
-    public void setScore(Double score) {
-        this.score = score;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public interface Validation{};
-
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
-    }
-
-    public Integer getExercisesType() {
-        return exercisesType;
-    }
-
-    public void setExercisesType(Integer exercisesType) {
-        this.exercisesType = exercisesType;
-    }
-
-    public String getOptions() {
-        return options;
-    }
-
-    public void setOptions(String options) {
-        this.options = options;
-    }
-
-    public String getExerciseContent() {
-        return exerciseContent;
-    }
-
-    public void setExerciseContent(String exerciseContent) {
-        this.exerciseContent = exerciseContent;
-    }
-
-    public String getAnswer() {
-        return answer;
-    }
-
-    public void setAnswer(String answer) {
-        this.answer = answer;
-    }
-
-    public Integer getTestTemplateId() {
-        return testTemplateId;
-    }
-
-    public Integer getDisplayType() {
-        return displayType;
-    }
-
-    public void setDisplayType(Integer displayType) {
-        this.displayType = displayType;
-    }
-
-    public void setTestTemplateId(Integer testTemplateId) {
-        this.testTemplateId = testTemplateId;
+    public static void main(String[] args){
+        TestExerciseTemplate testExerciseTemplate = new TestExerciseTemplate();
+        testExerciseTemplate.setOptions("[{\"A\": \"1\"},{\"B\": \"2\"},{\"C\": \"3\"},{\"D\": \"4\"}]");
+        String op = testExerciseTemplate.getRandomOrderOptions();
+        System.out.println(op);
+//        int orderNo = (int) (Math.random() * 4);
+//        System.out.println(orderNo);
     }
 }

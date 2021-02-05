@@ -17,7 +17,7 @@ public class AnswerInput {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String answer;
 
-    @ApiModelProperty(value = "测验小题实例ID")
+    @ApiModelProperty(value = "实验报告小题实例ID")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer testExerciseInstanceId;
 

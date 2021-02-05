@@ -10,13 +10,13 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.List;
 
 /**
- * 测验大题模板公用对象
+ * 实验报告大题模板公用对象
  *
  * @Author: yupeng
  */
-@ApiModel(value = "测验大题模板公用对象")
+@ApiModel(value = "实验报告大题模板公用对象")
 public class TestPartTemplatePublicVo extends TestPartTemplate {
-    @ApiModelProperty(value = "测验小题模板列表")
+    @ApiModelProperty(value = "实验报告小题模板列表")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<TestExerciseTemplate> testExerciseTemplateList;
 
@@ -34,6 +34,7 @@ public class TestPartTemplatePublicVo extends TestPartTemplate {
         this.setSerialNumber(testPartTemplate.getSerialNumber());
         this.setType(testPartTemplate.getType());
         this.setTestTemplateId(testPartTemplate.getTestTemplateId());
+        this.setTestSubsectionTemplateId(testPartTemplate.getTestSubsectionTemplateId());
     }
 
     public TestPartTemplate voToEntity() {
@@ -49,6 +50,7 @@ public class TestPartTemplatePublicVo extends TestPartTemplate {
         testPartTemplate.setSerialNumber(this.getSerialNumber());
         testPartTemplate.setType(this.getType());
         testPartTemplate.setTestTemplateId(this.getTestTemplateId());
+        testPartTemplate.setTestSubsectionTemplateId(this.getTestSubsectionTemplateId());
         return testPartTemplate;
     }
 

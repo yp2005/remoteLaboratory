@@ -3,6 +3,7 @@ package com.remoteLaboratory.entities;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -20,6 +21,7 @@ import java.util.Date;
 @Entity
 @Table(name = "rl_course")
 @ApiModel(value = "课程表")
+@Data
 public class Course implements Serializable {
     @Id
     @Column(length = 10, nullable = false)
@@ -83,15 +85,25 @@ public class Course implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer status;
 
+    @Column
+    @ApiModelProperty(value = "实验是否开始")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Boolean experimentStarted;
+
     @Column(length = 10)
     @ApiModelProperty(value = "已参加学习人数")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer studentNumber;
 
     @Column(length = 10)
-    @ApiModelProperty(value = "评价数(讨论区主题数量)")
+    @ApiModelProperty(value = "讨论区主题数量")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer subjectNumber;
+
+    @Column(length = 10)
+    @ApiModelProperty(value = "评论数量")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer commentNumber;
 
     @Column(length = 10)
     @ApiModelProperty(value = "实验总时长")
@@ -111,133 +123,5 @@ public class Course implements Serializable {
     @UpdateTimestamp
     private Date updateTime;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getLogo() {
-        return logo;
-    }
-
-    public void setLogo(String logo) {
-        this.logo = logo;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Integer getTeacherId() {
-        return teacherId;
-    }
-
-    public void setTeacherId(Integer teacherId) {
-        this.teacherId = teacherId;
-    }
-
-    public String getTeacherName() {
-        return teacherName;
-    }
-
-    public void setTeacherName(String teacherName) {
-        this.teacherName = teacherName;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public String getMainImg() {
-        return mainImg;
-    }
-
-    public void setMainImg(String mainImg) {
-        this.mainImg = mainImg;
-    }
-
-    public String getIntroduction() {
-        return introduction;
-    }
-
-    public void setIntroduction(String introduction) {
-        this.introduction = introduction;
-    }
-
-    public String getStandard() {
-        return standard;
-    }
-
-    public void setStandard(String standard) {
-        this.standard = standard;
-    }
-
-    public Integer getStudentNumber() {
-        return studentNumber;
-    }
-
-    public void setStudentNumber(Integer studentNumber) {
-        this.studentNumber = studentNumber;
-    }
-
-    public Integer getSubjectNumber() {
-        return subjectNumber;
-    }
-
-    public void setSubjectNumber(Integer subjectNumber) {
-        this.subjectNumber = subjectNumber;
-    }
-
-    public String getVideoDesc() {
-        return videoDesc;
-    }
-
-    public void setVideoDesc(String videoDesc) {
-        this.videoDesc = videoDesc;
-    }
-
-    public Integer getTimeLimit() {
-        return timeLimit;
-    }
-
-    public void setTimeLimit(Integer timeLimit) {
-        this.timeLimit = timeLimit;
-    }
-
-    public interface Validation{};
+    public interface Validation{}
 }

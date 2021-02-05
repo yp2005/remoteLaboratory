@@ -3,6 +3,7 @@ package com.remoteLaboratory.entities;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -20,6 +21,7 @@ import java.util.Date;
 @Entity
 @Table(name = "rl_reply")
 @ApiModel(value = "回复表")
+@Data
 public class Reply implements Serializable {
     @Id
     @Column(length = 10, nullable = false)
@@ -110,133 +112,5 @@ public class Reply implements Serializable {
     @UpdateTimestamp
     private Date updateTime;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
-    }
-
-    public Integer getSubjectId() {
-        return subjectId;
-    }
-
-    public void setSubjectId(Integer subjectId) {
-        this.subjectId = subjectId;
-    }
-
-    public Integer getReplayId() {
-        return replayId;
-    }
-
-    public void setReplayId(Integer replayId) {
-        this.replayId = replayId;
-    }
-
-    public Integer getReplyUserId() {
-        return replyUserId;
-    }
-
-    public void setReplyUserId(Integer replyUserId) {
-        this.replyUserId = replyUserId;
-    }
-
-    public String getReplyUserName() {
-        return replyUserName;
-    }
-
-    public void setReplyUserName(String replyUserName) {
-        this.replyUserName = replyUserName;
-    }
-
-    public Integer getReplyNumber() {
-        return replyNumber;
-    }
-
-    public void setReplyNumber(Integer replyNumber) {
-        this.replyNumber = replyNumber;
-    }
-
-    public Integer getFloorNumber() {
-        return floorNumber;
-    }
-
-    public void setFloorNumber(Integer floorNumber) {
-        this.floorNumber = floorNumber;
-    }
-
-    public String getSubjectTitle() {
-        return subjectTitle;
-    }
-
-    public void setSubjectTitle(String subjectTitle) {
-        this.subjectTitle = subjectTitle;
-    }
-
-    public String getUserImage() {
-        return userImage;
-    }
-
-    public void setUserImage(String userImage) {
-        this.userImage = userImage;
-    }
-
-    public String getUserType() {
-        return userType;
-    }
-
-    public void setUserType(String userType) {
-        this.userType = userType;
-    }
-
-    public interface Validation{};
+    public interface Validation{}
 }

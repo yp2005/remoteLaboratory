@@ -19,16 +19,22 @@ import com.remoteLaboratory.vo.ListInput;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
+import java.io.InputStream;
+import java.security.Principal;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -256,6 +262,41 @@ public class UserController {
         loginUser.setPassword(encoder.encode(password));
         loginUser = this.userService.update(loginUser);
         LogUtil.add(this.logRecordRepository, "修改密码", "用户", loginUser, loginUser.getId(), loginUser.getUserName());
+        return CommonResponse.getInstance();
+    }
+
+    @PostMapping(path = "/importStudent")
+    @ApiOperation(value = "excel批量导入学生账号", notes = "excel批量导入学生账号接口")
+    @LoginRequired(adminRequired = "1")
+    public CommonResponse importStudent(@RequestParam MultipartFile file, @ApiIgnore User loginUser) throws BusinessException {
+        if (file.isEmpty()) {
+            throw new BusinessException(Messages.CODE_40001);
+        } else {
+            try {
+                String originFileName = file.getOriginalFilename();
+                String ext = originFileName.substring(originFileName.lastIndexOf("."));
+                Workbook workbook;
+                InputStream is = file.getInputStream();
+                if (".xls".equals(ext)) {
+                    workbook = new HSSFWorkbook(is);
+                } else if (".xlsx".equals(ext)) {
+                    workbook = new XSSFWorkbook(is);
+                } else {
+                    throw new BusinessException(Messages.CODE_40001);
+                }
+                if(workbook != null) {
+                    // 解析上传文件保存车牌数据
+                    this.userService.importStudent(workbook);
+                }
+                else {
+                    throw new BusinessException(Messages.CODE_40010, "无法解析的文件");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new BusinessException(Messages.CODE_40010, e.getMessage());
+            }
+        }
+        LogUtil.add(this.logRecordRepository, "导入学生账号", "用户", loginUser, null, null);
         return CommonResponse.getInstance();
     }
 }

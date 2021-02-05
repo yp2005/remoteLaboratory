@@ -3,6 +3,7 @@ package com.remoteLaboratory.entities;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -19,6 +20,7 @@ import java.util.Date;
 @Entity
 @Table(name = "rl_camera")
 @ApiModel(value = "摄像头表")
+@Data
 public class Camera {
     @Id
     @Column(length = 10, nullable = false)
@@ -114,142 +116,6 @@ public class Camera {
     @Temporal(TemporalType.TIMESTAMP)
     @UpdateTimestamp
     private Date updateTime;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getIp() {
-        return ip;
-    }
-
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
-
-    public Integer getVideoPort() {
-        return videoPort;
-    }
-
-    public void setVideoPort(Integer videoPort) {
-        this.videoPort = videoPort;
-    }
-
-    public Integer getFindPort() {
-        return findPort;
-    }
-
-    public void setFindPort(Integer findPort) {
-        this.findPort = findPort;
-    }
-
-    public Integer getControlPort() {
-        return controlPort;
-    }
-
-    public void setControlPort(Integer controlPort) {
-        this.controlPort = controlPort;
-    }
-
-    public Integer getRetransmitPort() {
-        return retransmitPort;
-    }
-
-    public void setRetransmitPort(Integer retransmitPort) {
-        this.retransmitPort = retransmitPort;
-    }
-
-    public String getUniqueKey() {
-        return uniqueKey;
-    }
-
-    public void setUniqueKey(String uniqueKey) {
-        this.uniqueKey = uniqueKey;
-    }
-
-    public String getProtocol() {
-        return protocol;
-    }
-
-    public void setProtocol(String protocol) {
-        this.protocol = protocol;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Integer getSrsServerId() {
-        return srsServerId;
-    }
-
-    public void setSrsServerId(Integer srsServerId) {
-        this.srsServerId = srsServerId;
-    }
-
-    public Integer getForceTcp() {
-        return forceTcp;
-    }
-
-    public void setForceTcp(Integer forceTcp) {
-        this.forceTcp = forceTcp;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public Integer getBindStatus() {
-        return bindStatus;
-    }
-
-    public void setBindStatus(Integer bindStatus) {
-        this.bindStatus = bindStatus;
-    }
-
-    public String getVideoPath() {
-        return videoPath;
-    }
-
-    public void setVideoPath(String videoPath) {
-        this.videoPath = videoPath;
-    }
 
     public interface Validation{}
 }

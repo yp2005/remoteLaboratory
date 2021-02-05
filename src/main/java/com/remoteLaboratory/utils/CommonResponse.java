@@ -12,6 +12,17 @@ import com.remoteLaboratory.utils.message.MessagesUtil;
  */
 
 public class CommonResponse {
+    @JsonProperty("code")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer code;
+
+    @JsonProperty("message")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String message;
+
+    @JsonProperty("result")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Object result;
 
     private CommonResponse() {
 
@@ -33,18 +44,6 @@ public class CommonResponse {
     public static CommonResponse getInstance() {
         return new CommonResponse(Messages.CODE_20000, MessagesUtil.getMessage(Messages.CODE_20000), null);
     }
-
-    @JsonProperty("code")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Integer code;
-
-    @JsonProperty("message")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String message;
-
-    @JsonProperty("result")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Object result;
 
     public Integer getCode() {
         return code;

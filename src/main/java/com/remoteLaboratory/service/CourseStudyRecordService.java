@@ -9,6 +9,7 @@ import com.remoteLaboratory.vo.ListInput;
 import com.remoteLaboratory.vo.ListOutput;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 课程学习记录服务接口定义
@@ -22,7 +23,7 @@ public interface CourseStudyRecordService {
      * @param courseStudyRecord
      * @return
      */
-    public CourseStudyRecord add(CourseStudyRecord courseStudyRecord) throws BusinessException;
+    CourseStudyRecord add(CourseStudyRecord courseStudyRecord) throws BusinessException;
 
     /**
      * 开始学习
@@ -30,28 +31,35 @@ public interface CourseStudyRecordService {
      * @param user
      * @return
      */
-    public CourseStudyRecordPublicVo startStudy(Integer courseId, User user) throws BusinessException;
+    CourseStudyRecordPublicVo startStudy(Integer courseId, User user) throws BusinessException;
 
     /**
      * 更新学习进度
+     * @param courseStudyRecord
+     * @return
+     */
+    void updatePercent(CourseStudyRecord courseStudyRecord) throws BusinessException;
+
+    /**
+     * 计算课程分数
      * @param id
      * @return
      */
-    public void update(Integer id) throws BusinessException;
+    void calculateScore(Integer id) throws BusinessException;
 
     /**
      * 修改课程学习记录信息
      * @param courseStudyRecord
      * @return
      */
-    public CourseStudyRecord update(CourseStudyRecord courseStudyRecord) throws BusinessException;
+    CourseStudyRecord update(CourseStudyRecord courseStudyRecord) throws BusinessException;
 
     /**
      * 根据条件查询课程学习记录信息列表
      * @param listInput
      * @return ListOutput
      */
-    public ListOutput list(ListInput listInput) throws BusinessException;
+    ListOutput list(ListInput listInput) throws BusinessException;
 
     /**
      * 根据条件查询某个课程的课程学习记录列表
@@ -59,7 +67,7 @@ public interface CourseStudyRecordService {
      * @param courseId
      * @return ListOutput
      */
-    public ListOutput listByCourseId(ListInput listInput, Integer courseId) throws BusinessException;
+    ListOutput listByCourseId(ListInput listInput, Integer courseId) throws BusinessException;
 
     /**
      * 根据条件查询某个用户的课程学习记录列表
@@ -67,14 +75,14 @@ public interface CourseStudyRecordService {
      * @param userId
      * @return ListOutput
      */
-    public ListOutput listByUserId(ListInput listInput, Integer userId) throws BusinessException;
+    ListOutput listByUserId(ListInput listInput, Integer userId) throws BusinessException;
 
     /**
      * 根据id获取课程学习记录信息
      * @param id
      * @return CourseStudyRecord
      */
-    public CourseStudyRecord get(Integer id) throws BusinessException;
+    CourseStudyRecord get(Integer id) throws BusinessException;
 
     /**
      * 根据课程id获取课程学习记录详情
@@ -82,19 +90,26 @@ public interface CourseStudyRecordService {
      * @param userId
      * @return CourseStudyRecordPublicVo
      */
-    public CourseStudyRecordPublicVo getDetailByCourseId(Integer courseId, Integer userId) throws BusinessException;
+    CourseStudyRecordPublicVo getDetailByCourseId(Integer courseId, Integer userId) throws BusinessException;
+
+    /**
+     * 根据课程ID统计成绩分布
+     * @param courseId
+     * @return CourseStudyRecordPublicVo
+     */
+    Map<String, Long> getScoreStatisticsByCourseId(Integer courseId) throws BusinessException;
 
     /**
      * 根据id获取课程学习记录详情
      * @param id
      * @return CourseStudyRecordPublicVo
      */
-    public CourseStudyRecordPublicVo getDetailById(Integer id) throws BusinessException;
+    CourseStudyRecordPublicVo getDetailById(Integer id) throws BusinessException;
 
     /**
      * 修改课程学习记录信息
      * @param ids
      * @param loginUser
      */
-    public void delete(List<Integer> ids, User loginUser) throws BusinessException;
+    void delete(List<Integer> ids, User loginUser) throws BusinessException;
 }

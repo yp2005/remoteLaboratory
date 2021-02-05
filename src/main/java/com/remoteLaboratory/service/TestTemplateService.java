@@ -11,63 +11,56 @@ import com.remoteLaboratory.vo.TestTemplatePublicVo;
 import java.util.List;
 
 /**
- * 测验模板服务接口定义
+ * 实验报告模板服务接口定义
  *
  * @Author: yupeng
  */
 
 public interface TestTemplateService {
     /**
-     * 添加测验模板信息
+     * 添加实验报告模板信息
      * @param testTemplatePublicVo
      * @return
      */
-    public TestTemplatePublicVo add(TestTemplatePublicVo testTemplatePublicVo) throws BusinessException;
+    public TestTemplate add(TestTemplatePublicVo testTemplatePublicVo) throws BusinessException;
 
     /**
-     * 修改测验模板信息
+     * 修改实验报告模板信息
      * @param testTemplatePublicVo
      * @return
      */
-    public TestTemplatePublicVo update(TestTemplatePublicVo testTemplatePublicVo) throws BusinessException;
+    public TestTemplate update(TestTemplatePublicVo testTemplatePublicVo) throws BusinessException;
 
     /**
-     * 根据条件查询测验模板信息列表
+     * 根据条件查询实验报告模板信息列表
      * @param listInput
      * @return ListOutput
      */
     public ListOutput list(ListInput listInput) throws BusinessException;
 
     /**
-     * 根据id获取测验模板信息
+     * 根据id获取实验报告模板信息
      * @param id
      * @return TestTemplate
      */
     public TestTemplate get(Integer id) throws BusinessException;
 
     /**
-     * 根据课程小结id获取测验模板详情
-     * @param sectionId
-     * @return TestTemplatePublicVo
-     */
-    public TestTemplatePublicVo getDetailBySectionId(Integer sectionId) throws BusinessException;
-
-    /**
-     * 根据id获取测验模板详情
+     * 根据ID查询实验报告模板详情接口
      * @param id
      * @return TestTemplatePublicVo
      */
     public TestTemplatePublicVo getDetail(Integer id) throws BusinessException;
 
     /**
-     * 根据课程小结id获取测验模板信息
-     * @param sectionId
-     * @return TestTemplate
+     * 查询课程问卷调查
+     * @param courseId
+     * @return TestTemplatePublicVo
      */
-    public TestTemplate getBySectionId(Integer sectionId) throws BusinessException;
+    public TestTemplatePublicVo getQuestionnaireByCourseId(Integer courseId) throws BusinessException;
 
     /**
-     * 修改测验模板信息
+     * 修改实验报告模板信息
      * @param ids
      * @param loginUser
      */
