@@ -13,6 +13,7 @@ import com.remoteLaboratory.utils.MySpecification;
 import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.utils.message.Messages;
 import com.remoteLaboratory.vo.CourseDeviceListAddInput;
+import com.remoteLaboratory.vo.CourseDeviceOutputVo;
 import com.remoteLaboratory.vo.ListInput;
 import com.remoteLaboratory.vo.ListOutput;
 import org.apache.commons.lang.StringUtils;
@@ -149,11 +150,31 @@ public class CourseDeviceServiceImpl implements CourseDeviceService {
             listOutput.setPage(listInput.getPage());
             listOutput.setPageSize(listInput.getPageSize());
             listOutput.setTotalNum((int) list.getTotalElements());
-            listOutput.setList(list.getContent());
+            List cdList = new ArrayList();
+            for(CourseDevice courseDevice : list.getContent()) {
+                CourseDeviceOutputVo courseDeviceOutputVo = new CourseDeviceOutputVo(courseDevice);
+                if(courseDevice.getType().equals(2)) {
+                    Device device = this.deviceService.get(courseDevice.getDeviceId());
+                    courseDeviceOutputVo.setRelationKey(device.getRelationKey());
+                    courseDeviceOutputVo.setSignalChannelList(device.getSignalChannelList());
+                }
+                cdList.add(courseDeviceOutputVo);
+            }
+            listOutput.setList(cdList);
         } else {
             List<CourseDevice> list = courseDeviceRepository.findAll(new MySpecification<CourseDevice>(listInput.getSearchParas()));
             listOutput.setTotalNum(list.size());
-            listOutput.setList(list);
+            List cdList = new ArrayList();
+            for(CourseDevice courseDevice : list) {
+                CourseDeviceOutputVo courseDeviceOutputVo = new CourseDeviceOutputVo(courseDevice);
+                if(courseDevice.getType().equals(2)) {
+                    Device device = this.deviceService.get(courseDevice.getDeviceId());
+                    courseDeviceOutputVo.setRelationKey(device.getRelationKey());
+                    courseDeviceOutputVo.setSignalChannelList(device.getSignalChannelList());
+                }
+                cdList.add(courseDeviceOutputVo);
+            }
+            listOutput.setList(cdList);
         }
         return listOutput;
     }
