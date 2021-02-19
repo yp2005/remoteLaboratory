@@ -79,7 +79,7 @@ public class UserController {
             user.setForumForbidden(0);
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             user.setPassword(encoder.encode(EncodeUtils.encodeSHA("123456".getBytes())));
-            userService.add(user);
+            userRepository.save(user);
         }
         user = this.userRepository.findByUserName(Constants.GUEST_USER_NAME);
         if (user == null) { // 初始化游客账号
@@ -90,7 +90,7 @@ public class UserController {
             user.setForumForbidden(0);
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             user.setPassword(encoder.encode(EncodeUtils.encodeSHA("123456".getBytes())));
-            userService.add(user);
+            userRepository.save(user);
         }
     }
 
