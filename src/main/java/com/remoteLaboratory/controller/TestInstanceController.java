@@ -1,11 +1,9 @@
 package com.remoteLaboratory.controller;
 
 import com.remoteLaboratory.config.LoginRequired;
-import com.remoteLaboratory.entities.Course;
-import com.remoteLaboratory.entities.TestExerciseInstance;
-import com.remoteLaboratory.entities.TestInstance;
-import com.remoteLaboratory.entities.User;
+import com.remoteLaboratory.entities.*;
 import com.remoteLaboratory.repositories.LogRecordRepository;
+import com.remoteLaboratory.repositories.TestSubsectionInstanceRepository;
 import com.remoteLaboratory.service.*;
 import com.remoteLaboratory.utils.CommonResponse;
 import com.remoteLaboratory.utils.Constants;
@@ -45,6 +43,9 @@ public class TestInstanceController {
 
     @Autowired
     private TestExerciseInstanceService testExerciseInstanceService;
+
+    @Autowired
+    private TestSubsectionInstanceRepository testSubsectionInstanceRepository;
 
     @Autowired
     private CourseService courseService;
@@ -172,8 +173,19 @@ public class TestInstanceController {
     @ApiOperation(value = "打分", notes = "打分接口")
     @LoginRequired(teacherRequired = "1")
     public CommonResponse grade(@RequestBody GradeInput gradeInput, @ApiIgnore User loginUser) throws BusinessException {
-        TestExerciseInstance testExerciseInstance = this.testExerciseInstanceService.get(gradeInput.getTestExerciseInstanceId());
-        TestInstance testInstance = this.testInstanceService.get(testExerciseInstance.getTestInstanceId());
+        TestExerciseInstance testExerciseInstance = null;
+        TestInstance testInstance;
+        TestSubsectionInstance testSubsectionInstance = null;
+        if(gradeInput.getType().equals(1)) { // 小题
+            testExerciseInstance = this.testExerciseInstanceService.get(gradeInput.getTestExerciseInstanceId());
+            testInstance = this.testInstanceService.get(testExerciseInstance.getTestInstanceId());
+            testExerciseInstance.setScored(gradeInput.getScored());
+        }
+        else { // 分项
+            testSubsectionInstance = this.testSubsectionInstanceRepository.findOne(gradeInput.getTestSubsectionInstanceId());
+            testInstance = this.testInstanceService.get(testSubsectionInstance.getTestInstanceId());
+            testSubsectionInstance.setScored(gradeInput.getScored());
+        }
         Course course = this.courseService.get(testInstance.getCourseId());
         if (!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
             throw new BusinessException(Messages.CODE_50200);
@@ -184,10 +196,16 @@ public class TestInstanceController {
         if(testInstance.getTestType().equals(2)) {
             throw new BusinessException(Messages.CODE_40010, "问卷调查无需阅卷");
         }
-        testExerciseInstance.setScored(gradeInput.getScored());
+
         CommonResponse commonResponse = CommonResponse.getInstance();
-        commonResponse.setResult(testExerciseInstanceService.update(testExerciseInstance));
-        LogUtil.add(this.logRecordRepository, "打分", "实验报告小题实例", loginUser, testExerciseInstance.getId(), ExerciseUtil.getTypeName(testExerciseInstance.getExercisesType()));
+        if(gradeInput.getType().equals(1)) { // 小题
+            commonResponse.setResult(testExerciseInstanceService.update(testExerciseInstance));
+            LogUtil.add(this.logRecordRepository, "打分", "实验报告小题实例", loginUser, testExerciseInstance.getId(), ExerciseUtil.getTypeName(testExerciseInstance.getExercisesType()));
+        }
+        else {
+            commonResponse.setResult(testSubsectionInstanceRepository.save(testSubsectionInstance));
+            LogUtil.add(this.logRecordRepository, "打分", "实验报告分项实例", loginUser, testSubsectionInstance.getId(), testSubsectionInstance.getName());
+        }
         return commonResponse;
     }
 

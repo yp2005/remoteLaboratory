@@ -13,7 +13,7 @@ spring:
 logging:
   level: debug
 ---
-UPLOAD_FILE_PATH: /temp
+UPLOAD_FILE_PATH: /Users/yupeng/tmp
 spring:
   profiles: dev
   datasource:

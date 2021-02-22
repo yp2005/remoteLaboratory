@@ -4,6 +4,7 @@ import com.remoteLaboratory.config.LoginRequired;
 import com.remoteLaboratory.entities.Course;
 import com.remoteLaboratory.entities.CourseStudyRecord;
 import com.remoteLaboratory.entities.User;
+import com.remoteLaboratory.repositories.CourseRepository;
 import com.remoteLaboratory.repositories.CourseStudyRecordRepository;
 import com.remoteLaboratory.repositories.LogRecordRepository;
 import com.remoteLaboratory.service.CourseService;
@@ -13,6 +14,7 @@ import com.remoteLaboratory.utils.LogUtil;
 import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.utils.message.Messages;
 import com.remoteLaboratory.vo.ListInput;
+import com.remoteLaboratory.vo.SetScoreInput;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
@@ -74,6 +76,16 @@ public class CourseController {
         return commonResponse;
     }
 
+    @PostMapping(path = "/setScore")
+    @ApiOperation(value = "设置分数分布", notes = "设置分数分布接口")
+    @LoginRequired(teacherRequired = "1")
+    public CommonResponse setScore(@RequestBody SetScoreInput setScoreInput, @ApiIgnore User loginUser) throws BusinessException {
+        Course course = courseService.setScore(setScoreInput, loginUser);
+        CommonResponse commonResponse = CommonResponse.getInstance(course);
+        LogUtil.add(this.logRecordRepository, "开始实验", "课程", loginUser, course.getId(), course.getName());
+        return commonResponse;
+    }
+
     @PostMapping
     @ApiOperation(value = "添加课程", notes = "添加课程信息接口")
     @LoginRequired(teacherRequired = "1")
@@ -117,21 +129,7 @@ public class CourseController {
     public CommonResponse updateStatus(@NotNull(message = "课程编号不能为空") @PathVariable("courseId") Integer courseId,
                                        @NotNull(message = "课程状态不能为空") @PathVariable("status") Integer status,
                                        @ApiIgnore User loginUser) throws BusinessException {
-        Course course = this.courseService.get(courseId);
-        if(!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
-            throw new BusinessException(Messages.CODE_50200);
-        }
-        if(course.getStatus().equals(1) && !status.equals(1)) {
-            List<CourseStudyRecord> courseStudyRecordList = this.courseStudyRecordRepository.findByCourseIdAndStatus(courseId, 0);
-            if(courseStudyRecordList.size() > 0) {
-                throw new BusinessException(Messages.CODE_40010, "有学生尚未完成学习，不能结束课程！");
-            }
-        }
-        course.setStatus(status);
-        if(status.equals(2)) { // 结束课程的同时结束实验
-            course.setExperimentStarted(false);
-        }
-        course = courseService.update(course);
+        Course course = courseService.updateStatus(courseId, status, loginUser);
         CommonResponse commonResponse = CommonResponse.getInstance(course);
         LogUtil.add(this.logRecordRepository, "修改状态", "课程", loginUser, course.getId(), course.getName());
         return commonResponse;

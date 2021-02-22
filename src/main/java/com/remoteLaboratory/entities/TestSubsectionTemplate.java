@@ -31,13 +31,13 @@ public class TestSubsectionTemplate implements Serializable {
     private Integer id;
 
     @Column(length = 255)
-    @ApiModelProperty(value = "名称: 课前预习、实验操作、实验数据、数据分析、实验报告")
+    @ApiModelProperty(value = "名称: 实验操作、实验数据、数据分析、实验报告")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotNull
     private String name;
 
     @Column(length = 10)
-    @ApiModelProperty(value = "类型: 1-课前预 2-实验操 3-实验数 4-数据分析 5-实验报告")
+    @ApiModelProperty(value = "类型: 1-实验操作 2-实验数据 3-数据分析 4-实验报告")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotNull
     private Integer type;

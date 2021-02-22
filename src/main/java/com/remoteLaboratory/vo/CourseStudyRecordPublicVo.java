@@ -53,6 +53,14 @@ public class CourseStudyRecordPublicVo extends CourseStudyRecord {
         this.setTestTemplateNumber(courseStudyRecord.getTestTemplateNumber());
         this.setTestTemplateFinishedNumber(courseStudyRecord.getTestTemplateFinishedNumber());
         this.setTestTemplateSubmitedNumber(courseStudyRecord.getTestTemplateSubmitedNumber());
+        this.setScore(courseStudyRecord.getScore());
+        this.setPreStudyScore(courseStudyRecord.getPreStudyScore());
+        this.setOperationScore(courseStudyRecord.getOperationScore());
+        this.setDataScore(courseStudyRecord.getDataScore());
+        this.setDataAnalysisScore(courseStudyRecord.getDataAnalysisScore());
+        this.setReportScore(courseStudyRecord.getReportScore());
+        this.setGraded(courseStudyRecord.getGraded());
+        this.setIsOld(courseStudyRecord.getIsOld());
     }
 
     public CourseStudyRecord voToEntity() {
@@ -82,6 +90,14 @@ public class CourseStudyRecordPublicVo extends CourseStudyRecord {
         courseStudyRecord.setTestTemplateNumber(this.getTestTemplateNumber());
         courseStudyRecord.setTestTemplateFinishedNumber(this.getTestTemplateFinishedNumber());
         courseStudyRecord.setTestTemplateSubmitedNumber(this.getTestTemplateSubmitedNumber());
+        courseStudyRecord.setScore(this.getScore());
+        courseStudyRecord.setPreStudyScore(this.getPreStudyScore());
+        courseStudyRecord.setOperationScore(this.getOperationScore());
+        courseStudyRecord.setDataScore(this.getDataScore());
+        courseStudyRecord.setDataAnalysisScore(this.getDataAnalysisScore());
+        courseStudyRecord.setReportScore(this.getReportScore());
+        courseStudyRecord.setGraded(this.getGraded());
+        courseStudyRecord.setIsOld(this.getIsOld());
         return courseStudyRecord;
     }
 

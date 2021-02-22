@@ -79,6 +79,42 @@ public class CourseStudyRecord implements Serializable {
     @NotNull
     private Double score;
 
+    @Column(length = 20)
+    @ApiModelProperty(value = "课前预习得分")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
+    private Double preStudyScore;
+
+    @Column(length = 20)
+    @ApiModelProperty(value = "实验操作得分")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
+    private Double operationScore;
+
+    @Column(length = 20)
+    @ApiModelProperty(value = "实验数据得分")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
+    private Double dataScore;
+
+    @Column(length = 20)
+    @ApiModelProperty(value = "数据分析得分")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
+    private Double dataAnalysisScore;
+
+    @Column(length = 20)
+    @ApiModelProperty(value = "实验报告得分")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
+    private Double reportScore;
+
+    @Column
+    @ApiModelProperty(value = "是否已计算分数")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
+    private Boolean graded;
+
     @Column(length = 10)
     @ApiModelProperty(value = "正在学习章ID")
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -113,6 +149,12 @@ public class CourseStudyRecord implements Serializable {
     @ApiModelProperty(value = "学习状态 0-学习中 1-已完成")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer status;
+
+    @Column
+    @ApiModelProperty(value = "是否往期")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
+    private Boolean isOld;
 
     @Column
     @ApiModelProperty(value = "是否完成问卷调查")

@@ -41,11 +41,11 @@ public interface CourseStudyRecordService {
     void updatePercent(CourseStudyRecord courseStudyRecord) throws BusinessException;
 
     /**
-     * 计算课程分数
-     * @param id
+     * 计算分数
+     * @param courseStudyRecord
      * @return
      */
-    void calculateScore(Integer id) throws BusinessException;
+    CourseStudyRecord calculateScore(CourseStudyRecord courseStudyRecord) throws BusinessException;
 
     /**
      * 修改课程学习记录信息

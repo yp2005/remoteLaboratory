@@ -354,8 +354,7 @@ public class TestInstanceServiceImpl implements TestInstanceService {
         List<TestSubsectionInstancePublicVo> testSubsectionInstancePublicVoList = testInstancePublicVo.getTestSubsectionInstancePublicVoList();
         if (CollectionUtils.isNotEmpty(testSubsectionInstancePublicVoList)) {
             for (TestSubsectionInstancePublicVo testSubsectionInstancePublicVo : testSubsectionInstancePublicVoList) {
-                // TODO 课前预习打分
-                if (testSubsectionInstancePublicVo.getType().equals(5)) { // 实验报告根据答题计算分数
+                if (testSubsectionInstancePublicVo.getType().equals(4)) { // 实验报告根据答题计算分数
                     List<TestPartInstancePublicVo> testPartInstancePublicVoList = testSubsectionInstancePublicVo.getTestPartInstancePublicVoList();
                     if (CollectionUtils.isNotEmpty(testPartInstancePublicVoList)) {
                         Double subsectionScore = 0.0;

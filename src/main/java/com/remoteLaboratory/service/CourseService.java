@@ -6,6 +6,7 @@ import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.vo.CoursePublicVo;
 import com.remoteLaboratory.vo.ListInput;
 import com.remoteLaboratory.vo.ListOutput;
+import com.remoteLaboratory.vo.SetScoreInput;
 
 import java.util.List;
 
@@ -29,6 +30,23 @@ public interface CourseService {
      * @return
      */
     public Course update(Course course) throws BusinessException;
+
+    /**
+     * 修改课程状态
+     * @param courseId
+     * @param status
+     * @param loginUser
+     * @return
+     */
+    public Course updateStatus(Integer courseId, Integer status, User loginUser) throws BusinessException;
+
+    /**
+     * 设置分数分布
+     * @param setScoreInput
+     * @param loginUser
+     * @return
+     */
+    public Course setScore(SetScoreInput setScoreInput, User loginUser) throws BusinessException;
 
     /**
      * 删除课程信息

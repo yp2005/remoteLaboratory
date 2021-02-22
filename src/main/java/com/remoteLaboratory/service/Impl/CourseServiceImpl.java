@@ -3,6 +3,7 @@ package com.remoteLaboratory.service.Impl;
 import com.remoteLaboratory.entities.*;
 import com.remoteLaboratory.repositories.*;
 import com.remoteLaboratory.service.CourseService;
+import com.remoteLaboratory.service.CourseStudyRecordService;
 import com.remoteLaboratory.utils.Constants;
 import com.remoteLaboratory.utils.MySpecification;
 import com.remoteLaboratory.utils.exception.BusinessException;
@@ -40,6 +41,8 @@ public class CourseServiceImpl implements CourseService {
 
     private CourseStudyRecordRepository courseStudyRecordRepository;
 
+    private CourseStudyRecordService courseStudyRecordService;
+
     private ChapterRepository chapterRepository;
 
     private SectionRepository sectionRepository;
@@ -69,9 +72,63 @@ public class CourseServiceImpl implements CourseService {
         course.setStudentNumber(courseOld.getStudentNumber());
         course.setSubjectNumber(courseOld.getSubjectNumber());
         course.setCommentNumber(courseOld.getCommentNumber());
+        course.setPreStudyScore(courseOld.getPreStudyScore());
+        course.setReportScore(courseOld.getReportScore());
         course = courseRepository.save(course);
         this.courseStudyRecordRepository.updateByCourseId(course.getId(), course.getName(), course.getMainImg(), course.getIntroduction());
         return course;
+    }
+
+    @Override
+    public Course updateStatus(Integer courseId, Integer status, User loginUser) throws BusinessException {
+        Course course = this.get(courseId);
+        if(!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
+            throw new BusinessException(Messages.CODE_50200);
+        }
+        if(status.equals(course.getStatus())) {
+            throw new BusinessException(Messages.CODE_40001);
+        }
+        if((course.getStatus().equals(1) && status.equals(0))
+                || (course.getStatus().equals(0) && status.equals(2))) {
+            throw new BusinessException(Messages.CODE_40001);
+        }
+        if(status.equals(2)) { // 结束课程
+            List<CourseStudyRecord> courseStudyRecordList = this.courseStudyRecordRepository.findByCourseIdAndStatus(courseId, 0);
+            if(courseStudyRecordList.size() > 0) { // 处理未完成学习的学记录
+                for (CourseStudyRecord courseStudyRecord : courseStudyRecordList) {
+                    courseStudyRecord.setStatus(1);
+                    if(!courseStudyRecord.getGraded()) {
+                        courseStudyRecord = this.courseStudyRecordService.calculateScore(courseStudyRecord);
+                    }
+                    courseStudyRecord = this.courseStudyRecordRepository.save(courseStudyRecord);
+                }
+            }
+            // 结束课程的同时结束实验
+            course.setExperimentStarted(false);
+        }
+        else if(status.equals(1)) { // 开始课程，将学习记录设置为往期课程
+            this.courseStudyRecordRepository.updateOldByCourseId(courseId);
+        }
+        course.setStatus(status);
+        course = courseRepository.save(course);
+        return course;
+    }
+
+    @Override
+    public Course setScore(SetScoreInput setScoreInput, User loginUser) throws BusinessException {
+        Course course = this.get(setScoreInput.getCourseId());
+        if(!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
+            throw new BusinessException(Messages.CODE_50200);
+        }
+        if(course.getStatus().equals(1)) {
+            throw new BusinessException(Messages.CODE_40010, "课程进行中，不能设置分数分布！");
+        }
+        if(setScoreInput.getPreStudyScore() + setScoreInput.getReportScore() != 100) {
+            throw new BusinessException(Messages.CODE_40010, "课程总分为100分！");
+        }
+        course.setPreStudyScore(setScoreInput.getPreStudyScore());
+        course.setReportScore(setScoreInput.getReportScore());
+        return courseRepository.save(course);
     }
 
     @Override

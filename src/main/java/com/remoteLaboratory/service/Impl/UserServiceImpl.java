@@ -60,9 +60,11 @@ public class UserServiceImpl implements UserService {
         if(oldUser != null) {
             throw new BusinessException(Messages.CODE_40010, "用户名已存在！");
         }
-        oldUser = this.userRepository.findByUserKey(user.getUserKey());
-        if(oldUser != null) {
-            throw new BusinessException(Messages.CODE_40010, "该学号已注册！");
+        if(StringUtils.isNotEmpty(user.getUserKey())) {
+            oldUser = this.userRepository.findByUserKey(user.getUserKey());
+            if(oldUser != null) {
+                throw new BusinessException(Messages.CODE_40010, "该学号已注册！");
+            }
         }
         user = userRepository.save(user);
         return user;

@@ -28,4 +28,8 @@ public interface CourseStudyRecordRepository extends JpaRepository<CourseStudyRe
     @Query("update CourseStudyRecord csr set csr.sectionName = :sectionName, csr.sectionTitle = :sectionTitle where csr.sectionId = :sectionId")
     @Modifying
     void updateBySectionId(@Param("sectionId") Integer sectionId, @Param("sectionName") String sectionName, @Param("sectionTitle") String sectionTitle);
+
+    @Query("update CourseStudyRecord csr set csr.isOld = true where csr.courseId = :courseId and csr.isOld = false")
+    @Modifying
+    void updateOldByCourseId(@Param("courseId") Integer courseId);
 }

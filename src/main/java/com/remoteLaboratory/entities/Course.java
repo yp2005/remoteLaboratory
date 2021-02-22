@@ -80,6 +80,16 @@ public class Course implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String description;
 
+    @Column(length = 20)
+    @ApiModelProperty(value = "课前预习分数")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Double preStudyScore;
+
+    @Column(length = 20)
+    @ApiModelProperty(value = "实验报告分数")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Double reportScore;
+
     @Column(length = 10)
     @ApiModelProperty(value = "状态 0-草稿(即将开始) 1-发布(进行中) 2-结束")
     @JsonInclude(JsonInclude.Include.NON_NULL)

@@ -1,5 +1,6 @@
 package com.remoteLaboratory.service.Impl;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.remoteLaboratory.bo.SearchPara;
 import com.remoteLaboratory.bo.SearchParas;
 import com.remoteLaboratory.entities.*;
@@ -14,6 +15,7 @@ import com.remoteLaboratory.vo.ChapterStudyRecordPublicVo;
 import com.remoteLaboratory.vo.CourseStudyRecordPublicVo;
 import com.remoteLaboratory.vo.ListInput;
 import com.remoteLaboratory.vo.ListOutput;
+import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -26,7 +28,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.Column;
 import javax.transaction.Transactional;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,56 +47,44 @@ import java.util.Map;
 public class CourseStudyRecordServiceImpl implements CourseStudyRecordService {
     private static Logger log = LoggerFactory.getLogger(CourseStudyRecordServiceImpl.class);
 
+    @Autowired
     private CourseStudyRecordRepository courseStudyRecordRepository;
 
+    @Autowired
     private LogRecordRepository logRecordRepository;
 
+    @Autowired
     private CourseService courseService;
 
+    @Autowired
     private CourseRepository courseRepository;
 
+    @Autowired
     private ChapterRepository chapterRepository;
 
+    @Autowired
     private SectionRepository sectionRepository;
 
+    @Autowired
     private ChapterStudyRecordRepository chapterStudyRecordRepository;
 
+    @Autowired
     private SectionStudyRecordRepository sectionStudyRecordRepository;
 
+    @Autowired
     private TestInstanceRepository testInstanceRepository;
 
-    private TestTemplateRepository testTemplateRepository;
-
-    private TestRecordRepository testRecordRepository;
-
-    private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private TestSubsectionInstanceRepository testSubsectionInstanceRepository;
 
     @Autowired
-    public CourseStudyRecordServiceImpl(CourseStudyRecordRepository courseStudyRecordRepository,
-                                        LogRecordRepository logRecordRepository,
-                                        ChapterRepository chapterRepository,
-                                        SectionRepository sectionRepository,
-                                        TestInstanceRepository testInstanceRepository,
-                                        ChapterStudyRecordRepository chapterStudyRecordRepository,
-                                        SectionStudyRecordRepository sectionStudyRecordRepository,
-                                        CourseRepository courseRepository,
-                                        TestRecordRepository testRecordRepository,
-                                        TestTemplateRepository testTemplateRepository,
-                                        JdbcTemplate jdbcTemplate,
-                                        CourseService courseService) {
-        this.courseStudyRecordRepository = courseStudyRecordRepository;
-        this.logRecordRepository = logRecordRepository;
-        this.courseService = courseService;
-        this.chapterRepository = chapterRepository;
-        this.sectionRepository = sectionRepository;
-        this.chapterStudyRecordRepository = chapterStudyRecordRepository;
-        this.sectionStudyRecordRepository = sectionStudyRecordRepository;
-        this.courseRepository = courseRepository;
-        this.testInstanceRepository = testInstanceRepository;
-        this.testTemplateRepository = testTemplateRepository;
-        this.testRecordRepository = testRecordRepository;
-        this.jdbcTemplate = jdbcTemplate;
-    }
+    private TestTemplateRepository testTemplateRepository;
+
+    @Autowired
+    private TestRecordRepository testRecordRepository;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Override
     public CourseStudyRecord add(CourseStudyRecord courseStudyRecord) throws BusinessException {
@@ -111,7 +103,14 @@ public class CourseStudyRecordServiceImpl implements CourseStudyRecordService {
             courseStudyRecord = new CourseStudyRecord();
             courseStudyRecord.setStudied(0.0);
             courseStudyRecord.setScore(0.0);
+            courseStudyRecord.setPreStudyScore(0.0);
+            courseStudyRecord.setOperationScore(0.0);
+            courseStudyRecord.setDataScore(0.0);
+            courseStudyRecord.setDataAnalysisScore(0.0);
+            courseStudyRecord.setReportScore(0.0);
+            courseStudyRecord.setGraded(false);
             courseStudyRecord.setStatus(0);
+            courseStudyRecord.setIsOld(false);
             courseStudyRecord.setUserId(user.getId());
             courseStudyRecord.setUserName(StringUtils.isEmpty(user.getPersonName()) ? user.getUserName() : user.getPersonName());
             courseStudyRecord.setCourseId(course.getId());
@@ -201,7 +200,7 @@ public class CourseStudyRecordServiceImpl implements CourseStudyRecordService {
             List<ChapterStudyRecord> chapterStudyRecordList = this.chapterStudyRecordRepository.findByCourseStudyRecordId(courseStudyRecord.getId());
             Double courseStudied = courseStudyRecord.getTestTemplateSubmitedNumber() / (courseStudyRecord.getTestTemplateNumber() + chapterStudyRecordList.size()) * 1.0;
             if (CollectionUtils.isNotEmpty(chapterStudyRecordList)) {
-                Double chapterPercent = 1.0 / chapterStudyRecordList.size();
+                Double chapterPercent = 1.0 / (courseStudyRecord.getTestTemplateNumber() + chapterStudyRecordList.size());
                 for (ChapterStudyRecord chapterStudyRecord : chapterStudyRecordList) {
                     List<SectionStudyRecord> sectionStudyRecordList = this.sectionStudyRecordRepository.findByChapterStudyRecordId(chapterStudyRecord.getId());
                     Double chapterStudied = 0.0;
@@ -230,34 +229,67 @@ public class CourseStudyRecordServiceImpl implements CourseStudyRecordService {
         }
         // 实验报告完成后计算分数
         if (courseStudyRecord.getTestTemplateFinishedNumber().equals(courseStudyRecord.getTestTemplateNumber())) {
-            List<TestInstance> testInstances = this.testInstanceRepository.findByUserIdAndCourseId(courseStudyRecord.getUserId(), courseStudyRecord.getCourseId());
-            Double totalScore = 0.0;
-            if (CollectionUtils.isNotEmpty(testInstances)) {
-                for (TestInstance testInstance : testInstances) {
-                    totalScore += testInstance.getScored();
-                }
-            }
-            // 实验报告的平均分作为课程分数
-            courseStudyRecord.setScore(Math.round(totalScore / courseStudyRecord.getTestTemplateNumber() * 10) / 10.0);
+            courseStudyRecord = this.calculateScore(courseStudyRecord);
             courseStudyRecord = this.courseStudyRecordRepository.save(courseStudyRecord);
         }
     }
 
     @Override
-    public void calculateScore(Integer id) throws BusinessException {
-        CourseStudyRecord courseStudyRecord = this.courseStudyRecordRepository.findOne(id);
-        if (courseStudyRecord == null) {
-            throw new BusinessException(Messages.CODE_20001);
-        }
+    public CourseStudyRecord calculateScore(CourseStudyRecord courseStudyRecord) throws BusinessException {
         List<TestInstance> testInstances = this.testInstanceRepository.findByUserIdAndCourseId(courseStudyRecord.getUserId(), courseStudyRecord.getCourseId());
-        Double score = 0.0;
+        Double totalScore = 0.0;
+        Double operationScore = 0.0;
+        Double dataScore = 0.0;
+        Double dataAnalysisScore = 0.0;
+        Double reportScore = 0.0;
         if (CollectionUtils.isNotEmpty(testInstances)) {
             for (TestInstance testInstance : testInstances) {
-                score += testInstance.getScored();
+                totalScore += testInstance.getScored();
+                List<TestSubsectionInstance> testSubsectionInstanceList = this.testSubsectionInstanceRepository.findByTestInstanceId(testInstance.getId());
+                if (CollectionUtils.isNotEmpty(testSubsectionInstanceList)) {
+                    for (TestSubsectionInstance testSubsectionInstance : testSubsectionInstanceList) {
+                        // 1-实验操作 2-实验数据 3-数据分析 4-实验报告
+                        switch (testSubsectionInstance.getType()) {
+                            case 1:
+                                operationScore += testSubsectionInstance.getScored();
+                                break;
+                            case 2:
+                                dataScore += testSubsectionInstance.getScored();
+                                break;
+                            case 3:
+                                dataAnalysisScore += testSubsectionInstance.getScored();
+                                break;
+                            case 4:
+                                reportScore += testSubsectionInstance.getScored();
+                                break;
+                        }
+                    }
+                }
             }
         }
-        courseStudyRecord.setScore(score);
-        this.courseStudyRecordRepository.save(courseStudyRecord);
+        Course course = this.courseRepository.findOne(courseStudyRecord.getCourseId());
+        Double testScore = totalScore / courseStudyRecord.getTestTemplateNumber();
+        operationScore = operationScore / courseStudyRecord.getTestTemplateNumber();
+        dataScore = dataScore / courseStudyRecord.getTestTemplateNumber();
+        dataAnalysisScore = dataAnalysisScore / courseStudyRecord.getTestTemplateNumber();
+        reportScore = reportScore / courseStudyRecord.getTestTemplateNumber();
+
+        Double reportSocrePercent = course.getReportScore() / 100;
+        testScore = Math.round(testScore * reportSocrePercent * 10) / 10.0;
+        operationScore = Math.round(operationScore * reportSocrePercent * 10) / 10.0;
+        dataScore = Math.round(dataScore * reportSocrePercent * 10) / 10.0;
+        dataAnalysisScore = Math.round(dataAnalysisScore * reportSocrePercent * 10) / 10.0;
+        reportScore = Math.round(reportScore * reportSocrePercent * 10) / 10.0;
+
+        Double preStudyScore = Math.round(course.getPreStudyScore() * courseStudyRecord.getStudied()  * 10) / 10.0;
+        courseStudyRecord.setScore(preStudyScore + testScore);
+        courseStudyRecord.setPreStudyScore(preStudyScore);
+        courseStudyRecord.setOperationScore(operationScore);
+        courseStudyRecord.setDataScore(dataScore);
+        courseStudyRecord.setDataAnalysisScore(dataAnalysisScore);
+        courseStudyRecord.setReportScore(reportScore);
+        courseStudyRecord.setGraded(true);
+        return courseStudyRecord;
     }
 
     @Override
