@@ -51,7 +51,6 @@ public class Exercise implements Serializable {
     @Column(length = 10)
     @ApiModelProperty(value = "试卷类型 1-实验报告 2-问卷调查")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonIgnore
     private Integer testType;
 
     @Column(length = 10)
