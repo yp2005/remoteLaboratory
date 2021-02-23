@@ -1,6 +1,5 @@
 package com.remoteLaboratory.service.Impl;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.remoteLaboratory.bo.SearchPara;
 import com.remoteLaboratory.bo.SearchParas;
 import com.remoteLaboratory.entities.*;
@@ -11,11 +10,7 @@ import com.remoteLaboratory.utils.Constants;
 import com.remoteLaboratory.utils.MySpecification;
 import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.utils.message.Messages;
-import com.remoteLaboratory.vo.ChapterStudyRecordPublicVo;
-import com.remoteLaboratory.vo.CourseStudyRecordPublicVo;
-import com.remoteLaboratory.vo.ListInput;
-import com.remoteLaboratory.vo.ListOutput;
-import io.swagger.annotations.ApiModelProperty;
+import com.remoteLaboratory.vo.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -28,9 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.Column;
 import javax.transaction.Transactional;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -119,6 +112,15 @@ public class CourseStudyRecordServiceImpl implements CourseStudyRecordService {
             courseStudyRecord.setCourseIntroduction(course.getIntroduction());
             courseStudyRecord.setCourseVideoDesc(course.getVideoDesc());
             courseStudyRecord.setIsQuestionnaireFinish(false);
+            StringBuilder class1 = new StringBuilder();
+            class1.append(user.getCollege())
+                    .append("->")
+                    .append(user.getMajor())
+                    .append("->")
+                    .append(user.getGrade())
+                    .append("->")
+                    .append(user.getClass1());
+            courseStudyRecord.setClass1(class1.toString());
             // 查询课程的问卷调查
             TestTemplate questionnaire = this.testTemplateRepository.findQuestionnaireByCourseId(courseId);
             // 查询课程的实验报告
@@ -414,9 +416,27 @@ public class CourseStudyRecordServiceImpl implements CourseStudyRecordService {
     }
 
     @Override
-    public Map<String, Long> getScoreStatisticsByCourseId(Integer courseId) throws BusinessException {
-        String sql = "SELECT CASE WHEN score >= 90 THEN '优' WHEN score >= 80 THEN '良' WHEN score >= 70 THEN '中' WHEN score >= 60 THEN '及格' ELSE '不及格' END AS level , count(score) AS count FROM rl_course_study_record WHERE course_id = ? GROUP BY CASE WHEN score >= 90 THEN '优' WHEN score >= 80 THEN '良' WHEN score >= 70 THEN '中' WHEN score >= 60 THEN '及格' ELSE '不及格' END";
-        List<Map<String, Object>> result = jdbcTemplate.queryForList(sql, courseId);
+    public Map<String, Long> getScoreStatistics(ScoreStatisticsInput scoreStatisticsInput) throws BusinessException {
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT CASE WHEN score >= 90 THEN '优' WHEN score >= 80 THEN '良' WHEN score >= 70 THEN '中' WHEN score >= 60 THEN '及格' ELSE '不及格' END AS level , count(score) AS count FROM rl_course_study_record WHERE course_id = ? ");
+        if(StringUtils.isNotEmpty(scoreStatisticsInput.getClass1())) {
+            sql.append("AND class1 = ? ");
+        }
+        if(scoreStatisticsInput.getType().equals(1)) {
+            sql.append("AND is_old = false ");
+        }
+        else if(scoreStatisticsInput.getType().equals(2)) {
+            sql.append("AND is_old = true ");
+        }
+        sql.append("GROUP BY CASE WHEN score >= 90 THEN '优' WHEN score >= 80 THEN '良' WHEN score >= 70 THEN '中' WHEN score >= 60 THEN '及格' ELSE '不及格' END");
+
+        List<Map<String, Object>> result;
+        if(StringUtils.isNotEmpty(scoreStatisticsInput.getClass1())) {
+            result = jdbcTemplate.queryForList(sql.toString(), scoreStatisticsInput.getCourseId(), scoreStatisticsInput.getClass1());
+        }
+        else {
+            result = jdbcTemplate.queryForList(sql.toString(), scoreStatisticsInput.getCourseId());
+        }
         Map<String, Long> resultMap = new HashMap<>();
         resultMap.put("优", 0l);
         resultMap.put("良", 0l);
@@ -470,5 +490,22 @@ public class CourseStudyRecordServiceImpl implements CourseStudyRecordService {
         courseStudyRecordPublicVo.setChapterStudyRecordPublicVoList(chapterStudyRecordPublicVoList);
         courseStudyRecordPublicVo.setTestRecordList(this.testRecordRepository.findByCourseStudyRecordId(courseStudyRecord.getId()));
         return courseStudyRecordPublicVo;
+    }
+
+    @Override
+    public List<String> getClassByCourseId(GetClassByCourseIdInput getClassByCourseIdInput) throws BusinessException {
+        List<String> result = null;
+        switch (getClassByCourseIdInput.getType()) {
+            case 0:
+                result = this.courseStudyRecordRepository.findClassByCourseId(getClassByCourseIdInput.getCourseId());
+                break;
+            case 1:
+                result = this.courseStudyRecordRepository.findClassByCourseIdAndIsOld(getClassByCourseIdInput.getCourseId(), false);
+                break;
+            case 2:
+                result = this.courseStudyRecordRepository.findClassByCourseIdAndIsOld(getClassByCourseIdInput.getCourseId(), true);
+                break;
+        }
+        return result;
     }
 }

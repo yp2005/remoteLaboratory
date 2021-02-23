@@ -103,6 +103,12 @@ public class TestInstance implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer status;
 
+    @Column
+    @ApiModelProperty(value = "是否往期")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull
+    private Boolean isOld;
+
     @Column(updatable = false)
     @ApiModelProperty(value = "创建时间", hidden = true)
     @JsonInclude(JsonInclude.Include.NON_NULL)

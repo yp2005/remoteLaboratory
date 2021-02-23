@@ -4,9 +4,7 @@ package com.remoteLaboratory.service;
 import com.remoteLaboratory.entities.CourseStudyRecord;
 import com.remoteLaboratory.entities.User;
 import com.remoteLaboratory.utils.exception.BusinessException;
-import com.remoteLaboratory.vo.CourseStudyRecordPublicVo;
-import com.remoteLaboratory.vo.ListInput;
-import com.remoteLaboratory.vo.ListOutput;
+import com.remoteLaboratory.vo.*;
 
 import java.util.List;
 import java.util.Map;
@@ -93,11 +91,11 @@ public interface CourseStudyRecordService {
     CourseStudyRecordPublicVo getDetailByCourseId(Integer courseId, Integer userId) throws BusinessException;
 
     /**
-     * 根据课程ID统计成绩分布
-     * @param courseId
-     * @return CourseStudyRecordPublicVo
+     * 统计成绩分布
+     * @param scoreStatisticsInput
+     * @return Map
      */
-    Map<String, Long> getScoreStatisticsByCourseId(Integer courseId) throws BusinessException;
+    Map<String, Long> getScoreStatistics(ScoreStatisticsInput scoreStatisticsInput) throws BusinessException;
 
     /**
      * 根据id获取课程学习记录详情
@@ -112,4 +110,12 @@ public interface CourseStudyRecordService {
      * @param loginUser
      */
     void delete(List<Integer> ids, User loginUser) throws BusinessException;
+
+    /**
+     * 根据courseId获取学习课程的班级
+     * @param getClassByCourseIdInput
+     * @return List<String>
+     */
+    public List<String> getClassByCourseId(GetClassByCourseIdInput getClassByCourseIdInput) throws BusinessException;
+
 }

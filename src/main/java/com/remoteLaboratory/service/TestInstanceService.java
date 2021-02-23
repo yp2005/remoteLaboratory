@@ -62,13 +62,6 @@ public interface TestInstanceService {
     public List<TestInstance> getByUserId(Integer userId) throws BusinessException;
 
     /**
-     * 根据courseId获取学习课程的班级
-     * @param courseId
-     * @return List<String>
-     */
-    public List<String> getClassByCourseId(Integer courseId) throws BusinessException;
-
-    /**
      * 根据userId、courseId获取实验报告实例
      * @param userId
      * @param courseId

@@ -61,6 +61,7 @@ public class CourseStudyRecordPublicVo extends CourseStudyRecord {
         this.setReportScore(courseStudyRecord.getReportScore());
         this.setGraded(courseStudyRecord.getGraded());
         this.setIsOld(courseStudyRecord.getIsOld());
+        this.setClass1(courseStudyRecord.getClass1());
     }
 
     public CourseStudyRecord voToEntity() {
@@ -98,6 +99,7 @@ public class CourseStudyRecordPublicVo extends CourseStudyRecord {
         courseStudyRecord.setReportScore(this.getReportScore());
         courseStudyRecord.setGraded(this.getGraded());
         courseStudyRecord.setIsOld(this.getIsOld());
+        courseStudyRecord.setClass1(this.getClass1());
         return courseStudyRecord;
     }
 

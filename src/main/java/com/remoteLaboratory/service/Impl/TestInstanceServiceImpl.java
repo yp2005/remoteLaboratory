@@ -272,11 +272,6 @@ public class TestInstanceServiceImpl implements TestInstanceService {
     }
 
     @Override
-    public List<String> getClassByCourseId(Integer courseId) throws BusinessException {
-        return this.testInstanceRepository.findClassByCourseId(courseId);
-    }
-
-    @Override
     public List<TestInstance> getByUserIdAndCourseId(Integer userId, Integer courseId) throws BusinessException {
         return this.testInstanceRepository.findByUserIdAndCourseId(userId, courseId);
     }

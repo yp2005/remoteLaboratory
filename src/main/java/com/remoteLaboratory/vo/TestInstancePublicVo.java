@@ -39,6 +39,7 @@ public class TestInstancePublicVo extends TestInstance {
         this.setScored(0.0);
         this.setTestType(testTemplatePublicVo.getTestType());
         this.setStatus(0);
+        this.setIsOld(false);
         this.setTestTemplateId(testTemplatePublicVo.getId());
         if(testTemplatePublicVo.getTestType().equals(1)) { // 实验报告
             List<TestSubsectionTemplatePublicVo> testSubsectionTemplatePublicVoList = testTemplatePublicVo.getTestSubsectionTemplatePublicVoList();
@@ -88,6 +89,7 @@ public class TestInstancePublicVo extends TestInstance {
         this.setTestExerciseInstanceId(testInstance.getTestExerciseInstanceId());
         this.setTestType(testInstance.getTestType());
         this.setStatus(testInstance.getStatus());
+        this.setIsOld(testInstance.getIsOld());
         this.setTestTemplateId(testInstance.getTestTemplateId());
     }
 
@@ -110,6 +112,7 @@ public class TestInstancePublicVo extends TestInstance {
         testInstance.setTestExerciseInstanceId(this.getTestExerciseInstanceId());
         testInstance.setTestType(this.getTestType());
         testInstance.setStatus(this.getStatus());
+        testInstance.setIsOld(this.getIsOld());
         testInstance.setTestTemplateId(this.getTestTemplateId());
         return testInstance;
     }

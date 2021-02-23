@@ -14,6 +14,7 @@ import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.utils.message.Messages;
 import com.remoteLaboratory.vo.CourseStudyRecordPublicVo;
 import com.remoteLaboratory.vo.ListInput;
+import com.remoteLaboratory.vo.ScoreStatisticsInput;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -112,15 +113,15 @@ public class CourseStudyRecordController {
         return commonResponse;
     }
 
-    @GetMapping(path = "/getScoreStatisticsByCourseId/{courseId}")
-    @ApiOperation(value = "根据课程ID统计成绩分布", notes = "根据课程ID统计成绩分布接口")
-    public CommonResponse getScoreStatisticsByCourseId(@NotNull(message = "课程id不能为空") @PathVariable Integer courseId, @ApiIgnore User loginUser) throws BusinessException {
-//        Course course = this.courseService.get(courseId);
-//        if(!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN)
-//                && !course.getTeacherId().equals(loginUser.getId())) {
-//            throw new BusinessException(Messages.CODE_50200);
-//        }
-        CommonResponse commonResponse = CommonResponse.getInstance(this.courseStudyRecordService.getScoreStatisticsByCourseId(courseId));
-        return commonResponse;
+    @PostMapping(path = "/getScoreStatistics")
+    @ApiOperation(value = "统计成绩分布", notes = "统计成绩分布接口")
+    @LoginRequired(teacherRequired = "1")
+    public CommonResponse getScoreStatistics(@RequestBody ScoreStatisticsInput scoreStatisticsInput, @ApiIgnore User loginUser) throws BusinessException {
+        Course course = this.courseService.get(scoreStatisticsInput.getCourseId());
+        if(!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN)
+                && !course.getTeacherId().equals(loginUser.getId())) {
+            throw new BusinessException(Messages.CODE_50200);
+        }
+        return CommonResponse.getInstance(this.courseStudyRecordService.getScoreStatistics(scoreStatisticsInput));
     }
 }

@@ -35,30 +35,26 @@ import java.util.List;
 public class CourseServiceImpl implements CourseService {
     private static Logger log = LoggerFactory.getLogger(CourseServiceImpl.class);
 
+    @Autowired
     private CourseRepository courseRepository;
 
+    @Autowired
     private LogRecordRepository logRecordRepository;
 
+    @Autowired
     private CourseStudyRecordRepository courseStudyRecordRepository;
 
+    @Autowired
     private CourseStudyRecordService courseStudyRecordService;
 
+    @Autowired
     private ChapterRepository chapterRepository;
 
+    @Autowired
     private SectionRepository sectionRepository;
 
     @Autowired
-    public CourseServiceImpl(CourseRepository courseRepository,
-                             CourseStudyRecordRepository courseStudyRecordRepository,
-                             ChapterRepository chapterRepository,
-                             SectionRepository sectionRepository,
-                             LogRecordRepository logRecordRepository) {
-        this.courseRepository = courseRepository;
-        this.logRecordRepository = logRecordRepository;
-        this.courseStudyRecordRepository = courseStudyRecordRepository;
-        this.chapterRepository = chapterRepository;
-        this.sectionRepository = sectionRepository;
-    }
+    private TestInstanceRepository testInstanceRepository;
 
     @Override
     public Course add(Course course) throws BusinessException {
@@ -106,8 +102,9 @@ public class CourseServiceImpl implements CourseService {
             // 结束课程的同时结束实验
             course.setExperimentStarted(false);
         }
-        else if(status.equals(1)) { // 开始课程，将学习记录设置为往期课程
+        else if(status.equals(1)) { // 开始课程，将学习记录、实验报告设置为往期课程
             this.courseStudyRecordRepository.updateOldByCourseId(courseId);
+            this.testInstanceRepository.updateOldByCourseId(courseId);
         }
         course.setStatus(status);
         course = courseRepository.save(course);

@@ -58,6 +58,11 @@ public class CourseStudyRecord implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String courseIntroduction;
 
+    @Column(length = 500)
+    @ApiModelProperty(value = "班级")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String class1;
+
     @Column(length = 10)
     @ApiModelProperty(value = "用户ID")
     @JsonInclude(JsonInclude.Include.NON_NULL)

@@ -128,15 +128,6 @@ public class TestInstanceController {
         return commonResponse;
     }
 
-    @GetMapping(path = "/getClassByCourseId/{courseId}")
-    @ApiOperation(value = "根据courseId获取学习课程的班级", notes = "根据courseId获取学习课程的班级接口")
-    public CommonResponse getClassByCourseId(@PathVariable Integer courseId, @ApiIgnore User loginUser) throws BusinessException {
-        CommonResponse commonResponse = CommonResponse.getInstance();
-        commonResponse.setResult(testInstanceService.getClassByCourseId(courseId));
-        LogUtil.add(this.logRecordRepository, "根据courseId获取学习课程的班级", "实验报告", loginUser, null, null);
-        return commonResponse;
-    }
-
     @GetMapping(path = "/getDetail/{id}")
     @ApiOperation(value = "查询实验报告详情", notes = "根据ID查询实验报告详情接口")
     @LoginRequired(teacherRequired = "1")

@@ -4,6 +4,7 @@ package com.remoteLaboratory.repositories;
 import com.remoteLaboratory.entities.TestInstance;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -18,6 +19,7 @@ public interface TestInstanceRepository extends JpaRepository<TestInstance, Inte
 
     List<TestInstance> findByUserIdAndCourseId(@Param("userId") Integer userId, @Param("courseId") Integer courseId);
 
-    @Query("select distinct t.class1 from TestInstance t where t.courseId = :courseId")
-    List<String> findClassByCourseId(@Param("courseId") Integer courseId);
+    @Query("update TestInstance set isOld = true where courseId = :courseId and isOld = false")
+    @Modifying
+    void updateOldByCourseId(@Param("courseId") Integer courseId);
 }
