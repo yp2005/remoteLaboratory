@@ -1,5 +1,7 @@
 package com.remoteLaboratory.service.Impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.remoteLaboratory.entities.*;
 import com.remoteLaboratory.repositories.*;
 import com.remoteLaboratory.service.CourseService;
@@ -90,6 +92,11 @@ public class TestTemplateServiceImpl implements TestTemplateService {
                                     testExerciseTemplate.setTestSubsectionTemplateId(testSubsectionTemplate.getId());
                                     testExerciseTemplate.setTestPartTemplateId(testPartTemplate.getId());
                                     testExerciseTemplate.setType(ExerciseUtil.getType(testExerciseTemplate.getExercisesType()));
+                                    JSONArray options = JSONArray.parseArray(testExerciseTemplate.getOptions());
+                                    for (int i = 0; i < options.size(); i++) {
+                                        options.getJSONObject(i).put("selectNumber", 0);
+                                    }
+                                    testExerciseTemplate.setOptions(options.toJSONString());
                                 }
                                 this.testExerciseTemplateRepository.save(testExerciseTemplateList);
                             }

@@ -1,8 +1,11 @@
 package com.remoteLaboratory.service.Impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.remoteLaboratory.entities.*;
 import com.remoteLaboratory.repositories.TestExerciseInstanceRepository;
 import com.remoteLaboratory.repositories.LogRecordRepository;
+import com.remoteLaboratory.repositories.TestExerciseTemplateRepository;
 import com.remoteLaboratory.repositories.TestInstanceRepository;
 import com.remoteLaboratory.service.TestExerciseInstanceService;
 import com.remoteLaboratory.service.CourseService;
@@ -37,23 +40,20 @@ import java.util.List;
 public class TestExerciseInstanceServiceImpl implements TestExerciseInstanceService {
     private static Logger log = LoggerFactory.getLogger(TestExerciseInstanceServiceImpl.class);
 
+    @Autowired
     private TestExerciseInstanceRepository testExerciseInstanceRepository;
 
-    private TestInstanceRepository testInstanceRepository;
-
-    private LogRecordRepository logRecordRepository;
-
-    private CourseService courseService;
+    @Autowired
+    private TestExerciseTemplateRepository testExerciseTemplateRepository;
 
     @Autowired
-    public TestExerciseInstanceServiceImpl(TestExerciseInstanceRepository testExerciseInstanceRepository,
-                                           TestInstanceRepository testInstanceRepository,
-                                           LogRecordRepository logRecordRepository, CourseService courseService) {
-        this.testExerciseInstanceRepository = testExerciseInstanceRepository;
-        this.logRecordRepository = logRecordRepository;
-        this.courseService = courseService;
-        this.testInstanceRepository = testInstanceRepository;
-    }
+    private TestInstanceRepository testInstanceRepository;
+
+    @Autowired
+    private LogRecordRepository logRecordRepository;
+
+    @Autowired
+    private CourseService courseService;
 
     @Override
     public TestExerciseInstance add(TestExerciseInstance testExerciseInstance) throws BusinessException {
@@ -73,6 +73,23 @@ public class TestExerciseInstanceServiceImpl implements TestExerciseInstanceServ
         TestInstance testInstance = this.testInstanceRepository.findOne(testExerciseInstance.getTestInstanceId());
         testInstance.setTestExerciseInstanceId(testExerciseInstance.getTestInstanceId());
         testInstance = this.testInstanceRepository.save(testInstance);
+
+        if(testInstance.getTestType().equals(2)) { // 问卷调查统计选项
+            TestExerciseTemplate testExerciseTemplate = this.testExerciseTemplateRepository.findOne(testExerciseInstance.getTestExerciseTemplateId());
+            String[] answers = testExerciseInstance.getAnswer().split(",");
+            JSONArray options = JSONArray.parseArray(testExerciseTemplate.getOptions());
+            for (String answer : answers) {
+                answer = answer.trim();
+                for (int i = 0; i < options.size(); i++) {
+                    JSONObject option = options.getJSONObject(i);
+                    if(option.getString("order").equals(answer)) {
+                        option.put("selectNumber", option.getInteger("selectNumber") + 1);
+                    }
+                }
+            }
+            testExerciseTemplate.setOptions(options.toJSONString());
+            this.testExerciseTemplateRepository.save(testExerciseTemplate);
+        }
         return testExerciseInstance;
     }
 

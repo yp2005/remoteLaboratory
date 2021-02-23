@@ -66,7 +66,7 @@ public class TestExerciseTemplate implements Serializable {
     private Integer exercisesType;
 
     @Lob
-    @ApiModelProperty(value = "选项 选择题填此字段JSON:[{'A': '1'},{'B': '2'}]")
+    @ApiModelProperty(value = "选项 选择题填此字段JSON: [{'order': 'A', 'content': '1'},{'order': 'B', 'content': '2'}]")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String options;
 
@@ -119,7 +119,7 @@ public class TestExerciseTemplate implements Serializable {
     private Date updateTime;
 
     public String getRandomOrderOptions() {
-        // [{"A": "1"},{"B": "2"},{"C": "3"},{"D": "4"}]
+        // [{"order":"A", "content":"1"},{"order":"B", "content":"2"}]
         if(!this.getExercisesType().equals(1) && !this.getExercisesType().equals(2)) { // 非选择题返回null
             return null;
         }
@@ -133,10 +133,8 @@ public class TestExerciseTemplate implements Serializable {
         for (int i = 0; i < options.size(); i++) {
             JSONObject option = options.getJSONObject(i);
             JSONObject newOption = new JSONObject();
-            for (String key : option.keySet()) {
-                newOption.put("order", key);
-                newOption.put("content", option.getString(key));
-            }
+            newOption.put("order", option.getString("order"));
+            newOption.put("content", option.getString("content"));
             int orderNo = (int) (Math.random() * orders.size());
             newOption.put("displayOrder", orders.get(orderNo).toString());
             orders.remove(orderNo);
@@ -148,7 +146,8 @@ public class TestExerciseTemplate implements Serializable {
 
     public static void main(String[] args){
         TestExerciseTemplate testExerciseTemplate = new TestExerciseTemplate();
-        testExerciseTemplate.setOptions("[{\"A\": \"1\"},{\"B\": \"2\"},{\"C\": \"3\"},{\"D\": \"4\"}]");
+        testExerciseTemplate.setOptions("[{\"order\":\"A\", \"content\":\"1\"},{\"order\":\"B\", \"content\":\"2\"}]");
+        testExerciseTemplate.setExercisesType(1);
         String op = testExerciseTemplate.getRandomOrderOptions();
         System.out.println(op);
 //        int orderNo = (int) (Math.random() * 4);

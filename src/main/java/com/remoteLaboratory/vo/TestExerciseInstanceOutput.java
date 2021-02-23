@@ -18,6 +18,7 @@ public class TestExerciseInstanceOutput extends TestExerciseInstance {
         this.setAnswer(testExerciseInstance.getAnswer());
         this.setExerciseContent(testExerciseInstance.getExerciseContent());
         this.setExerciseId(testExerciseInstance.getExerciseId());
+        this.setTestExerciseTemplateId(testExerciseInstance.getTestExerciseTemplateId());
         this.setExercisesType(testExerciseInstance.getExercisesType());
         this.setOptions(testExerciseInstance.getOptions());
         this.setScore(testExerciseInstance.getScore());

@@ -60,7 +60,7 @@ public class Exercise implements Serializable {
     private Integer exercisesType;
 
     @Lob
-    @ApiModelProperty(value = "选项 选择题填此字段JSON:[{'A': '1'},{'B': '2'}]")
+    @ApiModelProperty(value = "选项 选择题填此字段JSON: [{'order': 'A', 'content': '1'},{'order': 'B', 'content': '2'}]")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String options;
 

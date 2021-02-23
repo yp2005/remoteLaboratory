@@ -40,6 +40,7 @@ public class TestPartInstancePublicVo extends TestPartInstance {
                 TestExerciseInstance testExerciseInstance = new TestExerciseInstance();
                 testExerciseInstance.setExerciseContent(testExerciseTemplate.getExerciseContent());
                 testExerciseInstance.setExerciseId(testExerciseTemplate.getExerciseId());
+                testExerciseInstance.setTestExerciseTemplateId(testExerciseTemplate.getId());
                 testExerciseInstance.setExercisesType(testExerciseTemplate.getExercisesType());
                 testExerciseInstance.setOptions(testExerciseTemplate.getRandomOrderOptions());
                 testExerciseInstance.setScore(testExerciseTemplate.getScore());
