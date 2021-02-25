@@ -75,8 +75,9 @@ public class TestTemplateController {
         if(!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
             throw new BusinessException(Messages.CODE_50200);
         }
-        CommonResponse commonResponse = CommonResponse.getInstance(testTemplateService.add(testTemplatePublicVo));
-        LogUtil.add(this.logRecordRepository, "添加", "实验报告模板", loginUser, testTemplatePublicVo.getId(), testTemplatePublicVo.getName());
+        TestTemplate testTemplate = testTemplateService.add(testTemplatePublicVo);
+        CommonResponse commonResponse = CommonResponse.getInstance(testTemplate);
+        LogUtil.add(this.logRecordRepository, "添加", "实验报告模板", loginUser, testTemplate.getId(), testTemplate.getName());
         return commonResponse;
     }
 
