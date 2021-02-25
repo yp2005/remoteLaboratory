@@ -50,7 +50,7 @@ public class TestTemplateController {
 
     @PostMapping(path = "/list")
     @ApiOperation(value = "实验报告模板列表", notes = "查询实验报告模板信息列表")
-    @LoginRequired(adminRequired = "1")
+    @LoginRequired(teacherRequired = "1")
     public CommonResponse list(@RequestBody ListInput listInput,  @ApiIgnore User loginUser) throws BusinessException {
         CommonResponse commonResponse = CommonResponse.getInstance();
         commonResponse.setResult(testTemplateService.list(listInput));
@@ -60,7 +60,6 @@ public class TestTemplateController {
 
     @GetMapping(path = "/getQuestionnaireByCourseId/{courseId}")
     @ApiOperation(value = "查询课程问卷调查", notes = "查询课程问卷调查接口")
-    @LoginRequired(adminRequired = "1")
     public CommonResponse getQuestionnaireByCourseId(@PathVariable Integer courseId,  @ApiIgnore User loginUser) throws BusinessException {
         CommonResponse commonResponse = CommonResponse.getInstance();
         TestTemplate testTemplate = testTemplateService.getQuestionnaireByCourseId(courseId);
