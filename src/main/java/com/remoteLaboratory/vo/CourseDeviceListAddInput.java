@@ -20,7 +20,6 @@ public class CourseDeviceListAddInput {
 
     @ApiModelProperty(value = "课程名称")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonIgnore
     private String courseName;
 
     @ApiModelProperty(value = "设备ID集合")
