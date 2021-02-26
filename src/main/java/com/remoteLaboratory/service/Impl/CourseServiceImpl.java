@@ -103,6 +103,9 @@ public class CourseServiceImpl implements CourseService {
             course.setExperimentStarted(false);
         }
         else if(status.equals(1)) { // 开始课程，将学习记录、实验报告设置为往期课程
+            if(course.getReportScore() == null || course.getPreStudyScore() == null) {
+                throw new BusinessException(Messages.CODE_40010, "请完成课程分数设置再开始课程！");
+            }
             this.courseStudyRecordRepository.updateOldByCourseId(courseId);
             this.testInstanceRepository.updateOldByCourseId(courseId);
         }
