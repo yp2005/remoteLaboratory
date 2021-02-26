@@ -84,13 +84,11 @@ public class TestExerciseTemplate implements Serializable {
     @Column(length = 10)
     @ApiModelProperty(value = "分项模板ID")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotNull
     private Integer testSubsectionTemplateId;
     
     @Column(length = 10)
     @ApiModelProperty(value = "实验报告大题模板ID")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotNull
     private Integer testPartTemplateId;
 
     @Column(length = 10)
