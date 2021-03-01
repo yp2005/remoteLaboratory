@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -14,5 +15,5 @@ public interface CourseCommentRepository extends JpaRepository<CourseComment, In
 
     @Query("update CourseComment set mainPageDisplay = false where courseId = :courseId and mainPageDisplay = true")
     @Modifying
-    void cancelMainPageDisplayByCourseId(Integer courseId);
+    void cancelMainPageDisplayByCourseId(@Param("courseId") Integer courseId);
 }
