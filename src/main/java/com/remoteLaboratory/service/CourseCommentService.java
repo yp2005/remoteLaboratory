@@ -31,6 +31,13 @@ public interface CourseCommentService {
     public CourseComment update(CourseComment courseComment) throws BusinessException;
 
     /**
+     * 设置评论首页显示
+     * @param courseComment
+     * @return
+     */
+    public CourseComment setMainPageDisplay(CourseComment courseComment) throws BusinessException;
+
+    /**
      * 根据条件查询课程评论信息列表
      * @param listInput
      * @return ListOutput

@@ -76,6 +76,14 @@ public class CourseCommentServiceImpl implements CourseCommentService {
     }
 
     @Override
+    public CourseComment setMainPageDisplay(CourseComment courseComment) throws BusinessException {
+        this.courseCommentRepository.cancelMainPageDisplayByCourseId(courseComment.getCourseId());
+        courseComment.setMainPageDisplay(true);
+        courseComment = courseCommentRepository.save(courseComment);
+        return courseComment;
+    }
+
+    @Override
     public void delete(List<Integer> ids, User loginUser) throws BusinessException {
         List<LogRecord> logRecords = new ArrayList<>();
         for (int id : ids) {

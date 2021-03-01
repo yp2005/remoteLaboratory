@@ -1,11 +1,14 @@
 package com.remoteLaboratory.controller;
 
 import com.remoteLaboratory.config.LoginRequired;
+import com.remoteLaboratory.entities.Course;
 import com.remoteLaboratory.entities.CourseComment;
 import com.remoteLaboratory.entities.User;
 import com.remoteLaboratory.repositories.LogRecordRepository;
 import com.remoteLaboratory.service.CourseCommentService;
+import com.remoteLaboratory.service.CourseService;
 import com.remoteLaboratory.utils.CommonResponse;
+import com.remoteLaboratory.utils.Constants;
 import com.remoteLaboratory.utils.LogUtil;
 import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.utils.message.Messages;
@@ -42,6 +45,9 @@ public class CourseCommentController {
     @Autowired
     private LogRecordRepository logRecordRepository;
 
+    @Autowired
+    private CourseService courseService;
+
     @PostMapping(path = "/list")
     @ApiOperation(value = "课程评论列表", notes = "查询课程评论信息列表")
     public CommonResponse list(@RequestBody ListInput listInput,  @ApiIgnore User loginUser) throws BusinessException {
@@ -56,6 +62,7 @@ public class CourseCommentController {
     public CommonResponse add(@Validated({CourseComment.Validation.class}) @RequestBody CourseComment courseComment, @ApiIgnore User loginUser) throws BusinessException {
         courseComment.setUserId(loginUser.getId());
         courseComment.setUserName(StringUtils.isEmpty(loginUser.getPersonName()) ? loginUser.getUserName() : loginUser.getPersonName());
+        courseComment.setMainPageDisplay(false);
         courseComment = courseCommentService.add(courseComment);
         CommonResponse commonResponse = CommonResponse.getInstance(courseComment);
         LogUtil.add(this.logRecordRepository, "添加", "课程评论", loginUser, courseComment.getId(), courseComment.getTitle());
@@ -71,9 +78,25 @@ public class CourseCommentController {
         }
         courseComment.setUserId(loginUser.getId());
         courseComment.setUserName(StringUtils.isEmpty(loginUser.getPersonName()) ? loginUser.getUserName() : loginUser.getPersonName());
+        courseComment.setMainPageDisplay(courseCommentOld.getMainPageDisplay());
         courseComment = courseCommentService.update(courseComment);
         CommonResponse commonResponse = CommonResponse.getInstance(courseComment);
         LogUtil.add(this.logRecordRepository, "修改", "课程评论", loginUser, courseComment.getId(), courseComment.getTitle());
+        return commonResponse;
+    }
+
+    @PostMapping(path = "setMainPageDisplay/{id}")
+    @ApiOperation(value = "设置评论首页显示", notes = "设置评论首页显示接口")
+    @LoginRequired(teacherRequired = "1")
+    public CommonResponse setMainPageDisplay(@NotNull(message = "课程评论编号不能为空") @PathVariable Integer id, @ApiIgnore User loginUser) throws BusinessException {
+        CourseComment courseComment = this.courseCommentService.get(id);
+        Course course = this.courseService.get(courseComment.getCourseId());
+        if(!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
+            throw new BusinessException(Messages.CODE_50200);
+        }
+        courseComment = courseCommentService.setMainPageDisplay(courseComment);
+        CommonResponse commonResponse = CommonResponse.getInstance(courseComment);
+        LogUtil.add(this.logRecordRepository, "设置评论首页显示", "课程评论", loginUser, courseComment.getId(), courseComment.getTitle());
         return commonResponse;
     }
 
