@@ -8,6 +8,7 @@ import com.remoteLaboratory.service.CourseCommentService;
 import com.remoteLaboratory.utils.CommonResponse;
 import com.remoteLaboratory.utils.LogUtil;
 import com.remoteLaboratory.utils.exception.BusinessException;
+import com.remoteLaboratory.utils.message.Messages;
 import com.remoteLaboratory.vo.ListInput;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -64,6 +65,10 @@ public class CourseCommentController {
     @PutMapping
     @ApiOperation(value = "修改课程评论", notes = "修改课程评论信息接口")
     public CommonResponse update(@Validated({CourseComment.Validation.class}) @RequestBody CourseComment courseComment, @ApiIgnore User loginUser) throws BusinessException {
+        CourseComment courseCommentOld = this.courseCommentService.get(courseComment.getId());
+        if(!loginUser.getId().equals(courseCommentOld.getUserId())) { // 只有自己可以修改评论
+            throw new BusinessException(Messages.CODE_50200);
+        }
         courseComment.setUserId(loginUser.getId());
         courseComment.setUserName(StringUtils.isEmpty(loginUser.getPersonName()) ? loginUser.getUserName() : loginUser.getPersonName());
         courseComment = courseCommentService.update(courseComment);

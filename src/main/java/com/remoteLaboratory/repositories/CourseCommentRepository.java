@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CourseCommentRepository extends JpaRepository<CourseComment, Integer>,JpaSpecificationExecutor<CourseComment> {
-
+    CourseComment findByCourseIdAndUserId(Integer courseId, Integer userId);
 }

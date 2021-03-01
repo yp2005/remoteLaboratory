@@ -54,6 +54,10 @@ public class CourseCommentServiceImpl implements CourseCommentService {
 
     @Override
     public CourseComment add(CourseComment courseComment) throws BusinessException {
+        CourseComment cc = this.courseCommentRepository.findByCourseIdAndUserId(courseComment.getCourseId(), courseComment.getUserId());
+        if (cc == null) {
+            throw new BusinessException(Messages.CODE_40010, "您已对该课程进行过评论！");
+        }
         Course course = this.courseService.get(courseComment.getCourseId());
         courseComment = courseCommentRepository.save(courseComment);
         course.setCommentNumber(course.getCommentNumber() + 1);
