@@ -256,12 +256,24 @@ public class UserController {
     }
 
     @PostMapping(path = "/modifyPassword")
+    @ApiOperation(value = "用户修改自己的密码", notes = "用户修改自己的密码接口")
     @LoginRequired
     public CommonResponse modifyPassword(@RequestParam("password") String password, @ApiIgnore User loginUser) throws Exception {
         loginUser = this.userRepository.findOne(loginUser.getId());
         loginUser.setPassword(encoder.encode(password));
         loginUser = this.userService.update(loginUser);
         LogUtil.add(this.logRecordRepository, "修改密码", "用户", loginUser, loginUser.getId(), loginUser.getUserName());
+        return CommonResponse.getInstance();
+    }
+
+    @PostMapping(path = "/adminModifyPassword")
+    @ApiOperation(value = "管理员修改密码", notes = "管理员修改密码接口")
+    @LoginRequired(adminRequired = "1")
+    public CommonResponse adminModifyPassword(@RequestBody User user, @ApiIgnore User loginUser) throws Exception {
+        User oldUser = this.userService.get(user.getId());
+        oldUser.setPassword(encoder.encode(user.getPassword()));
+        oldUser = this.userService.update(oldUser);
+        LogUtil.add(this.logRecordRepository, "修改密码", "用户", loginUser, oldUser.getId(), oldUser.getUserName());
         return CommonResponse.getInstance();
     }
 

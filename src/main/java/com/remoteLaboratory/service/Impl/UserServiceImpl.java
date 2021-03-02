@@ -73,11 +73,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User update(User user) throws BusinessException {
         User oldUser = this.userRepository.findByUserName(user.getUserName());
-        if(oldUser != null && oldUser.getId().equals(user.getId())) {
+        if(oldUser != null && !oldUser.getId().equals(user.getId())) {
             throw new BusinessException(Messages.CODE_40010, "用户名已存在！");
         }
         oldUser = this.userRepository.findByUserKey(user.getUserKey());
-        if(oldUser != null && oldUser.getId().equals(user.getId())) {
+        if(oldUser != null && !oldUser.getId().equals(user.getId())) {
             throw new BusinessException(Messages.CODE_40010, "该学号已注册！");
         }
         user = userRepository.save(user);
