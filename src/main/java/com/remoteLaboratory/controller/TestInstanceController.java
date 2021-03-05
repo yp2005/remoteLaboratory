@@ -134,7 +134,9 @@ public class TestInstanceController {
     public CommonResponse getDetail(@NotNull(message = "实验报告编号不能为空") @PathVariable Integer id, @ApiIgnore User loginUser) throws BusinessException {
         TestInstancePublicVo testInstancePublicVo = testInstanceService.getDetail(id);
         Course course = this.courseService.get(testInstancePublicVo.getCourseId());
-        if (!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
+        if (!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN)
+                && !course.getTeacherId().equals(loginUser.getId())
+                && !testInstancePublicVo.getUserId().equals(loginUser.getId())) {
             throw new BusinessException(Messages.CODE_50200);
         }
         CommonResponse commonResponse = CommonResponse.getInstance(testInstancePublicVo);
