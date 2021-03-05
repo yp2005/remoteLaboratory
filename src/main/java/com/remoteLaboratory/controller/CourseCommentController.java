@@ -34,7 +34,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/courseComment")
 @Api(description = "课程评论")
-@LoginRequired
 public class CourseCommentController {
 
     private static Logger log = LoggerFactory.getLogger(CourseCommentController.class);
@@ -59,6 +58,7 @@ public class CourseCommentController {
 
     @PostMapping
     @ApiOperation(value = "添加课程评论", notes = "添加课程评论信息接口")
+    @LoginRequired
     public CommonResponse add(@Validated({CourseComment.Validation.class}) @RequestBody CourseComment courseComment, @ApiIgnore User loginUser) throws BusinessException {
         courseComment.setUserId(loginUser.getId());
         courseComment.setUserName(StringUtils.isEmpty(loginUser.getPersonName()) ? loginUser.getUserName() : loginUser.getPersonName());
@@ -72,6 +72,7 @@ public class CourseCommentController {
 
     @PutMapping
     @ApiOperation(value = "修改课程评论", notes = "修改课程评论信息接口")
+    @LoginRequired
     public CommonResponse update(@Validated({CourseComment.Validation.class}) @RequestBody CourseComment courseComment, @ApiIgnore User loginUser) throws BusinessException {
         CourseComment courseCommentOld = this.courseCommentService.get(courseComment.getId());
         if(!loginUser.getId().equals(courseCommentOld.getUserId())) { // 只有自己可以修改评论
