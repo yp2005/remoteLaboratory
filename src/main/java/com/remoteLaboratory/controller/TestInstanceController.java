@@ -130,7 +130,6 @@ public class TestInstanceController {
 
     @GetMapping(path = "/getDetail/{id}")
     @ApiOperation(value = "查询实验报告详情", notes = "根据ID查询实验报告详情接口")
-    @LoginRequired(teacherRequired = "1")
     public CommonResponse getDetail(@NotNull(message = "实验报告编号不能为空") @PathVariable Integer id, @ApiIgnore User loginUser) throws BusinessException {
         TestInstancePublicVo testInstancePublicVo = testInstanceService.getDetail(id);
         Course course = this.courseService.get(testInstancePublicVo.getCourseId());
