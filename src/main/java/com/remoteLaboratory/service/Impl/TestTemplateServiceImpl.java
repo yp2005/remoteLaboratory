@@ -92,11 +92,6 @@ public class TestTemplateServiceImpl implements TestTemplateService {
                                     testExerciseTemplate.setTestSubsectionTemplateId(testSubsectionTemplate.getId());
                                     testExerciseTemplate.setTestPartTemplateId(testPartTemplate.getId());
                                     testExerciseTemplate.setType(ExerciseUtil.getType(testExerciseTemplate.getExercisesType()));
-                                    JSONArray options = JSONArray.parseArray(testExerciseTemplate.getOptions());
-                                    for (int i = 0; i < options.size(); i++) {
-                                        options.getJSONObject(i).put("selectNumber", 0);
-                                    }
-                                    testExerciseTemplate.setOptions(options.toJSONString());
                                 }
                                 this.testExerciseTemplateRepository.save(testExerciseTemplateList);
                             }
@@ -127,6 +122,11 @@ public class TestTemplateServiceImpl implements TestTemplateService {
                 for (TestExerciseTemplate testExerciseTemplate : testExerciseTemplateList) {
                     testExerciseTemplate.setTestTemplateId(testTemplate.getId());
                     testExerciseTemplate.setType(1);
+                    JSONArray options = JSONArray.parseArray(testExerciseTemplate.getOptions());
+                    for (int i = 0; i < options.size(); i++) {
+                        options.getJSONObject(i).put("selectNumber", 0);
+                    }
+                    testExerciseTemplate.setOptions(options.toJSONString());
                 }
                 this.testExerciseTemplateRepository.save(testExerciseTemplateList);
             }

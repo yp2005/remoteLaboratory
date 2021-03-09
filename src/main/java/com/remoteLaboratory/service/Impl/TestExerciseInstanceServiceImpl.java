@@ -83,7 +83,9 @@ public class TestExerciseInstanceServiceImpl implements TestExerciseInstanceServ
                 for (int i = 0; i < options.size(); i++) {
                     JSONObject option = options.getJSONObject(i);
                     if(option.getString("order").equals(answer)) {
-                        option.put("selectNumber", option.getInteger("selectNumber") + 1);
+                        Integer selectNumber = option.getInteger("selectNumber");
+                        selectNumber = selectNumber == null ? 0 : selectNumber;
+                        option.put("selectNumber", selectNumber + 1);
                     }
                 }
             }
