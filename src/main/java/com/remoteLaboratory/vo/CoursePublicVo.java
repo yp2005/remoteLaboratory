@@ -42,6 +42,8 @@ public class CoursePublicVo extends Course {
         this.setExperimentStarted(course.getExperimentStarted());
         this.setPreStudyScore(course.getPreStudyScore());
         this.setReportScore(course.getReportScore());
+        this.setIsOuter(course.getIsOuter());
+        this.setOuterUrl(course.getOuterUrl());
     }
 
     public Course voToEntity() {
@@ -67,6 +69,8 @@ public class CoursePublicVo extends Course {
         course.setExperimentStarted(this.getExperimentStarted());
         course.setPreStudyScore(this.getPreStudyScore());
         course.setReportScore(this.getReportScore());
+        course.setIsOuter(this.getIsOuter());
+        course.setOuterUrl(this.getOuterUrl());
         return course;
     }
 
