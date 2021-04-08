@@ -33,8 +33,12 @@ public class CourseComment implements Serializable {
     @Column(length = 255)
     @ApiModelProperty(value = "标题")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotNull
     private String title;
+
+    @Column(length = 10)
+    @ApiModelProperty(value = "评分")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Float score;
 
     @Lob
     @ApiModelProperty(value = "内容")

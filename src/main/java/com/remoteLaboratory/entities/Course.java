@@ -100,6 +100,16 @@ public class Course implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean experimentStarted;
 
+    @Column
+    @ApiModelProperty(value = "是否外部课程")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Boolean isOuter;
+
+    @Column(length = 500)
+    @ApiModelProperty(value = "外部课程连接")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String outerUrl;
+
     @Column(length = 10)
     @ApiModelProperty(value = "已参加学习人数")
     @JsonInclude(JsonInclude.Include.NON_NULL)
