@@ -43,7 +43,7 @@ public class QuestionnaireStatistics implements Serializable {
     @Column(length = 2)
     @ApiModelProperty(value = "选项")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String option;
+    private String optionOrder;
 
     @Column(length = 10)
     @ApiModelProperty(value = "选择人数")

@@ -226,7 +226,7 @@ public class TestTemplateServiceImpl implements TestTemplateService {
                     for (int i = 0; i < options.size(); i++) {
                         JSONObject option = options.getJSONObject(i);
                         String order = option.getString("order");
-                        QuestionnaireStatistics questionnaireStatistics = this.questionnaireStatisticsRepository.findByTestExerciseTemplateIdAndClass1AndOption(tet.getId(), getQuestionnaireInput.getClass1(), order);
+                        QuestionnaireStatistics questionnaireStatistics = this.questionnaireStatisticsRepository.findByTestExerciseTemplateIdAndClass1AndOptionOrder(tet.getId(), getQuestionnaireInput.getClass1(), order);
                         option.put("selectNumber", questionnaireStatistics == null ? 0 : questionnaireStatistics.getSelectNumber());
                     }
                     testExerciseTemplateOutput.setOptions(options.toJSONString());

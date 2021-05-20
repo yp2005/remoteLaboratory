@@ -86,12 +86,12 @@ public class TestExerciseInstanceServiceImpl implements TestExerciseInstanceServ
                         Integer selectNumber = option.getInteger("selectNumber");
                         selectNumber = selectNumber == null ? 0 : selectNumber;
                         option.put("selectNumber", selectNumber + 1);
-                        QuestionnaireStatistics questionnaireStatistics = this.questionnaireStatisticsRepository.findByTestExerciseTemplateIdAndClass1AndOption(testExerciseTemplate.getId(), testInstance.getClass1(), answer);
+                        QuestionnaireStatistics questionnaireStatistics = this.questionnaireStatisticsRepository.findByTestExerciseTemplateIdAndClass1AndOptionOrder(testExerciseTemplate.getId(), testInstance.getClass1(), answer);
                         if(questionnaireStatistics == null) {
                             questionnaireStatistics = new QuestionnaireStatistics();
                             questionnaireStatistics.setTestExerciseTemplateId(testExerciseTemplate.getId());
                             questionnaireStatistics.setClass1(testInstance.getClass1());
-                            questionnaireStatistics.setOption(answer);
+                            questionnaireStatistics.setOptionOrder(answer);
                             questionnaireStatistics.setSelectNumber(0);
                         }
                         questionnaireStatistics.setSelectNumber(questionnaireStatistics.getSelectNumber() + 1);
