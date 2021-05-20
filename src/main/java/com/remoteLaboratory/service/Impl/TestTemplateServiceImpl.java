@@ -213,25 +213,34 @@ public class TestTemplateServiceImpl implements TestTemplateService {
     }
 
     @Override
-    public TestTemplatePublicVo getQuestionnaire(GetQuestionnaireInput getQuestionnaireInput) throws BusinessException {
+    public TestTemplateOutput getQuestionnaire(GetQuestionnaireInput getQuestionnaireInput) throws BusinessException {
         TestTemplate testTemplate = this.testTemplateRepository.findQuestionnaireByCourseId(getQuestionnaireInput.getCourseId());
         if (testTemplate != null) {
-            TestTemplatePublicVo testTemplatePublicVo = new TestTemplatePublicVo(testTemplate);
+            TestTemplateOutput testTemplateOutput = new TestTemplateOutput(testTemplate);
             List<TestExerciseTemplate> testExerciseTemplateList = this.testExerciseTemplateRepository.findByTestTemplateId(testTemplate.getId());
+            List<TestExerciseTemplateOutput> testExerciseTemplateOutputList = new ArrayList<>();
             if(StringUtils.isNotEmpty(getQuestionnaireInput.getClass1())) {
-                for (TestExerciseTemplate testExerciseTemplate : testExerciseTemplateList) {
-                    JSONArray options = JSONArray.parseArray(testExerciseTemplate.getOptions());
+                for (TestExerciseTemplate tet : testExerciseTemplateList) {
+                    TestExerciseTemplateOutput testExerciseTemplateOutput = new TestExerciseTemplateOutput(tet);
+                    JSONArray options = JSONArray.parseArray(tet.getOptions());
                     for (int i = 0; i < options.size(); i++) {
                         JSONObject option = options.getJSONObject(i);
                         String order = option.getString("order");
-                        QuestionnaireStatistics questionnaireStatistics = this.questionnaireStatisticsRepository.findByTestExerciseTemplateIdAndClass1AndOption(testExerciseTemplate.getId(), getQuestionnaireInput.getClass1(), order);
+                        QuestionnaireStatistics questionnaireStatistics = this.questionnaireStatisticsRepository.findByTestExerciseTemplateIdAndClass1AndOption(tet.getId(), getQuestionnaireInput.getClass1(), order);
                         option.put("selectNumber", questionnaireStatistics == null ? 0 : questionnaireStatistics.getSelectNumber());
                     }
-                    testExerciseTemplate.setOptions(options.toJSONString());
+                    testExerciseTemplateOutput.setOptions(options.toJSONString());
+                    testExerciseTemplateOutputList.add(testExerciseTemplateOutput);
                 }
             }
-            testTemplatePublicVo.setTestExerciseTemplateList(testExerciseTemplateList);
-            return testTemplatePublicVo;
+            else {
+                for (TestExerciseTemplate testExerciseTemplate : testExerciseTemplateList) {
+                    TestExerciseTemplateOutput testExerciseTemplateOutput = new TestExerciseTemplateOutput(testExerciseTemplate);
+                    testExerciseTemplateOutputList.add(testExerciseTemplateOutput);
+                }
+            }
+            testTemplateOutput.setTestExerciseTemplateList(testExerciseTemplateOutputList);
+            return testTemplateOutput;
         } else {
             return null;
         }

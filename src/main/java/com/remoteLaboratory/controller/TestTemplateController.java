@@ -59,7 +59,7 @@ public class TestTemplateController {
         return commonResponse;
     }
 
-    @GetMapping(path = "/getQuestionnaire")
+    @PostMapping(path = "/getQuestionnaire")
     @ApiOperation(value = "查询课程问卷调查", notes = "查询课程问卷调查接口")
     public CommonResponse getQuestionnaireByCourseId(@RequestBody GetQuestionnaireInput getQuestionnaireInput, @ApiIgnore User loginUser) throws BusinessException {
         CommonResponse commonResponse = CommonResponse.getInstance();
