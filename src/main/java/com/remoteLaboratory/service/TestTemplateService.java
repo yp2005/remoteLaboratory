@@ -4,6 +4,7 @@ package com.remoteLaboratory.service;
 import com.remoteLaboratory.entities.TestTemplate;
 import com.remoteLaboratory.entities.User;
 import com.remoteLaboratory.utils.exception.BusinessException;
+import com.remoteLaboratory.vo.GetQuestionnaireInput;
 import com.remoteLaboratory.vo.ListInput;
 import com.remoteLaboratory.vo.ListOutput;
 import com.remoteLaboratory.vo.TestTemplatePublicVo;
@@ -54,10 +55,10 @@ public interface TestTemplateService {
 
     /**
      * 查询课程问卷调查
-     * @param courseId
+     * @param getQuestionnaireInput
      * @return TestTemplatePublicVo
      */
-    public TestTemplatePublicVo getQuestionnaireByCourseId(Integer courseId) throws BusinessException;
+    public TestTemplatePublicVo getQuestionnaire(GetQuestionnaireInput getQuestionnaireInput) throws BusinessException;
 
     /**
      * 修改实验报告模板信息

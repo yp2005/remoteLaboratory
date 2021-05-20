@@ -12,6 +12,7 @@ import com.remoteLaboratory.utils.Constants;
 import com.remoteLaboratory.utils.LogUtil;
 import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.utils.message.Messages;
+import com.remoteLaboratory.vo.GetQuestionnaireInput;
 import com.remoteLaboratory.vo.ListInput;
 import com.remoteLaboratory.vo.TestTemplatePublicVo;
 import io.swagger.annotations.Api;
@@ -58,11 +59,11 @@ public class TestTemplateController {
         return commonResponse;
     }
 
-    @GetMapping(path = "/getQuestionnaireByCourseId/{courseId}")
+    @GetMapping(path = "/getQuestionnaire")
     @ApiOperation(value = "查询课程问卷调查", notes = "查询课程问卷调查接口")
-    public CommonResponse getQuestionnaireByCourseId(@PathVariable Integer courseId,  @ApiIgnore User loginUser) throws BusinessException {
+    public CommonResponse getQuestionnaireByCourseId(@RequestBody GetQuestionnaireInput getQuestionnaireInput, @ApiIgnore User loginUser) throws BusinessException {
         CommonResponse commonResponse = CommonResponse.getInstance();
-        TestTemplate testTemplate = testTemplateService.getQuestionnaireByCourseId(courseId);
+        TestTemplate testTemplate = testTemplateService.getQuestionnaire(getQuestionnaireInput);
         commonResponse.setResult(testTemplate);
         LogUtil.add(this.logRecordRepository, "查询课程问卷调查", "实验报告模板", loginUser, testTemplate.getId(), testTemplate.getName());
         return commonResponse;

@@ -175,34 +175,52 @@ public class UserServiceImpl implements UserService {
             if (row == null) {
                 continue;
             }
-            String userKey = this.getCellValue(row.getCell(0));
-            String userName = this.getCellValue(row.getCell(1));
-            if(userKey == null || userName == null) {
-                throw new BusinessException(Messages.CODE_40010, "学号和用户名不能为空！");
+            String userKey = this.getCellValue(row.getCell(0)).trim();
+            String userName = this.getCellValue(row.getCell(1)).trim();
+            if((StringUtils.isEmpty(userKey))) {
+                throw new BusinessException(Messages.CODE_40010, "学号不能为空！");
+            }
+            if(StringUtils.isEmpty(userName)) {
+                userName = userKey;
             }
             User oldUser = this.userRepository.findByUserKey(userKey);
             if(oldUser != null) {
                 throw new BusinessException(Messages.CODE_40010, "该学号已注册：" + userKey);
             }
-            String password = this.getCellValue(row.getCell(2));
-            if (password == null) {
-                password = "123456";
+            String password = this.getCellValue(row.getCell(2)).trim();
+            if (StringUtils.isEmpty(password)) {
+                password = userKey;
             }
             try {
-                password = encoder.encode(EncodeUtils.encodeSHA("123456".getBytes()));
+                password = encoder.encode(EncodeUtils.encodeSHA(password.getBytes()));
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new BusinessException(Messages.CODE_50000);
             }
-            String personName = this.getCellValue(row.getCell(3));
-            String sex = this.getCellValue(row.getCell(4));
-            String minzu = this.getCellValue(row.getCell(5));
-            String nativePlace = this.getCellValue(row.getCell(6));
-            String telphone = this.getCellValue(row.getCell(7));
-            String college = this.getCellValue(row.getCell(8));
-            String major = this.getCellValue(row.getCell(9));
-            String grade = this.getCellValue(row.getCell(10));
-            String class1 = this.getCellValue(row.getCell(11));
+            String personName = this.getCellValue(row.getCell(3)).trim();
+            if(StringUtils.isEmpty(personName)) {
+                throw new BusinessException(Messages.CODE_40010, "姓名不能为空！");
+            }
+            String sex = this.getCellValue(row.getCell(4)).trim();
+            String minzu = this.getCellValue(row.getCell(5)).trim();
+            String nativePlace = this.getCellValue(row.getCell(6)).trim();
+            String telphone = this.getCellValue(row.getCell(7)).trim();
+            String college = this.getCellValue(row.getCell(8)).trim();
+            if(StringUtils.isEmpty(college)) {
+                throw new BusinessException(Messages.CODE_40010, "学院不能为空！");
+            }
+            String major = this.getCellValue(row.getCell(9)).trim();
+            if(StringUtils.isEmpty(major)) {
+                throw new BusinessException(Messages.CODE_40010, "专业不能为空！");
+            }
+            String grade = this.getCellValue(row.getCell(10)).trim();
+            if(StringUtils.isEmpty(grade)) {
+                throw new BusinessException(Messages.CODE_40010, "年级不能为空！");
+            }
+            String class1 = this.getCellValue(row.getCell(11)).trim();
+            if(StringUtils.isEmpty(class1)) {
+                throw new BusinessException(Messages.CODE_40010, "班级不能为空！");
+            }
 
             User user = new User();
             user.setUserKey(userKey);

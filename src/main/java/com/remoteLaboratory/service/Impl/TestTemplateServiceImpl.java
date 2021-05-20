@@ -67,6 +67,9 @@ public class TestTemplateServiceImpl implements TestTemplateService {
     @Autowired
     private TestRecordRepository testRecordRepository;
 
+    @Autowired
+    private QuestionnaireStatisticsRepository questionnaireStatisticsRepository;
+
     @Override
     public TestTemplate add(TestTemplatePublicVo testTemplatePublicVo) throws BusinessException {
         TestTemplate testTemplate = testTemplatePublicVo.voToEntity();
@@ -210,11 +213,24 @@ public class TestTemplateServiceImpl implements TestTemplateService {
     }
 
     @Override
-    public TestTemplatePublicVo getQuestionnaireByCourseId(Integer courseId) throws BusinessException {
-        TestTemplate testTemplate = this.testTemplateRepository.findQuestionnaireByCourseId(courseId);
+    public TestTemplatePublicVo getQuestionnaire(GetQuestionnaireInput getQuestionnaireInput) throws BusinessException {
+        TestTemplate testTemplate = this.testTemplateRepository.findQuestionnaireByCourseId(getQuestionnaireInput.getCourseId());
         if (testTemplate != null) {
             TestTemplatePublicVo testTemplatePublicVo = new TestTemplatePublicVo(testTemplate);
-            testTemplatePublicVo.setTestExerciseTemplateList(this.testExerciseTemplateRepository.findByTestTemplateId(testTemplate.getId()));
+            List<TestExerciseTemplate> testExerciseTemplateList = this.testExerciseTemplateRepository.findByTestTemplateId(testTemplate.getId());
+            if(StringUtils.isNotEmpty(getQuestionnaireInput.getClass1())) {
+                for (TestExerciseTemplate testExerciseTemplate : testExerciseTemplateList) {
+                    JSONArray options = JSONArray.parseArray(testExerciseTemplate.getOptions());
+                    for (int i = 0; i < options.size(); i++) {
+                        JSONObject option = options.getJSONObject(i);
+                        String order = option.getString("order");
+                        QuestionnaireStatistics questionnaireStatistics = this.questionnaireStatisticsRepository.findByTestExerciseTemplateIdAndClass1AndOption(testExerciseTemplate.getId(), getQuestionnaireInput.getClass1(), order);
+                        option.put("selectNumber", questionnaireStatistics == null ? 0 : questionnaireStatistics.getSelectNumber());
+                    }
+                    testExerciseTemplate.setOptions(options.toJSONString());
+                }
+            }
+            testTemplatePublicVo.setTestExerciseTemplateList(testExerciseTemplateList);
             return testTemplatePublicVo;
         } else {
             return null;
