@@ -31,7 +31,7 @@ public class Exercise implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(length = 5000)
+    @Lob
     @ApiModelProperty(value = "内容")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotNull

@@ -44,7 +44,7 @@ public class TestExerciseInstance implements Serializable {
     @NotNull
     private Integer testExerciseTemplateId;
 
-    @Column(length = 5000)
+    @Lob
     @ApiModelProperty(value = "习题内容")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotNull

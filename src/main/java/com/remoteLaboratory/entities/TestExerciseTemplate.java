@@ -42,7 +42,7 @@ public class TestExerciseTemplate implements Serializable {
     @NotNull
     private Integer exerciseId;
 
-    @Column(length = 5000)
+    @Lob
     @ApiModelProperty(value = "习题内容")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotNull
