@@ -219,15 +219,29 @@ public class TestTemplateServiceImpl implements TestTemplateService {
             TestTemplateOutput testTemplateOutput = new TestTemplateOutput(testTemplate);
             List<TestExerciseTemplate> testExerciseTemplateList = this.testExerciseTemplateRepository.findByTestTemplateId(testTemplate.getId());
             List<TestExerciseTemplateOutput> testExerciseTemplateOutputList = new ArrayList<>();
-            if(StringUtils.isNotEmpty(getQuestionnaireInput.getClass1())) {
+            if(StringUtils.isNotEmpty(getQuestionnaireInput.getClass1())) { // 按班级统计
                 for (TestExerciseTemplate tet : testExerciseTemplateList) {
                     TestExerciseTemplateOutput testExerciseTemplateOutput = new TestExerciseTemplateOutput(tet);
                     JSONArray options = JSONArray.parseArray(tet.getOptions());
                     for (int i = 0; i < options.size(); i++) {
                         JSONObject option = options.getJSONObject(i);
                         String order = option.getString("order");
-                        QuestionnaireStatistics questionnaireStatistics = this.questionnaireStatisticsRepository.findByTestExerciseTemplateIdAndClass1AndOptionOrder(tet.getId(), getQuestionnaireInput.getClass1(), order);
-                        option.put("selectNumber", questionnaireStatistics == null ? 0 : questionnaireStatistics.getSelectNumber());
+                        Integer selectNumber = this.questionnaireStatisticsRepository.findSelectNumberByTestExerciseTemplateIdAndClass1AndOptionOrder(tet.getId(), getQuestionnaireInput.getClass1(), order);
+                        option.put("selectNumber", selectNumber == null ? 0 : selectNumber);
+                    }
+                    testExerciseTemplateOutput.setOptions(options.toJSONString());
+                    testExerciseTemplateOutputList.add(testExerciseTemplateOutput);
+                }
+            }
+            else if(StringUtils.isNotEmpty(getQuestionnaireInput.getGrade())) { // 按年级统计
+                for (TestExerciseTemplate tet : testExerciseTemplateList) {
+                    TestExerciseTemplateOutput testExerciseTemplateOutput = new TestExerciseTemplateOutput(tet);
+                    JSONArray options = JSONArray.parseArray(tet.getOptions());
+                    for (int i = 0; i < options.size(); i++) {
+                        JSONObject option = options.getJSONObject(i);
+                        String order = option.getString("order");
+                        Integer selectNumber = this.questionnaireStatisticsRepository.findSelectNumberByTestExerciseTemplateIdAndGradeAndOptionOrder(tet.getId(), getQuestionnaireInput.getGrade(), order);
+                        option.put("selectNumber", selectNumber == null ? 0 : selectNumber);
                     }
                     testExerciseTemplateOutput.setOptions(options.toJSONString());
                     testExerciseTemplateOutputList.add(testExerciseTemplateOutput);

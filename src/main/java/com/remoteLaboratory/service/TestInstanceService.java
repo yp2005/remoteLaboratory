@@ -2,6 +2,7 @@ package com.remoteLaboratory.service;
 
 
 import com.remoteLaboratory.entities.TestInstance;
+import com.remoteLaboratory.entities.TestSubsectionInstance;
 import com.remoteLaboratory.entities.User;
 import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.vo.ListInput;
@@ -82,4 +83,11 @@ public interface TestInstanceService {
      * @return TestInstancePublicVo
      */
     public TestInstancePublicVo submit(Integer id, Integer status, User user) throws BusinessException;
+
+    /**
+     * 分项打分
+     * @param testSubsectionInstance
+     * @return TestSubsectionInstance
+     */
+    public TestSubsectionInstance grade(TestSubsectionInstance testSubsectionInstance) throws BusinessException;
 }

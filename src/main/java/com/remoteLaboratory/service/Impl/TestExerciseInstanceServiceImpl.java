@@ -68,7 +68,7 @@ public class TestExerciseInstanceServiceImpl implements TestExerciseInstanceServ
     }
 
     @Override
-    public TestExerciseInstance answer(TestExerciseInstance testExerciseInstance) throws BusinessException {
+    public TestExerciseInstance answer(TestExerciseInstance testExerciseInstance, User loginUser) throws BusinessException {
         testExerciseInstance = testExerciseInstanceRepository.save(testExerciseInstance);
         TestInstance testInstance = this.testInstanceRepository.findOne(testExerciseInstance.getTestInstanceId());
         testInstance.setTestExerciseInstanceId(testExerciseInstance.getTestInstanceId());
@@ -91,6 +91,7 @@ public class TestExerciseInstanceServiceImpl implements TestExerciseInstanceServ
                             questionnaireStatistics = new QuestionnaireStatistics();
                             questionnaireStatistics.setTestExerciseTemplateId(testExerciseTemplate.getId());
                             questionnaireStatistics.setClass1(testInstance.getClass1());
+                            questionnaireStatistics.setGrade(loginUser.getGrade());
                             questionnaireStatistics.setOptionOrder(answer);
                             questionnaireStatistics.setSelectNumber(0);
                         }

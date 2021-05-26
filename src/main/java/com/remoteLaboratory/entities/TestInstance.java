@@ -86,6 +86,11 @@ public class TestInstance implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String userName;
 
+    @Column(length = 255)
+    @ApiModelProperty(value = "学号")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String userKey;
+
     @Column(length = 10)
     @ApiModelProperty(value = "当前答题位置-小题ID")
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -107,6 +112,16 @@ public class TestInstance implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotNull
     private Boolean isOld;
+
+    @ApiModelProperty(value = "交卷时间")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date submitTime;
+
+    @ApiModelProperty(value = "阅卷时间")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date finishTime;
 
     @Column(updatable = false)
     @ApiModelProperty(value = "创建时间", hidden = true)

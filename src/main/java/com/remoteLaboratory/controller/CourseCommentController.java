@@ -64,6 +64,16 @@ public class CourseCommentController {
         courseComment.setUserName(StringUtils.isEmpty(loginUser.getPersonName()) ? loginUser.getUserName() : loginUser.getPersonName());
         courseComment.setMainPageDisplay(false);
         courseComment.setUserImage(loginUser.getUserImage());
+        courseComment.setUserKey(loginUser.getUserKey());
+        StringBuilder class1 = new StringBuilder();
+        class1.append(loginUser.getCollege())
+                .append("->")
+                .append(loginUser.getMajor())
+                .append("->")
+                .append(loginUser.getGrade())
+                .append("->")
+                .append(loginUser.getClass1());
+        courseComment.setClass1(class1.toString());
         courseComment = courseCommentService.add(courseComment);
         CommonResponse commonResponse = CommonResponse.getInstance(courseComment);
         LogUtil.add(this.logRecordRepository, "添加", "课程评论", loginUser, courseComment.getId(), courseComment.getTitle());

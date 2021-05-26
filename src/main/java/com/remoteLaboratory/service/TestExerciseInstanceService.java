@@ -33,9 +33,10 @@ public interface TestExerciseInstanceService {
     /**
      * 答题
      * @param testExerciseInstance
+     * @param loginUser
      * @return
      */
-    public TestExerciseInstance answer(TestExerciseInstance testExerciseInstance) throws BusinessException;
+    public TestExerciseInstance answer(TestExerciseInstance testExerciseInstance, User loginUser) throws BusinessException;
 
     /**
      * 根据条件查询实验报告小题实例信息列表

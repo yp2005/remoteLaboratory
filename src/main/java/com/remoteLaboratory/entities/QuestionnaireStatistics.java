@@ -40,6 +40,11 @@ public class QuestionnaireStatistics implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String class1;
 
+    @Column(length = 500)
+    @ApiModelProperty(value = "年级")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String grade;
+
     @Column(length = 2)
     @ApiModelProperty(value = "选项")
     @JsonInclude(JsonInclude.Include.NON_NULL)

@@ -9,19 +9,24 @@ import com.remoteLaboratory.utils.CommonResponse;
 import com.remoteLaboratory.utils.Constants;
 import com.remoteLaboratory.utils.ExerciseUtil;
 import com.remoteLaboratory.utils.LogUtil;
+import com.remoteLaboratory.utils.date.DateTimeUtil;
 import com.remoteLaboratory.utils.exception.BusinessException;
 import com.remoteLaboratory.utils.message.Messages;
 import com.remoteLaboratory.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.poi.hssf.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,6 +89,136 @@ public class TestInstanceController {
         commonResponse.setResult(testInstanceService.listByCourseId(listInput, courseId));
         LogUtil.add(this.logRecordRepository, "列表查询", "实验报告", loginUser, course.getId(), course.getName());
         return commonResponse;
+    }
+
+    @PostMapping(path = "/exportByCourseId/{courseId}")
+    @ApiOperation(value = "导出实验报告", notes = "导出实验报告")
+    public void exportByCourseId(@RequestBody ListInput listInput, @NotNull(message = "课程Id不能为空") @PathVariable Integer courseId, @ApiIgnore User loginUser, HttpServletResponse response) throws BusinessException {
+        Course course = this.courseService.get(courseId);
+        if (!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN) && !course.getTeacherId().equals(loginUser.getId())) {
+            throw new BusinessException(Messages.CODE_50200);
+        }
+        ListOutput listOutput = testInstanceService.listByCourseId(listInput, courseId);
+        if(CollectionUtils.isNotEmpty(listOutput.getList())) {
+            //创建工作簿
+            HSSFWorkbook wb = new HSSFWorkbook();
+
+            //创建字体样式
+            HSSFFont cellFont = wb.createFont();
+            cellFont.setFontName("宋体");//使用宋体
+            cellFont.setFontHeightInPoints((short) 12);//字体大小
+            //创建单元格样式style
+            HSSFCellStyle cellStyle = wb.createCellStyle();
+            cellStyle.setFont(cellFont);//将字体注入
+            cellStyle.setWrapText(true);//自动换行
+            cellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);// 左右居中
+            cellStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);// 上下居中
+            cellStyle.setBorderTop((short) 1);//设置边框大小
+            cellStyle.setBorderBottom((short) 1);
+            cellStyle.setBorderLeft((short) 1);
+            cellStyle.setBorderRight((short) 1);
+
+            //创建表头字体样式
+            HSSFFont headFont = wb.createFont();
+            headFont.setFontName("宋体");//使用宋体
+            headFont.setFontHeightInPoints((short) 14);//字体大小
+            headFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);//加粗
+            //创建表头样式style
+            HSSFCellStyle headStyle = wb.createCellStyle();
+            headStyle.setFont(headFont);//将字体注入
+            headStyle.setWrapText(true);//自动换行
+            headStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);// 左右居中
+            headStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);// 上下居中
+            headStyle.setBorderTop((short) 1);//设置边框大小
+            headStyle.setBorderBottom((short) 1);
+            headStyle.setBorderLeft((short) 1);
+            headStyle.setBorderRight((short) 1);
+
+            HSSFSheet wbSheet = wb.createSheet("学生成绩");
+            // 设置默认列宽
+            wbSheet.setDefaultColumnWidth(20);
+            HSSFCell cell;
+            HSSFRow row;
+
+            row = wbSheet.createRow(0);
+
+            cell = row.createCell(0);
+            cell.setCellStyle(headStyle);
+            cell.setCellValue("课程");
+
+            cell = row.createCell(1);
+            cell.setCellStyle(headStyle);
+            cell.setCellValue("实验报告");
+
+            cell = row.createCell(2);
+            cell.setCellStyle(headStyle);
+            cell.setCellValue("班级");
+
+            cell = row.createCell(3);
+            cell.setCellStyle(headStyle);
+            cell.setCellValue("姓名");
+
+            cell = row.createCell(4);
+            cell.setCellStyle(headStyle);
+            cell.setCellValue("学号");
+
+            cell = row.createCell(5);
+            cell.setCellStyle(headStyle);
+            cell.setCellValue("交卷时间");
+
+            cell = row.createCell(6);
+            cell.setCellStyle(headStyle);
+            cell.setCellValue("成绩");
+
+            for (int i = 0; i < listOutput.getList().size(); i++) {
+                TestInstance testInstance = (TestInstance) listOutput.getList().get(i);
+                row = wbSheet.createRow(i + 1);
+
+                cell = row.createCell(0);
+                cell.setCellStyle(cellStyle);
+                cell.setCellValue(course.getName());
+
+                cell = row.createCell(1);
+                cell.setCellStyle(cellStyle);
+                cell.setCellValue(testInstance.getName());
+
+                cell = row.createCell(2);
+                cell.setCellStyle(cellStyle);
+                cell.setCellValue(testInstance.getClass1());
+
+                cell = row.createCell(3);
+                cell.setCellStyle(cellStyle);
+                cell.setCellValue(testInstance.getUserName());
+
+                cell = row.createCell(4);
+                cell.setCellStyle(cellStyle);
+                cell.setCellValue(testInstance.getUserKey());
+
+                cell = row.createCell(5);
+                cell.setCellStyle(cellStyle);
+                cell.setCellValue(DateTimeUtil.formatDate(testInstance.getSubmitTime()));
+
+                cell = row.createCell(6);
+                cell.setCellStyle(cellStyle);
+                cell.setCellValue(testInstance.getScored());
+            }
+
+            response.setContentType("application/vnd.ms-excel");
+            response.setHeader("Access-Control-Expose-Headers", "Content-disposition");
+            response.setHeader("Content-Disposition", "attachment;Filename=" + System.currentTimeMillis() + ".xls");
+            try {
+                OutputStream outputStream = response.getOutputStream();
+                wb.write(outputStream);
+                outputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new BusinessException(Messages.CODE_50000);
+            }
+        }
+        else {
+            throw new BusinessException(Messages.CODE_20001);
+        }
+        LogUtil.add(this.logRecordRepository, "导出实验报告", "实验报告", loginUser, course.getId(), course.getName());
     }
 
     @PostMapping(path = "/startTest/{testTemplateId}")
@@ -156,7 +291,7 @@ public class TestInstanceController {
         }
         testExerciseInstance.setAnswer(answerInput.getAnswer());
         CommonResponse commonResponse = CommonResponse.getInstance();
-        commonResponse.setResult(new TestExerciseInstanceOutput(testExerciseInstanceService.answer(testExerciseInstance)));
+        commonResponse.setResult(new TestExerciseInstanceOutput(testExerciseInstanceService.answer(testExerciseInstance, loginUser)));
         LogUtil.add(this.logRecordRepository, "答题", "实验报告小题实例", loginUser, testExerciseInstance.getId(), ExerciseUtil.getTypeName(testExerciseInstance.getExercisesType()));
         return commonResponse;
     }
@@ -195,7 +330,14 @@ public class TestInstanceController {
             LogUtil.add(this.logRecordRepository, "打分", "实验报告小题实例", loginUser, testExerciseInstance.getId(), ExerciseUtil.getTypeName(testExerciseInstance.getExercisesType()));
         }
         else {
-            commonResponse.setResult(testSubsectionInstanceRepository.save(testSubsectionInstance));
+
+            if(testInstance.getStatus().equals(2)) { // 已阅卷重新结算分数
+                testSubsectionInstance = this.testInstanceService.grade(testSubsectionInstance);
+            }
+            else {
+                testSubsectionInstance = testSubsectionInstanceRepository.save(testSubsectionInstance);
+            }
+            commonResponse.setResult(testSubsectionInstance);
             LogUtil.add(this.logRecordRepository, "打分", "实验报告分项实例", loginUser, testSubsectionInstance.getId(), testSubsectionInstance.getName());
         }
         return commonResponse;

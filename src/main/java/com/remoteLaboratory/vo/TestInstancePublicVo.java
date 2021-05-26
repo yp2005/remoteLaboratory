@@ -92,6 +92,8 @@ public class TestInstancePublicVo extends TestInstance {
         this.setStatus(testInstance.getStatus());
         this.setIsOld(testInstance.getIsOld());
         this.setTestTemplateId(testInstance.getTestTemplateId());
+        this.setSubmitTime(testInstance.getSubmitTime());
+        this.setUserKey(testInstance.getUserKey());
     }
 
     public TestInstance voToEntity() {
@@ -115,6 +117,8 @@ public class TestInstancePublicVo extends TestInstance {
         testInstance.setStatus(this.getStatus());
         testInstance.setIsOld(this.getIsOld());
         testInstance.setTestTemplateId(this.getTestTemplateId());
+        testInstance.setSubmitTime(this.getSubmitTime());
+        testInstance.setUserKey(this.getUserKey());
         return testInstance;
     }
 

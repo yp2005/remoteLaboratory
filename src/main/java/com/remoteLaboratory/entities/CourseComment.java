@@ -73,6 +73,16 @@ public class CourseComment implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String userImage;
 
+    @Column(length = 255)
+    @ApiModelProperty(value = "班级")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String class1;
+
+    @Column(length = 255)
+    @ApiModelProperty(value = "学号")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String userKey;
+
     @Column
     @ApiModelProperty(value = "是否首页显示")
     @JsonInclude(JsonInclude.Include.NON_NULL)

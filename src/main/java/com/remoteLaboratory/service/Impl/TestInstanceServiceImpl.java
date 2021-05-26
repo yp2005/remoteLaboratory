@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -202,6 +203,7 @@ public class TestInstanceServiceImpl implements TestInstanceService {
             TestInstancePublicVo testInstancePublicVo = new TestInstancePublicVo(testTemplatePublicVo);
             testInstancePublicVo.setUserId(user.getId());
             testInstancePublicVo.setUserName(StringUtils.isEmpty(user.getPersonName()) ? user.getUserName() : user.getPersonName());
+            testInstancePublicVo.setUserKey(user.getUserKey());
             StringBuilder class1 = new StringBuilder();
             class1.append(user.getCollege())
                     .append("->")
@@ -324,14 +326,19 @@ public class TestInstanceServiceImpl implements TestInstanceService {
         }
         CourseStudyRecord courseStudyRecord = this.courseStudyRecordRepository.findByCourseIdAndUserId(testInstancePublicVo.getCourseId(), user.getId());
         if (testInstancePublicVo.getTestType().equals(1)) { // 实验报告
+            if (status.equals(1)) { // 交卷
+                testInstancePublicVo.setSubmitTime(new Date());
+            } else if (status.equals(2)) { // 阅卷
+                testInstancePublicVo.setFinishTime(new Date());
+            }
             testInstancePublicVo = this.calculateScore(testInstancePublicVo);
             testInstancePublicVo = this.update(testInstancePublicVo);
             TestRecord testRecord = this.testRecordRepository.findByTestTemplateIdAndUserId(testInstancePublicVo.getTestTemplateId(), testInstancePublicVo.getUserId());
             testRecord.setStatus(status);
             this.testRecordRepository.save(testRecord);
-            if (status.equals(1)) {
+            if (status.equals(1)) { // 交卷
                 courseStudyRecord.setTestTemplateSubmitedNumber(courseStudyRecord.getTestTemplateSubmitedNumber() + 1);
-            } else if (status.equals(2)) {
+            } else if (status.equals(2)) { // 阅卷
                 courseStudyRecord.setTestTemplateFinishedNumber(courseStudyRecord.getTestTemplateFinishedNumber() + 1);
             }
             this.courseStudyRecordService.updatePercent(courseStudyRecord);
@@ -387,4 +394,14 @@ public class TestInstanceServiceImpl implements TestInstanceService {
         return testInstancePublicVo;
     }
 
+    @Override
+    public TestSubsectionInstance grade(TestSubsectionInstance testSubsectionInstance) throws BusinessException {
+        testSubsectionInstance = testSubsectionInstanceRepository.save(testSubsectionInstance);
+        TestInstancePublicVo testInstancePublicVo = this.getDetail(testSubsectionInstance.getTestInstanceId());
+        testInstancePublicVo = this.calculateScore(testInstancePublicVo);
+        testInstancePublicVo = this.update(testInstancePublicVo);
+        CourseStudyRecord courseStudyRecord = this.courseStudyRecordRepository.findByCourseIdAndUserId(testInstancePublicVo.getCourseId(), testInstancePublicVo.getUserId());
+        this.courseStudyRecordService.updatePercent(courseStudyRecord);
+        return testSubsectionInstance;
+    }
 }
