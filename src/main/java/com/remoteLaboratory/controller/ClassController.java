@@ -44,4 +44,16 @@ public class ClassController {
         }
         return CommonResponse.getInstance(courseStudyRecordService.getClassByCourseId(getClassByCourseIdInput));
     }
+
+    @PostMapping(path = "/getGradeByCourseId")
+    @ApiOperation(value = "根据courseId获取学习课程的年级", notes = "根据courseId获取学习课程的年级接口")
+    @LoginRequired(teacherRequired = "1")
+    public CommonResponse getGradeByCourseId(@RequestBody GetClassByCourseIdInput getClassByCourseIdInput, @ApiIgnore User loginUser) throws BusinessException {
+        Course course = this.courseService.get(getClassByCourseIdInput.getCourseId());
+        if(!loginUser.getUserType().equals(Constants.USER_TYPE_ADMIN)
+                && !course.getTeacherId().equals(loginUser.getId())) {
+            throw new BusinessException(Messages.CODE_50200);
+        }
+        return CommonResponse.getInstance(courseStudyRecordService.getClassByCourseId(getClassByCourseIdInput));
+    }
 }

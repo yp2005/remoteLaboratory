@@ -1,9 +1,7 @@
 package com.remoteLaboratory.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.remoteLaboratory.entities.ChapterStudyRecord;
 import com.remoteLaboratory.entities.CourseStudyRecord;
-import com.remoteLaboratory.entities.SectionStudyRecord;
 import com.remoteLaboratory.entities.TestRecord;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -62,6 +60,7 @@ public class CourseStudyRecordPublicVo extends CourseStudyRecord {
         this.setGraded(courseStudyRecord.getGraded());
         this.setIsOld(courseStudyRecord.getIsOld());
         this.setClass1(courseStudyRecord.getClass1());
+        this.setGraded(courseStudyRecord.getGraded());
     }
 
     public CourseStudyRecord voToEntity() {
@@ -100,6 +99,7 @@ public class CourseStudyRecordPublicVo extends CourseStudyRecord {
         courseStudyRecord.setGraded(this.getGraded());
         courseStudyRecord.setIsOld(this.getIsOld());
         courseStudyRecord.setClass1(this.getClass1());
+        courseStudyRecord.setGraded(this.getGraded());
         return courseStudyRecord;
     }
 

@@ -36,7 +36,13 @@ public interface CourseStudyRecordRepository extends JpaRepository<CourseStudyRe
     @Query("select distinct class1 from CourseStudyRecord where courseId = :courseId")
     List<String> findClassByCourseId(@Param("courseId") Integer courseId);
 
+    @Query("select distinct grade from CourseStudyRecord where courseId = :courseId")
+    List<String> findGradeByCourseId(@Param("courseId") Integer courseId);
+
     @Query("select distinct class1 from CourseStudyRecord where courseId = :courseId and isOld = :isOld")
     List<String> findClassByCourseIdAndIsOld(@Param("courseId") Integer courseId, @Param("isOld") Boolean isOld);
+
+    @Query("select distinct grade from CourseStudyRecord where courseId = :courseId and isOld = :isOld")
+    List<String> findGradeByCourseIdAndIsOld(@Param("courseId") Integer courseId, @Param("isOld") Boolean isOld);
 
 }

@@ -121,6 +121,7 @@ public class CourseStudyRecordServiceImpl implements CourseStudyRecordService {
                     .append("->")
                     .append(user.getClass1());
             courseStudyRecord.setClass1(class1.toString());
+            courseStudyRecord.setGrade(user.getGrade());
             // 查询课程的问卷调查
             TestTemplate questionnaire = this.testTemplateRepository.findQuestionnaireByCourseId(courseId);
             // 查询课程的实验报告
@@ -504,6 +505,23 @@ public class CourseStudyRecordServiceImpl implements CourseStudyRecordService {
                 break;
             case 2:
                 result = this.courseStudyRecordRepository.findClassByCourseIdAndIsOld(getClassByCourseIdInput.getCourseId(), true);
+                break;
+        }
+        return result;
+    }
+
+    @Override
+    public List<String> getGradeByCourseId(GetClassByCourseIdInput getClassByCourseIdInput) throws BusinessException {
+        List<String> result = null;
+        switch (getClassByCourseIdInput.getType()) {
+            case 0:
+                result = this.courseStudyRecordRepository.findGradeByCourseId(getClassByCourseIdInput.getCourseId());
+                break;
+            case 1:
+                result = this.courseStudyRecordRepository.findGradeByCourseIdAndIsOld(getClassByCourseIdInput.getCourseId(), false);
+                break;
+            case 2:
+                result = this.courseStudyRecordRepository.findGradeByCourseIdAndIsOld(getClassByCourseIdInput.getCourseId(), true);
                 break;
         }
         return result;

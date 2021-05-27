@@ -118,4 +118,10 @@ public interface CourseStudyRecordService {
      */
     public List<String> getClassByCourseId(GetClassByCourseIdInput getClassByCourseIdInput) throws BusinessException;
 
+    /**
+     * 根据courseId获取学习课程的年级
+     * @param getClassByCourseIdInput
+     * @return List<String>
+     */
+    public List<String> getGradeByCourseId(GetClassByCourseIdInput getClassByCourseIdInput) throws BusinessException;
 }
