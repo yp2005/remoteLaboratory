@@ -20,7 +20,7 @@ public class TestExerciseTemplateOutput extends TestExerciseTemplate {
         this.setExerciseContent(testExerciseTemplate.getExerciseContent());
         this.setExerciseId(testExerciseTemplate.getExerciseId());
         this.setExercisesType(testExerciseTemplate.getExercisesType());
-        this.setOptions(testExerciseTemplate.getRandomOrderOptions());
+        this.setOptions(testExerciseTemplate.getOptions());
         this.setScore(testExerciseTemplate.getScore());
         this.setSerialNumber(testExerciseTemplate.getSerialNumber());
         this.setTestPartTemplateId(testExerciseTemplate.getTestPartTemplateId());
