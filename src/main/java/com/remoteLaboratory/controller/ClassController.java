@@ -54,6 +54,6 @@ public class ClassController {
                 && !course.getTeacherId().equals(loginUser.getId())) {
             throw new BusinessException(Messages.CODE_50200);
         }
-        return CommonResponse.getInstance(courseStudyRecordService.getClassByCourseId(getClassByCourseIdInput));
+        return CommonResponse.getInstance(courseStudyRecordService.getGradeByCourseId(getClassByCourseIdInput));
     }
 }
