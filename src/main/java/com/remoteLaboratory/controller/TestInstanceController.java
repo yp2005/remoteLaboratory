@@ -196,7 +196,7 @@ public class TestInstanceController {
 
                 cell = row.createCell(5);
                 cell.setCellStyle(cellStyle);
-                cell.setCellValue(DateTimeUtil.formatDate(testInstance.getSubmitTime()));
+                cell.setCellValue(testInstance.getSubmitTime() == null ? "" : DateTimeUtil.formatDate(testInstance.getSubmitTime()));
 
                 cell = row.createCell(6);
                 cell.setCellStyle(cellStyle);
