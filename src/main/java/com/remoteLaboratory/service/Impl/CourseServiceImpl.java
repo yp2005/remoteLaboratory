@@ -143,9 +143,10 @@ public class CourseServiceImpl implements CourseService {
                 if(course.getStatus().equals(1)) {
                     throw new BusinessException(Messages.CODE_40010, "课程进行中不能执行删除操作");
                 }
-                courseRepository.delete(id);
+                course.setIsDeleted(true);
+                this.courseRepository.save(course);
                 LogRecord logRecord = new LogRecord();
-                logRecord.setType("删除");
+                logRecord.setType("逻辑删除");
                 logRecord.setObject("课程");
                 logRecord.setUserId(loginUser.getId());
                 logRecord.setUserName(StringUtils.isEmpty(loginUser.getPersonName()) ? loginUser.getUserName() : loginUser.getPersonName());

@@ -130,6 +130,11 @@ public class Course implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer timeLimit;
 
+    @Column
+    @ApiModelProperty(value = "是否逻辑删除")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Boolean isDeleted;
+
     @Column(updatable = false)
     @ApiModelProperty(value = "创建时间", hidden = true)
     @JsonInclude(JsonInclude.Include.NON_NULL)

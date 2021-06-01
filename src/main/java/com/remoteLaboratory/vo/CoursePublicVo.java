@@ -44,6 +44,7 @@ public class CoursePublicVo extends Course {
         this.setReportScore(course.getReportScore());
         this.setIsOuter(course.getIsOuter());
         this.setOuterUrl(course.getOuterUrl());
+        this.setIsDeleted(course.getIsDeleted());
     }
 
     public Course voToEntity() {
@@ -71,6 +72,7 @@ public class CoursePublicVo extends Course {
         course.setReportScore(this.getReportScore());
         course.setIsOuter(this.getIsOuter());
         course.setOuterUrl(this.getOuterUrl());
+        course.setIsDeleted(this.getIsDeleted());
         return course;
     }
 
