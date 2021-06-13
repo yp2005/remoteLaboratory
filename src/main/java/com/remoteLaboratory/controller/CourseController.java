@@ -99,6 +99,7 @@ public class CourseController {
         course.setStudentNumber(0);
         course.setSubjectNumber(0);
         course.setCommentNumber(0);
+        course.setIsDeleted(false);
         course = courseService.add(course);
         CommonResponse commonResponse = CommonResponse.getInstance(course);
         LogUtil.add(this.logRecordRepository, "添加", "课程", loginUser, course.getId(), course.getName());
