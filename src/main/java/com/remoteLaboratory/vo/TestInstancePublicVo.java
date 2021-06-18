@@ -87,6 +87,7 @@ public class TestInstancePublicVo extends TestInstance {
         this.setUserId(testInstance.getUserId());
         this.setUserName(testInstance.getUserName());
         this.setClass1(testInstance.getClass1());
+        this.setGrade(testInstance.getGrade());
         this.setTestExerciseInstanceId(testInstance.getTestExerciseInstanceId());
         this.setTestType(testInstance.getTestType());
         this.setStatus(testInstance.getStatus());
@@ -112,6 +113,7 @@ public class TestInstancePublicVo extends TestInstance {
         testInstance.setUserId(this.getUserId());
         testInstance.setUserName(this.getUserName());
         testInstance.setClass1(this.getClass1());
+        testInstance.setGrade(this.getGrade());
         testInstance.setTestExerciseInstanceId(this.getTestExerciseInstanceId());
         testInstance.setTestType(this.getTestType());
         testInstance.setStatus(this.getStatus());

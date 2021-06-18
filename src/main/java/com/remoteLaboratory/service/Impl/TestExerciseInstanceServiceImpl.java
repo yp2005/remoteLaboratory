@@ -74,7 +74,7 @@ public class TestExerciseInstanceServiceImpl implements TestExerciseInstanceServ
         testInstance.setTestExerciseInstanceId(testExerciseInstance.getTestInstanceId());
         testInstance = this.testInstanceRepository.save(testInstance);
 
-        if(testInstance.getTestType().equals(2)) { // 问卷调查统计选项
+        if(testInstance.getTestType().equals(2) && testExerciseInstance.getType().equals(1)) { // 问卷调查客观题统计选项
             TestExerciseTemplate testExerciseTemplate = this.testExerciseTemplateRepository.findOne(testExerciseInstance.getTestExerciseTemplateId());
             String[] answers = testExerciseInstance.getAnswer().split(",");
             JSONArray options = JSONArray.parseArray(testExerciseTemplate.getOptions());

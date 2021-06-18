@@ -99,6 +99,8 @@ public class TestInstanceServiceImpl implements TestInstanceService {
                                     testExerciseInstance.setTestInstanceId(testInstance.getId());
                                     testExerciseInstance.setTestSubsectionInstanceId(testSubsectionInstance.getId());
                                     testExerciseInstance.setTestPartInstanceId(testPartInstance.getId());
+                                    testExerciseInstance.setClass1(testInstance.getClass1());
+                                    testExerciseInstance.setGrade(testInstance.getGrade());
                                     testExerciseInstance = this.testExerciseInstanceRepository.save(testExerciseInstance);
                                 }
                             }
@@ -213,6 +215,7 @@ public class TestInstanceServiceImpl implements TestInstanceService {
                     .append("->")
                     .append(user.getClass1());
             testInstancePublicVo.setClass1(class1.toString());
+            testInstancePublicVo.setGrade(user.getGrade());
             return this.add(testInstancePublicVo);
         }
     }

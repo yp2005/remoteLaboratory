@@ -120,6 +120,16 @@ public class TestExerciseInstance implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer status;
 
+    @Column(length = 500)
+    @ApiModelProperty(value = "班级")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String class1;
+
+    @Column(length = 500)
+    @ApiModelProperty(value = "年级")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String grade;
+
     @Column(updatable = false)
     @ApiModelProperty(value = "创建时间", hidden = true)
     @JsonInclude(JsonInclude.Include.NON_NULL)
