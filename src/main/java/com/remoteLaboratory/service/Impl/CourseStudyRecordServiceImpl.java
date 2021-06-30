@@ -1,5 +1,8 @@
 package com.remoteLaboratory.service.Impl;
 
+import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.remoteLaboratory.bo.SearchPara;
 import com.remoteLaboratory.bo.SearchParas;
 import com.remoteLaboratory.entities.*;
@@ -199,6 +202,7 @@ public class CourseStudyRecordServiceImpl implements CourseStudyRecordService {
         if (courseStudyRecord == null) {
             throw new BusinessException(Messages.CODE_20001);
         }
+        // 学习状态 0-学习中 1-已完成
         if (courseStudyRecord.getStatus().equals(0)) { // 未完成学习计算学习进度
             List<ChapterStudyRecord> chapterStudyRecordList = this.chapterStudyRecordRepository.findByCourseStudyRecordId(courseStudyRecord.getId());
             Double courseStudied = courseStudyRecord.getTestTemplateSubmitedNumber() / (courseStudyRecord.getTestTemplateNumber() + chapterStudyRecordList.size()) * 1.0;
@@ -525,5 +529,182 @@ public class CourseStudyRecordServiceImpl implements CourseStudyRecordService {
                 break;
         }
         return result;
+    }
+
+    public static void main(String[] args){
+      String ss = "{\n" +
+              "  \"id\": 25,\n" +
+              "  \"courseId\": 13,\n" +
+              "  \"courseName\": \"外骨骼上肢康复机器控制虚拟仿真实验\",\n" +
+              "  \"courseMainImg\": \"/remoteLaboratory/upload/admin/20215/c03c05a716b34e909afd8ffde4c04ddc.jpg\",\n" +
+              "  \"courseVideoDesc\": \"/remoteLaboratory/upload/admin/20215/90fa5f79e60049afa0e0f7cd2de7ccfe.mp4\",\n" +
+              "  \"courseIntroduction\": \"外骨骼上肢康复机器人控制虚拟仿真实验项目依托东北大学优势学科，结合自动化专业核心课程《自动控制原理》的关键知识点，以科研反哺本科教学的新模式，采用实际工程数据和虚拟仿真技术，开发了包含康复医学理论认知、上肢康复机器人训练系统组成、上肢康复机器人运动学和动力学分析、上肢康复机器人被动训练控制器的设计和自主性被动训练控制器的设计等内容，突出康复机器人的控制核心-智能的人机交互和精准的控制算法。\",\n" +
+              "  \"class1\": \"4->4->4->4\",\n" +
+              "  \"userId\": 15,\n" +
+              "  \"userName\": \"4\",\n" +
+              "  \"studied\": 0.33,\n" +
+              "  \"score\": 82.6,\n" +
+              "  \"preStudyScore\": 6.6,\n" +
+              "  \"operationScore\": 16,\n" +
+              "  \"dataScore\": 16,\n" +
+              "  \"dataAnalysisScore\": 16,\n" +
+              "  \"reportScore\": 28,\n" +
+              "  \"graded\": true,\n" +
+              "  \"chapterId\": 5,\n" +
+              "  \"chapterName\": \"一\",\n" +
+              "  \"chapterTitle\": \"外骨骼上肢康复机器人控制虚拟仿真实验\",\n" +
+              "  \"sectionId\": 8,\n" +
+              "  \"sectionName\": \"1.4\",\n" +
+              "  \"sectionTitle\": \"学习视频四\",\n" +
+              "  \"status\": 1,\n" +
+              "  \"isOld\": true,\n" +
+              "  \"isQuestionnaireFinish\": true,\n" +
+              "  \"questionnaireTemplateId\": 7,\n" +
+              "  \"testTemplateNumber\": 2,\n" +
+              "  \"testTemplateFinishedNumber\": 2,\n" +
+              "  \"testTemplateSubmitedNumber\": 2,\n" +
+              "  \"createTime\": \"2021-06-29 20:34:32\",\n" +
+              "  \"updateTime\": \"2021-06-30 09:10:58\",\n" +
+              "  \"chapterStudyRecordPublicVoList\": [\n" +
+              "    {\n" +
+              "      \"id\": 24,\n" +
+              "      \"chapterId\": 5,\n" +
+              "      \"chapterName\": \"一\",\n" +
+              "      \"chapterTitle\": \"外骨骼上肢康复机器人控制虚拟仿真实验\",\n" +
+              "      \"courseStudyRecordId\": 25,\n" +
+              "      \"studied\": 1,\n" +
+              "      \"userId\": 15,\n" +
+              "      \"userName\": \"4\",\n" +
+              "      \"createTime\": \"2021-06-29 20:34:32\",\n" +
+              "      \"updateTime\": \"2021-06-29 21:04:01\",\n" +
+              "      \"sectionStudyRecordList\": [\n" +
+              "        {\n" +
+              "          \"id\": 53,\n" +
+              "          \"chapterId\": 5,\n" +
+              "          \"chapterName\": \"一\",\n" +
+              "          \"chapterTitle\": \"外骨骼上肢康复机器人控制虚拟仿真实验\",\n" +
+              "          \"sectionId\": 5,\n" +
+              "          \"sectionName\": \"1.1\",\n" +
+              "          \"sectionTitle\": \"学习视频一\",\n" +
+              "          \"courseStudyRecordId\": 25,\n" +
+              "          \"chapterStudyRecordId\": 24,\n" +
+              "          \"studyStatus\": 1,\n" +
+              "          \"userId\": 15,\n" +
+              "          \"userName\": \"4\",\n" +
+              "          \"createTime\": \"2021-06-29 20:34:32\",\n" +
+              "          \"updateTime\": \"2021-06-29 21:03:55\"\n" +
+              "        },\n" +
+              "        {\n" +
+              "          \"id\": 54,\n" +
+              "          \"chapterId\": 5,\n" +
+              "          \"chapterName\": \"一\",\n" +
+              "          \"chapterTitle\": \"外骨骼上肢康复机器人控制虚拟仿真实验\",\n" +
+              "          \"sectionId\": 6,\n" +
+              "          \"sectionName\": \"1.2\",\n" +
+              "          \"sectionTitle\": \"学习视频二\",\n" +
+              "          \"courseStudyRecordId\": 25,\n" +
+              "          \"chapterStudyRecordId\": 24,\n" +
+              "          \"studyStatus\": 1,\n" +
+              "          \"userId\": 15,\n" +
+              "          \"userName\": \"4\",\n" +
+              "          \"createTime\": \"2021-06-29 20:34:32\",\n" +
+              "          \"updateTime\": \"2021-06-29 21:03:57\"\n" +
+              "        },\n" +
+              "        {\n" +
+              "          \"id\": 55,\n" +
+              "          \"chapterId\": 5,\n" +
+              "          \"chapterName\": \"一\",\n" +
+              "          \"chapterTitle\": \"外骨骼上肢康复机器人控制虚拟仿真实验\",\n" +
+              "          \"sectionId\": 7,\n" +
+              "          \"sectionName\": \"1.3\",\n" +
+              "          \"sectionTitle\": \"学习视频三\",\n" +
+              "          \"courseStudyRecordId\": 25,\n" +
+              "          \"chapterStudyRecordId\": 24,\n" +
+              "          \"studyStatus\": 1,\n" +
+              "          \"userId\": 15,\n" +
+              "          \"userName\": \"4\",\n" +
+              "          \"createTime\": \"2021-06-29 20:34:32\",\n" +
+              "          \"updateTime\": \"2021-06-29 21:03:59\"\n" +
+              "        },\n" +
+              "        {\n" +
+              "          \"id\": 56,\n" +
+              "          \"chapterId\": 5,\n" +
+              "          \"chapterName\": \"一\",\n" +
+              "          \"chapterTitle\": \"外骨骼上肢康复机器人控制虚拟仿真实验\",\n" +
+              "          \"sectionId\": 8,\n" +
+              "          \"sectionName\": \"1.4\",\n" +
+              "          \"sectionTitle\": \"学习视频四\",\n" +
+              "          \"courseStudyRecordId\": 25,\n" +
+              "          \"chapterStudyRecordId\": 24,\n" +
+              "          \"studyStatus\": 1,\n" +
+              "          \"userId\": 15,\n" +
+              "          \"userName\": \"4\",\n" +
+              "          \"createTime\": \"2021-06-29 20:34:32\",\n" +
+              "          \"updateTime\": \"2021-06-29 21:04:01\"\n" +
+              "        }\n" +
+              "      ]\n" +
+              "    }\n" +
+              "  ],\n" +
+              "  \"testRecordList\": [\n" +
+              "    {\n" +
+              "      \"id\": 34,\n" +
+              "      \"courseStudyRecordId\": 25,\n" +
+              "      \"testTemplateId\": 9,\n" +
+              "      \"testTemplateName\": \"实验报告一\",\n" +
+              "      \"status\": 2,\n" +
+              "      \"testInstanceId\": 33,\n" +
+              "      \"userId\": 15,\n" +
+              "      \"userName\": \"4\",\n" +
+              "      \"createTime\": \"2021-06-29 20:34:32\",\n" +
+              "      \"updateTime\": \"2021-06-29 21:02:59\"\n" +
+              "    },\n" +
+              "    {\n" +
+              "      \"id\": 35,\n" +
+              "      \"courseStudyRecordId\": 25,\n" +
+              "      \"testTemplateId\": 11,\n" +
+              "      \"testTemplateName\": \"实验报告二\",\n" +
+              "      \"status\": 2,\n" +
+              "      \"testInstanceId\": 34,\n" +
+              "      \"userId\": 15,\n" +
+              "      \"userName\": \"4\",\n" +
+              "      \"createTime\": \"2021-06-29 20:34:32\",\n" +
+              "      \"updateTime\": \"2021-06-29 21:03:33\"\n" +
+              "    }\n" +
+              "  ]\n" +
+              "}";
+        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+        CourseStudyRecordPublicVo courseStudyRecord = gson.fromJson(ss, CourseStudyRecordPublicVo.class);
+        courseStudyRecord.setStatus(0);
+        // 学习状态 0-学习中 1-已完成
+        if (courseStudyRecord.getStatus().equals(0)) { // 未完成学习计算学习进度
+            List<ChapterStudyRecordPublicVo> chapterStudyRecordList = courseStudyRecord.getChapterStudyRecordPublicVoList();
+            Double courseStudied = 1.0 * courseStudyRecord.getTestTemplateSubmitedNumber() / (courseStudyRecord.getTestTemplateNumber() + chapterStudyRecordList.size());
+            if (CollectionUtils.isNotEmpty(chapterStudyRecordList)) {
+                Double chapterPercent = 1.0 / (courseStudyRecord.getTestTemplateNumber() + chapterStudyRecordList.size());
+                for (ChapterStudyRecordPublicVo chapterStudyRecord : chapterStudyRecordList) {
+                    List<SectionStudyRecord> sectionStudyRecordList = chapterStudyRecord.getSectionStudyRecordList();
+                    Double chapterStudied = 0.0;
+                    if (CollectionUtils.isNotEmpty(sectionStudyRecordList)) {
+                        Double sectionPercent = 1.0 / sectionStudyRecordList.size();
+                        for (SectionStudyRecord sectionStudyRecord : sectionStudyRecordList) {
+                            if (sectionStudyRecord.getStudyStatus().equals(1)) {
+                                chapterStudied += sectionPercent;
+                            }
+                        }
+                    } else {
+                        chapterStudied = 1.0;
+                    }
+                    chapterStudied = Math.round(chapterStudied * 100) / 100.0;
+                    chapterStudyRecord.setStudied(chapterStudied);
+                    courseStudied += chapterPercent * chapterStudied;
+                }
+            } else if (courseStudyRecord.getTestTemplateNumber().equals(0)) {
+                courseStudied = 1.0;
+            }
+            courseStudied = Math.round(courseStudied * 100) / 100.0;
+            courseStudyRecord.setStudied(courseStudied);
+            courseStudyRecord.setStatus(courseStudyRecord.getStudied().equals(1.0) ? 1 : 0);
+        }
+        System.out.println(JSONObject.toJSONString(courseStudyRecord));
     }
 }
